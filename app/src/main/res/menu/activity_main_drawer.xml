@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_budget"
+            android:title="Budget" />
+            <!--android:icon="@drawable/ic_menu_camera"-->
+        <item
+            android:id="@+id/nav_expense"
+            android:title="Expense" />
+        <item
+            android:id="@+id/nav_report"
+            android:title="Report" />
+        <item
+            android:id="@+id/nav_settings"
+            android:title="Settings" />
+    </group>
+
+</menu>
