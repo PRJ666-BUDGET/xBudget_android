@@ -1,4 +1,4 @@
-package com.prj666_183a06.xbudget.adapter;
+package com.prj666_183a06.xbudget.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,10 +7,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.prj666_183a06.xbudget.Model.Plan;
 import com.prj666_183a06.xbudget.R;
-import com.prj666_183a06.xbudget.pojo.PlanItem;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by chanhwan on 2018-10-03.
@@ -18,20 +18,21 @@ import java.util.ArrayList;
 
 public class PlanAdapter extends BaseAdapter {
 
-    ArrayList<Object> list;
+    //ArrayList<Object> list;
+    List<Plan> list;
 
     private static final int PLAN_ITEM = 0;
     private static final int HEADER = 1;
     private LayoutInflater inflater;
 
-    public PlanAdapter(Context context, ArrayList<Object> list) {
+    public PlanAdapter(Context context, List<Plan> list) {
         this.list = list;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(list.get(position) instanceof PlanItem) {
+        if(list.get(position) instanceof Plan) {
             return PLAN_ITEM;
         }
         else {
@@ -81,16 +82,23 @@ public class PlanAdapter extends BaseAdapter {
                 TextView amount = (TextView) convertView.findViewById(R.id.planItemAmount);
                 TextView period = (TextView) convertView.findViewById(R.id.planItemPeriod);
 
+//                Old code with ArrayList<Object>
 //                image.setImageResource(((PlanItem)list.get(position)).getImage());
-                title.setText(((PlanItem)list.get(position)).getTitle());
-                amount.setText(((PlanItem)list.get(position)).getAmount());
-                period.setText(((PlanItem)list.get(position)).getPeriod());
+//                title.setText(((PlanItem)list.get(position)).getTitle());
+//                amount.setText(((PlanItem)list.get(position)).getAmount());
+//                period.setText(((PlanItem)list.get(position)).getPeriod());
+
+                title.setText(((Plan)list.get(position)).getPlanTitle());
+                amount.setText(String.valueOf(((Plan)list.get(position)).getPlanAmount()));
+                period.setText(((Plan)list.get(position)).getPlanPeriod());
 
                 break;
             case HEADER:
 
                 TextView header = (TextView) convertView.findViewById(R.id.planListHeader);
-                header.setText(((String)list.get(position)));
+//                Old code with ArrayList<Object>
+//                header.setText(((String)list.get(position)));
+                header.setText(list.get(position).toString());
                 break;
         }
         return convertView;

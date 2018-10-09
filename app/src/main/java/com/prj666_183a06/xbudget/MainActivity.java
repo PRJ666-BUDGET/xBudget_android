@@ -11,9 +11,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+
+import com.prj666_183a06.xbudget.Database.PlanRepository;
+import com.prj666_183a06.xbudget.Local.PlanDataSource;
+import com.prj666_183a06.xbudget.Local.PlanDatabase;
+import com.prj666_183a06.xbudget.Model.Plan;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.disposables.CompositeDisposable;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    // Adapter
+    List<Plan> planList = new ArrayList<>();
+    ArrayAdapter adapter;
+
+    //Database
+    private CompositeDisposable compositeDisposable;
+    private PlanRepository planRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,15 +40,12 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        
+        
+        // Database
+        // TODO: 2018-10-08 Add expanse database?
+        PlanDatabase planDatabase = PlanDatabase.getInstance(this); // Create database
+        planRepository = PlanRepository.getInstance(PlanDataSource.getIntance(planDatabase.planDAO()));
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -41,6 +57,32 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         displaySelectedScreen(R.id.nav_home);
+    }
+
+//    private void loadData() {
+//        //Use RxJava
+//        Disposable disposbale = planRepository.getAllPlans()
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribeOn(Schedulers.io())
+//                .subscribe(new Consumer<List<Plan>>() {
+//                               @Override
+//                               public void accept(List<Plan> plans) throws Exception {
+//                                   onGetAllPlanSuccess(plans);
+//                               }
+//                           },
+//                        new Consumer<Throwable>() {
+//                            @Override
+//                            public void accept(Throwable throwable) throws Exception {
+//                                Toast.makeText(MainActivity.this, ""+throwable.getMessage(), Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//        compositeDisposable.add(disposbale);
+//    }
+
+    private void onGetAllPlanSuccess(List<Plan> plans) {
+        planList.clear();
+        planList.addAll(plans);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -68,12 +110,48 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.demo_clear) {
+//            deleteAllPlans();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+//    private void deleteAllPlans() {
+//
+//
+//        Disposable disposable = io.reactivex.Observable.create(new ObservableOnSubscribe<Object>() {
+//            @Override
+//            public void subscribe(ObservableEmitter<Object> e) throws Exception {
+//                planRepository.deleteAllPlan();
+//                e.onComplete();
+//
+//        })
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribeOn(Schedulers.io())
+//                .subscribe(new Consumer() {
+//
+//                               @Override
+//                               public void accept(Object o) throws Exception {
+//
+//                               }
+//                           }, new Consumer<Throwable>() {
+//                               @Override
+//                               public void accept(Throwable throwable) throws Exception {
+//                                   Toast.makeText(MainActivity.this, "" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+//                               }
+//                           },
+//                        new Action() {
+//                            @Override
+//                            public void run() throws Exception {
+//                                loadData(); // Refresh data
+//                            }
+//                        }
+//                );
+//
+//        compositeDisposable.add(disposable);
+//    }
 
     private void displaySelectedScreen(int id) {
         Fragment fragment = null;

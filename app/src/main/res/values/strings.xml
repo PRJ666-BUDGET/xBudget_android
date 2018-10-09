@@ -5,4 +5,23 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+
+    <!--FOR PLAN CREATE FORM-->
+    <string name="planTitle">Plan Title</string>
+    <string name="planAmount">Amount</string>
+    <!--<string name="add_planType_textView">Type</string>-->
+    <!--<string name="add_planTitle_textView">Title</string>-->
+    <!--<string name="add_planAmount_textView">Amount</string>-->
+    <!--<string name="add_planPeriod_textView">Period</string>-->
+    <!--<string name="add_planType_Select">Select type</string>-->
+    <!--<string name="add_planTitle_editText">Enter plan name</string>-->
+    <!--<string name="add_planAmount_editText">Enter plan amount</string>-->
+    <!--<string name="add_planPeriod_Select">Select period</string>-->
+    <string name="planSave">Save</string>
+
+
+    <!--FOR DEMO DATA-->
+    <string name="demo_clear">Clear</string>
+
 </resources>

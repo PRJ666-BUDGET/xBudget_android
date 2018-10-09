@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/planCreateForm"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp" >
+
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/plan_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/planTitle" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/plan_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/planAmount" />
+    </android.support.design.widget.TextInputLayout>
+
+
+    <!--<TextView-->
+        <!--android:id="@+id/textView_planType"-->
+        <!--android:layout_width="68dp"-->
+        <!--android:layout_height="37dp"-->
+        <!--android:layout_alignStart="@+id/textView_planTitle"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_marginStart="0dp"-->
+        <!--android:layout_marginTop="37dp"-->
+        <!--android:text="@string/add_planType_textView" />-->
+
+    <!--<Spinner-->
+        <!--android:id="@+id/spinner_planType"-->
+        <!--android:layout_width="210dp"-->
+        <!--android:layout_height="37dp"-->
+        <!--android:layout_alignBottom="@+id/textView_planType"-->
+        <!--android:layout_marginStart="30dp"-->
+        <!--android:layout_marginBottom="1dp"-->
+        <!--android:layout_toEndOf="@+id/textView_planAmount" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/textView_planTitle"-->
+        <!--android:layout_width="69dp"-->
+        <!--android:layout_height="43dp"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_marginStart="45dp"-->
+        <!--android:layout_marginTop="111dp"-->
+        <!--android:text="@string/add_planTitle_textView" />-->
+
+    <!--<EditText-->
+        <!--android:id="@+id/editText_planTitle"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignTop="@+id/textView_planTitle"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_marginTop="0dp"-->
+        <!--android:layout_marginEnd="27dp"-->
+        <!--android:ems="10"-->
+        <!--android:inputType="textPersonName"-->
+        <!--android:text="@string/add_planTitle_editText" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/textView_planAmount"-->
+        <!--android:layout_width="68dp"-->
+        <!--android:layout_height="43dp"-->
+        <!--android:layout_alignStart="@+id/textView_planTitle"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_marginStart="0dp"-->
+        <!--android:layout_marginTop="194dp"-->
+        <!--android:text="@string/add_planAmount_textView" />-->
+
+    <!--<EditText-->
+        <!--android:id="@+id/editText_planAmount"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignStart="@+id/editText_planTitle"-->
+        <!--android:layout_alignBottom="@+id/textView_planAmount"-->
+        <!--android:layout_marginStart="0dp"-->
+        <!--android:layout_marginBottom="-1dp"-->
+        <!--android:ems="10"-->
+        <!--android:inputType="textPersonName"-->
+        <!--android:text="@string/add_planAmount_editText" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/textView_planPeriod"-->
+        <!--android:layout_width="68dp"-->
+        <!--android:layout_height="38dp"-->
+        <!--android:layout_alignStart="@+id/textView_planTitle"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_marginStart="1dp"-->
+        <!--android:layout_marginBottom="196dp"-->
+        <!--android:text="@string/add_planPeriod_textView" />-->
+
+    <!--<Spinner-->
+        <!--android:id="@+id/spinner_planPeriod"-->
+        <!--android:layout_width="209dp"-->
+        <!--android:layout_height="39dp"-->
+        <!--android:layout_alignStart="@+id/editText_planTitle"-->
+        <!--android:layout_alignTop="@+id/textView_planPeriod" />-->
+
+    <Button
+        android:id="@+id/button_planSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="88dp"
+        android:text="@string/planSave" />
+
+</LinearLayout>
