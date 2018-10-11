@@ -14,4 +14,9 @@
         tools:layout_editor_absoluteX="162dp"
         tools:layout_editor_absoluteY="245dp" />
 
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </RelativeLayout>
