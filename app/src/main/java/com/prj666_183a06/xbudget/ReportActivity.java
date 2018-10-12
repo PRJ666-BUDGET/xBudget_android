@@ -51,8 +51,8 @@ public class ReportActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.activity_report, container, false);
-        //
-        //        // Pie Chart
+
+        // Pie Chart
         mPie = v.findViewById(R.id.pieChart1);
         mPie.getDescription().setEnabled(false);
 
@@ -70,51 +70,10 @@ public class ReportActivity extends Fragment {
 
         mPie.setData(generatePieData());
 
-//        // Line Chart
-//        mLine = v.findViewById(R.id.lineChart1);
-//        mLine.getDescription().setEnabled(false);
-//
-////        mLine.setCenterText(generateCenterText());
-////        mLine.setCenterTextSize(10f);
-//
-////        mChart.setHoleRadius(45f);
-////        mChart.setTransparentCircleRadius(50f);
-//
-//        Legend lgdLine = mLine.getLegend();
-//        lgdLine.setForm(Legend.LegendForm.LINE);
-//
-//        mLine.setData(generateLineData());
-
         return v;
     }
-
-//    protected LineData generateLineData() {
-//        ArrayList<Entry> values = new ArrayList<Entry>();
-//        int count = 5;
-//        float range = 100;
-//
-//        for (int i = 0; i < count; i++){
-//            float val = (float) (Math.random() * range) + 3;
-//            values.add(new Entry(i, val));
-//        }
-//
-//        LineDataSet ds1;
-//
-//        ds1 = new LineDataSet(values, "DateSet 1");
-//        ds1.setLineWidth(2f);
-//        ds1.setDrawCircles(false);
-//        ds1.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
-//        ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-//        dataSets.add(ds1);
-//
-//        LineData d = new LineData(dataSets);
-//        d.setValueTypeface(tf);
-//        return d;
-//
-//    }
-
     private SpannableString generateCenterText() {
-        SpannableString s = new SpannableString("Revenes\nQuaters 2015");
+        SpannableString s = new SpannableString("Expensess\nJuly 2018");
         s.setSpan(new RelativeSizeSpan(2f), 0, 8, 0);
         s.setSpan(new ForegroundColorSpan(Color.GRAY), 8, s.length(), 0);
 
@@ -122,15 +81,15 @@ public class ReportActivity extends Fragment {
     }
 
     protected PieData generatePieData() {
-        int count = 4;
+        int count = 7;
 
         ArrayList<PieEntry> entries = new ArrayList<PieEntry>();
 
         for(int i = 0; i < count; i++) {
-            entries.add(new PieEntry((float) ((Math.random() * 60) + 40), "Quater " + (i+1)));
+            entries.add(new PieEntry((float) ((Math.random() * 60) + 40), "Expenses " + (i+1)));
         }
 
-        PieDataSet ds = new PieDataSet(entries, "Quarterly Revenues 2015");
+        PieDataSet ds = new PieDataSet(entries, "Expenses July 2018");
         ds.setColors(ColorTemplate.VORDIPLOM_COLORS);
         ds.setSliceSpace(2f);
         ds.setValueTextColor(Color.WHITE);
