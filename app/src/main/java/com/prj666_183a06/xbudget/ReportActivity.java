@@ -13,18 +13,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.FileUtils;
 
 import java.util.ArrayList;
 
 public class ReportActivity extends Fragment {
 
-    private PieChart mChart;
+    private PieChart mPie;
+    private LineChart mLine;
+
     private Typeface tf;
 
     public ReportActivity() {
@@ -35,7 +43,7 @@ public class ReportActivity extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        getActivity().setTitle("Plans");
+        getActivity().setTitle("Report");
     }
 
     @Nullable
@@ -43,30 +51,67 @@ public class ReportActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.activity_report, container, false);
-//        tf = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-Regular.ttf");
-        mChart = v.findViewById(R.id.pieChart1);
-        mChart.getDescription().setEnabled(false);
+        //
+        //        // Pie Chart
+        mPie = v.findViewById(R.id.pieChart1);
+        mPie.getDescription().setEnabled(false);
 
-//        Typeface tf = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-Light.ttf");
+        mPie.setCenterText(generateCenterText());
+        mPie.setCenterTextSize(10f);
+
+        mPie.setHoleRadius(45f);
+        mPie.setTransparentCircleRadius(50f);
+
+        Legend lgdPie = mPie.getLegend();
+        lgdPie.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        lgdPie.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+        lgdPie.setOrientation(Legend.LegendOrientation.VERTICAL);
+        lgdPie.setDrawInside(false);
+
+        mPie.setData(generatePieData());
+
+//        // Line Chart
+//        mLine = v.findViewById(R.id.lineChart1);
+//        mLine.getDescription().setEnabled(false);
 //
-//        mChart.setCenterTextTypeface(tf);
-        mChart.setCenterText(generateCenterText());
-        mChart.setCenterTextSize(10f);
-//        mChart.setCenterTextTypeface(tf);
-
-        mChart.setHoleRadius(45f);
-        mChart.setTransparentCircleRadius(50f);
-
-        Legend l = mChart.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        l.setOrientation(Legend.LegendOrientation.VERTICAL);
-        l.setDrawInside(false);
-
-        mChart.setData(generatePieData());
+////        mLine.setCenterText(generateCenterText());
+////        mLine.setCenterTextSize(10f);
+//
+////        mChart.setHoleRadius(45f);
+////        mChart.setTransparentCircleRadius(50f);
+//
+//        Legend lgdLine = mLine.getLegend();
+//        lgdLine.setForm(Legend.LegendForm.LINE);
+//
+//        mLine.setData(generateLineData());
 
         return v;
     }
+
+//    protected LineData generateLineData() {
+//        ArrayList<Entry> values = new ArrayList<Entry>();
+//        int count = 5;
+//        float range = 100;
+//
+//        for (int i = 0; i < count; i++){
+//            float val = (float) (Math.random() * range) + 3;
+//            values.add(new Entry(i, val));
+//        }
+//
+//        LineDataSet ds1;
+//
+//        ds1 = new LineDataSet(values, "DateSet 1");
+//        ds1.setLineWidth(2f);
+//        ds1.setDrawCircles(false);
+//        ds1.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+//        ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+//        dataSets.add(ds1);
+//
+//        LineData d = new LineData(dataSets);
+//        d.setValueTypeface(tf);
+//        return d;
+//
+//    }
 
     private SpannableString generateCenterText() {
         SpannableString s = new SpannableString("Revenes\nQuaters 2015");
@@ -75,18 +120,6 @@ public class ReportActivity extends Fragment {
 
         return s;
     }
-
-//    private Typeface tf;
-
-//    public ReportActivity() {
-//
-//    }
-
-//    @Override
-//    public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        tf = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-Regular.ttf");
-////        return super.onCreateView(inflater, container, savedInstanceState);
-//    }
 
     protected PieData generatePieData() {
         int count = 4;
@@ -109,16 +142,4 @@ public class ReportActivity extends Fragment {
         return d;
     }
 
-//    @Override
-//    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//
-//        getActivity().setTitle("Plans");
-//    }
-//
-//    @Nullable
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        return inflater.inflate(R.layout.activity_report, container, false);
-//    }
 }
