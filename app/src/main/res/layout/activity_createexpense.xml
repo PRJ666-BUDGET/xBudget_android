@@ -34,6 +34,13 @@
             android:textStyle="bold"
             android:textSize="25sp"/>
 
+        <TextView
+            android:id="@+id/jsonTest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="25sp"/>
+
         <Button
             android:id="@+id/buttonHome"
             android:layout_width="wrap_content"
