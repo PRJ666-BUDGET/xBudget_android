@@ -1,7 +1,4 @@
 package com.prj666_183a06.xbudget;
-
-import android.support.v7.app.AppCompatActivity;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
