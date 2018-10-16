@@ -35,5 +35,6 @@ dependencies {
     annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
 
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+    implementation 'com.google.android.gms:play-services-vision:15.0.0'
 
 }
