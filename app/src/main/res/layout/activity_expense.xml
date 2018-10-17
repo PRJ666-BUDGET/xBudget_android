@@ -4,33 +4,81 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <Button
-            android:id="@+id/create"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Create Expense Entry"
-            android:layout_gravity="center"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
         <TextView
-            android:id="@+id/jsonText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <ListView
-            android:id="@+id/listId"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-
-        </ListView>
-
-        <Button
-            android:id="@+id/delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delete Data"/>
+            android:text="@string/ExpenseStore"
+            android:textSize="25sp"/>
+
+        <EditText
+            android:id="@+id/storeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:width="150sp"
+            android:textAlignment="center"
+            android:textColor="#aaaaaa"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ExpenseDate"
+            android:textSize="25sp"/>
+
+
+        <EditText
+            android:id="@+id/dateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:width="150sp"
+            android:textAlignment="center"
+            android:textColor="#aaaaaa"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ExpenseItem"
+            android:textSize="25sp"/>
+
+        <EditText
+            android:id="@+id/itemText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:width="150sp"
+            android:textAlignment="center"
+            android:textColor="#aaaaaa"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ExpenseCost"
+            android:textSize="25sp"/>
+
+        <EditText
+            android:id="@+id/costText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:width="150sp"
+            android:textAlignment="center"
+            android:textColor="#aaaaaa"/>
+
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit"/>
+
     </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>
