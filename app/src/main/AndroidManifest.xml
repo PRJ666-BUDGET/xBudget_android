@@ -24,16 +24,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ExpenseCreateActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".crud.CreateUpdatePlanActivity"
+            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".crud.DetailPlanActivity"
+            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".ExpenseCreateActivity"
+            android:parentActivityName=".MainActivity"/>
         <activity android:name=".CameraActivity"></activity>
     </application>
 

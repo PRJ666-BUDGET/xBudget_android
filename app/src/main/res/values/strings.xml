@@ -6,6 +6,39 @@
 
     <string name="action_settings">Settings</string>
 
+    <!--PLAN ITEM-->
+    <string name="text_planTitle">PLAN TITLE</string>
+    <string name="text_planAmount">$1000</string>
+    <string name="text_planPeriod">Bi-weekly</string>
+
+    <!--CREATE PLAN-->
+    <string name="createForm_planType_label">Type</string>
+    <string name="hint_planTitle">Plan Title</string>
+    <string name="hint_planAmount">Amount</string>
+    <string name="createForm_planPeriod_label">Period</string>
+
+    <string-array name="spinner_planType">
+        <item>income</item>
+        <item>saving</item>
+    </string-array>
+
+    <string-array name="spinner_planPeriod">
+        <item>daily</item>
+        <item>weekly</item>
+        <item>bi-weekly</item>
+        <item>monthly</item>
+    </string-array>
+
+    <!--DETAIL PLAN-->
+    <string name="detailForm_planType_label">Type</string>
+    <string name="detailForm_planType">type</string>
+    <string name="detailForm_planTitle_label">Title</string>
+    <string name="detailForm_planTitle">title</string>
+    <string name="detailForm_planAmount_label">Amount</string>
+    <string name="detailForm_planAmount">amount</string>
+    <string name="detailForm_planPeriod_label">Period</string>
+    <string name="detailForm_planPeriod">period</string>
+
     <!-- Expense strings-->
 
     <string name="ExpenseItem">Item</string>
