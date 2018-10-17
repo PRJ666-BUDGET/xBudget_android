@@ -43,7 +43,7 @@
 
     <string name="ExpenseItem">Item</string>
     <string name="ExpenseStore">Store</string>
-    <string name="ExpenseDate">Select Date</string>
+    <string name="ExpenseDate">Date</string>
     <string name="ExpenseCost">Cost</string>
     <string name="ExpenseReturn">Back</string>
 
