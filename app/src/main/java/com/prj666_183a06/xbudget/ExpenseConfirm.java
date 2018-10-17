@@ -2,7 +2,6 @@ package com.prj666_183a06.xbudget;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -22,9 +21,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-
-import static java.util.Objects.isNull;
 
 public class ExpenseConfirm extends AppCompatActivity {
     TextView js;
@@ -79,16 +75,18 @@ public class ExpenseConfirm extends AppCompatActivity {
         }
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_createconfirm);
 
-        //Start
+        File file = new File("jsonStorage.json");
 
         ExpenseObj result;
         ExpenseJSON jsonDude = new ExpenseJSON();
         Intent intent = getIntent();
+
 
         String jsonString = readFromFile(getApplicationContext());
         try {
@@ -97,7 +95,7 @@ public class ExpenseConfirm extends AppCompatActivity {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
+        Log.d("string", jsonString);
         result = new ExpenseObj(
                 intent.getStringExtra("storeExtra"),
                 intent.getStringExtra("dateExtra"),
@@ -113,6 +111,7 @@ public class ExpenseConfirm extends AppCompatActivity {
             e.printStackTrace();
         }
 
+
         String output =
                 "Store:"  + intent.getStringExtra("storeExtra") + "\n" +
                 "Date: " + intent.getStringExtra("dateExtra") + "\n" +
@@ -121,7 +120,7 @@ public class ExpenseConfirm extends AppCompatActivity {
                         "\n Are you sure you want to submit?";
 
         js = (TextView) findViewById(R.id.jsonTest);
-        if(!isNull(obj.toString())){
+        if(obj.toString() != null){
             js.setText(output);
         }
 

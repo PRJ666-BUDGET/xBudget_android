@@ -1,6 +1,7 @@
 package com.prj666_183a06.xbudget;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -13,6 +14,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Calendar;
@@ -26,14 +30,20 @@ public class ExpenseCreateActivity extends AppCompatActivity {
     static public TextView dateTester;
     static DatePickerDialog.OnDateSetListener dateListener;
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                if (data.getStringExtra("ret") == "false") {
-                    loop = false;
-                }
-            }
+    private void writeToFile(String data) {
+        String filename = "jsonStorage.json";
+        String fileContents = "[]";
+        FileOutputStream outputStream;
+        Log.d("intial", "setitng up data");
+        Log.d("data", data);
+
+        try {
+            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+            outputStream.write(fileContents.getBytes());
+            outputStream.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -42,8 +52,15 @@ public class ExpenseCreateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_createexpense);
 
-        Intent intent = getIntent();
+        File file = new File("jsonString.json");
+        if(!file.exists()){
+            Log.d("checking","attempting to write");
+            writeToFile("");
+        }else{
+            Log.e("yes", "File exist");
+        }
 
+        Intent intent = getIntent();
 
         dateTester = (TextView) findViewById(R.id.dateText);
         dateTester.setOnClickListener(new View.OnClickListener(){
@@ -51,14 +68,10 @@ public class ExpenseCreateActivity extends AppCompatActivity {
             public void onClick(View view){
                 Calendar cal = Calendar.getInstance();
                 Date date = new Date();
-                LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                int year  = localDate.getYear();
-                int month = localDate.getMonthValue() - 1;
-                int day   = localDate.getDayOfMonth();
 
-                /*int year = cal.get(Calendar.YEAR);
-                int month = cal.get(Calendar.MONTH);
-                int day = cal.get(Calendar.YEAR);*/
+                int year = cal.get(Calendar.YEAR) ;
+                int month = cal.get(Calendar.MONTH) ;
+                int day = cal.get(Calendar.DAY_OF_MONTH);
 
                 DatePickerDialog dialogue = new DatePickerDialog(
                         ExpenseCreateActivity.this,
@@ -87,10 +100,12 @@ public class ExpenseCreateActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                Log.d("error chec", "start of press");
                 storeInput = (EditText) findViewById(R.id.storeText);
                 dateInput = (TextView) findViewById(R.id.dateText);
                 itemInput = (EditText) findViewById(R.id.itemText);
                 costInput = (EditText) findViewById(R.id.costText);
+
 
 
                 Intent intent2 = new Intent(ExpenseCreateActivity.this, ExpenseConfirm.class);
@@ -100,7 +115,8 @@ public class ExpenseCreateActivity extends AppCompatActivity {
                 intent2.putExtra("itemExtra", itemInput.getText().toString());
                 intent2.putExtra("costExtra", costInput.getText().toString());
 
-                startActivityForResult(intent2, REQUEST_CODE);
+
+                startActivity(intent2);
                 finish();
             }
         });

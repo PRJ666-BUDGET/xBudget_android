@@ -19,7 +19,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -63,7 +65,6 @@ public class ExpenseActivity extends Fragment {
         return ret;
     }
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -82,10 +83,11 @@ public class ExpenseActivity extends Fragment {
             temp = new JSONArray(very);
             for(int i = 0; i < temp.length(); i++){
                 jsonObj = temp.getJSONObject(i);
-                items.add(jsonObj.getString("item") + "\n"
-                        + jsonObj.getString("store")
-                        + "\n" + jsonObj.getString("cost")
-                        + "\n" + jsonObj.getString("date")  );
+                items.add(
+                        jsonObj.getString("item") + "\n" +
+                        jsonObj.getString("store") + "\n" +
+                        jsonObj.getString("cost") + "\n" +
+                        jsonObj.getString("date")  );
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -100,7 +102,6 @@ public class ExpenseActivity extends Fragment {
         listStore.setAdapter(arr);
 
         //end
-
 
 
         Button createButton = view.findViewById(R.id.create);
