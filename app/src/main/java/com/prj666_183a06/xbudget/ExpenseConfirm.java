@@ -113,9 +113,16 @@ public class ExpenseConfirm extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        String output =
+                "Store:"  + intent.getStringExtra("storeExtra") + "\n" +
+                "Date: " + intent.getStringExtra("dateExtra") + "\n" +
+                "Item: " + intent.getStringExtra("itemExtra") + "\n" +
+                "Cost: " + intent.getStringExtra("costExtra") +
+                        "\n Are you sure you want to submit?";
+
         js = (TextView) findViewById(R.id.jsonTest);
         if(!isNull(obj.toString())){
-            js.setText(arr.toString());
+            js.setText(output);
         }
 
         Button confirmButton = (Button) findViewById(R.id.confirm);

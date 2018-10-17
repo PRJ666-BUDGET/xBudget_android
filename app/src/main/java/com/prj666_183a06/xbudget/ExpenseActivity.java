@@ -13,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,8 +70,8 @@ public class ExpenseActivity extends Fragment {
 
         View view = inflater.inflate(R.layout.activity_expense, container, false);
         String very = readFromFile(getContext());
-        TextView te = view.findViewById(R.id.jsonText);
-        te.setText(very);
+        //TextView te = view.findViewById(R.id.jsonText);
+        //te.setText(very);
 
         //populate
 
@@ -83,7 +82,10 @@ public class ExpenseActivity extends Fragment {
             temp = new JSONArray(very);
             for(int i = 0; i < temp.length(); i++){
                 jsonObj = temp.getJSONObject(i);
-                items.add(jsonObj.getString("item") + "\n" + jsonObj.getString("store") + " - " + jsonObj.getString("cost"));
+                items.add(jsonObj.getString("item") + "\n"
+                        + jsonObj.getString("store")
+                        + "\n" + jsonObj.getString("cost")
+                        + "\n" + jsonObj.getString("date")  );
             }
         } catch (JSONException e) {
             e.printStackTrace();
