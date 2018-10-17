@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/planCreateForm"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/textView_planType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/spinner_planType"
+        android:text="@string/detailForm_planType_label"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <TextView
+        android:id="@+id/textView_typeRecord"
+        android:layout_width="240dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:text="@string/detailForm_planType"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <TextView
+        android:id="@+id/textInputLayout_planTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_planType"
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/detailForm_planTitle_label"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <TextView
+        android:id="@+id/textView_titleRecord"
+        android:layout_width="240dp"
+        android:layout_height="30dp"
+        android:layout_below="@+id/textView_typeRecord"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/detailForm_planTitle"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <TextView
+        android:id="@+id/textInputLayout_planPeriod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textInputLayout_planTitle"
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/detailForm_planAmount_label"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <TextView
+        android:id="@+id/textView_amountRecord"
+        android:layout_width="240dp"
+        android:layout_height="30dp"
+        android:layout_below="@+id/textView_titleRecord"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/detailForm_planAmount"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <TextView
+        android:id="@+id/textView_planPeriod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textInputLayout_planPeriod"
+        android:layout_alignStart="@+id/textView_planType"
+        android:layout_marginTop="35dp"
+        android:text="@string/detailForm_planPeriod_label"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <TextView
+        android:id="@+id/textView_periodRecord"
+        android:layout_width="240dp"
+        android:layout_height="30dp"
+        android:layout_below="@+id/textInputLayout_planPeriod"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="35dp"
+        android:text="@string/detailForm_planPeriod"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+
+</RelativeLayout>

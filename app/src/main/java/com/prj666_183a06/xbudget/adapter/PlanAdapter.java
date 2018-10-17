@@ -1,99 +1,103 @@
 package com.prj666_183a06.xbudget.adapter;
 
-import android.content.Context;
+import android.graphics.Color;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.prj666_183a06.xbudget.R;
-import com.prj666_183a06.xbudget.pojo.PlanItem;
+import com.prj666_183a06.xbudget.database.entity.PlanEntity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by chanhwan on 2018-10-03.
  */
 
-public class PlanAdapter extends BaseAdapter {
+public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.PlanHolder> {
 
-    ArrayList<Object> list;
+    private static final String TAG = "PlanAdapter";
 
-    private static final int PLAN_ITEM = 0;
-    private static final int HEADER = 1;
-    private LayoutInflater inflater;
+    private List<PlanEntity> plans = new ArrayList<>();
+    private OnItemClickListener listener;
 
-    public PlanAdapter(Context context, ArrayList<Object> list) {
-        this.list = list;
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    // 이거 봐야함... PlanFragment is not MainActivity
+    @NonNull
+    @Override
+    public PlanHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.plan_item, parent, false);
+        Log.d(TAG, "onCreateViewHolder: itemView=" + itemView);
+        return new PlanHolder(itemView);
     }
 
     @Override
-    public int getItemViewType(int position) {
-        if(list.get(position) instanceof PlanItem) {
-            return PLAN_ITEM;
+    public void onBindViewHolder(@NonNull PlanHolder holder, int position) {
+        PlanEntity currentPlan = plans.get(position);
+        holder.textview_planTitle.setText(currentPlan.getPlanTitle());
+        holder.textview_planAmount.setText(String.format("%.2f", currentPlan.getPlanAmount()));
+        holder.textview_planPeriod.setText(currentPlan.getPlanPeriod());
+
+        if (currentPlan.getPlanType().matches("income")) {
+            holder.textview_planAmount.setTextColor(Color.parseColor("#33cc33"));
+        } else {
+            holder.textview_planAmount.setTextColor(Color.parseColor("#ff1a1a"));
         }
-        else {
-            return HEADER;
+    }
+
+    @Override
+    public int getItemCount() {
+        return plans.size();
+    }
+
+    // 이거 다시 바꿀꺼임...
+    public void setPlans(List<PlanEntity> plans) {
+        this.plans = plans;
+        notifyDataSetChanged();
+    }
+
+    public PlanEntity getPlanPosition(int position) {
+        return plans.get(position);
+    }
+
+    class PlanHolder extends RecyclerView.ViewHolder {
+        private TextView textview_planTitle;
+        private TextView textview_planAmount;
+        private TextView textview_planPeriod;
+
+        public PlanHolder(View itemView) {
+            super(itemView);
+
+            textview_planTitle = itemView.findViewById(R.id.textview_planTitle);
+            textview_planAmount = itemView.findViewById(R.id.textview_planAmount);
+            textview_planPeriod = itemView.findViewById(R.id.textview_planPeriod);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    if (listener != null && position != RecyclerView.NO_POSITION) {
+                        listener.onItemClick(plans.get(position));
+                    }
+                }
+            });
         }
-//        return super.getItemViewType(position);
     }
 
-    @Override
-    public int getViewTypeCount() {
-        return 2;
+    /**
+     *  OnItemClickListener FOR PlanDetailView
+     */
+    public interface OnItemClickListener {
+        void onItemClick(PlanEntity plan);
     }
 
-    @Override
-    public int getCount() {
-        return list.size();
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
     }
 
-    @Override
-    public Object getItem(int position) {
-        return list.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        if(convertView == null) {
-            switch (getItemViewType(position)) {
-                case PLAN_ITEM:
-                    convertView = inflater.inflate(R.layout.plan_list_item, null);
-                    break;
-                case HEADER:
-                    convertView = inflater.inflate(R.layout.plan_list_header, null);
-                    break;
-            }
-        }
-
-        switch (getItemViewType(position)) {
-            case PLAN_ITEM:
-//                ImageView image = convertView.findViewById(R.id.);
-                TextView title = (TextView) convertView.findViewById(R.id.planItemTitle);
-                TextView amount = (TextView) convertView.findViewById(R.id.planItemAmount);
-                TextView period = (TextView) convertView.findViewById(R.id.planItemPeriod);
-
-//                image.setImageResource(((PlanItem)list.get(position)).getImage());
-                title.setText(((PlanItem)list.get(position)).getTitle());
-                amount.setText(((PlanItem)list.get(position)).getAmount());
-                period.setText(((PlanItem)list.get(position)).getPeriod());
-
-                break;
-            case HEADER:
-
-                TextView header = (TextView) convertView.findViewById(R.id.planListHeader);
-                header.setText(((String)list.get(position)));
-                break;
-        }
-        return convertView;
-
-    }
 }

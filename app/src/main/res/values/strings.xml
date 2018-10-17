@@ -6,6 +6,39 @@
 
     <string name="action_settings">Settings</string>
 
+    <!--PLAN ITEM-->
+    <string name="text_planTitle">PLAN TITLE</string>
+    <string name="text_planAmount">$1000</string>
+    <string name="text_planPeriod">Bi-weekly</string>
+
+    <!--CREATE PLAN-->
+    <string name="createForm_planType_label">Type</string>
+    <string name="hint_planTitle">Plan Title</string>
+    <string name="hint_planAmount">Amount</string>
+    <string name="createForm_planPeriod_label">Period</string>
+
+    <string-array name="spinner_planType">
+        <item>income</item>
+        <item>saving</item>
+    </string-array>
+
+    <string-array name="spinner_planPeriod">
+        <item>daily</item>
+        <item>weekly</item>
+        <item>bi-weekly</item>
+        <item>monthly</item>
+    </string-array>
+
+    <!--DETAIL PLAN-->
+    <string name="detailForm_planType_label">Type</string>
+    <string name="detailForm_planType">type</string>
+    <string name="detailForm_planTitle_label">Title</string>
+    <string name="detailForm_planTitle">title</string>
+    <string name="detailForm_planAmount_label">Amount</string>
+    <string name="detailForm_planAmount">amount</string>
+    <string name="detailForm_planPeriod_label">Period</string>
+    <string name="detailForm_planPeriod">period</string>
+
     <!-- Expense strings-->
 
     <string name="ExpenseItem">Item</string>
@@ -13,4 +46,20 @@
     <string name="ExpenseDate">Select Date</string>
     <string name="ExpenseCost">Cost</string>
     <string name="ExpenseReturn">Back</string>
+
+    <!-- Camera strings-->
+
+    <string name="ok">OK</string>
+    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+    <string name="low_storage_error">Ocr dependencies cannot be downloaded due to low device storage</string>
+    <string name="title_activity_main">Ocr Detector Sample</string>
+    <string name="ocr_header">Click &quot;Detect Text&quot; to detect text</string>
+    <string name="read_text">Detect Text</string>
+    <string name="auto_focus">Auto Focus</string>
+    <string name="use_flash">Use Flash</string>
+    <string name="ocr_success">Text read successfully</string>
+    <string name="ocr_failure">No text captured</string>
+    <string name="ocr_error">"Error reading text: %1$s"</string>
+
 </resources>

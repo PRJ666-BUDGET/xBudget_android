@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/planCreateForm"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/textView_planType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/spinner_planType"
+        android:text="@string/createForm_planType_label"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <Spinner
+        android:id="@+id/spinner_planType"
+        android:layout_width="240dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayout_planTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_planType"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="10dp">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/editText_plaTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_planTitle"
+            android:inputType="text"
+            android:maxLength="20"
+            android:textAlignment="textEnd" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayout_planPeriod"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textInputLayout_planTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="10dp">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/editText_planAamount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_planAmount"
+            android:inputType="number|numberDecimal"
+            android:maxLength="7"
+            android:textAlignment="textEnd" />
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:id="@+id/textView_planPeriod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textInputLayout_planPeriod"
+        android:layout_alignStart="@+id/textView_planType"
+        android:layout_marginTop="35dp"
+        android:text="@string/createForm_planPeriod_label"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    <Spinner
+        android:id="@+id/spinner_planPeriod"
+        android:layout_width="240dp"
+        android:layout_height="30dp"
+        android:layout_below="@+id/textInputLayout_planPeriod"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="35dp" />
+
+</RelativeLayout>
