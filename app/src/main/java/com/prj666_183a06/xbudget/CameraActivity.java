@@ -11,6 +11,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,6 +29,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 import com.prj666_183a06.xbudget.camera.CameraSourcePreview;
@@ -35,6 +38,7 @@ import com.google.android.gms.vision.text.TextRecognizer;
 
 
 import java.io.IOException;
+import java.io.InputStream;
 
 public final class CameraActivity extends AppCompatActivity {
     private static final String TAG = "OcrCaptureActivity";
@@ -58,6 +62,7 @@ public final class CameraActivity extends AppCompatActivity {
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
 
+    private TextRecognizer textRecognizer;
 
     /**
      * Initializes the UI and creates the detector pipeline.
@@ -151,7 +156,7 @@ public final class CameraActivity extends AppCompatActivity {
         // is set to receive the text recognition results, track the text, and maintain
         // graphics for each text block on screen.  The factory is used by the multi-processor to
         // create a separate tracker instance for each text block.
-        TextRecognizer textRecognizer = new TextRecognizer.Builder(context).build();
+        textRecognizer = new TextRecognizer.Builder(context).build();
         textRecognizer.setProcessor(new OCRParser(graphicOverlay));
 
         if (!textRecognizer.isOperational()) {
@@ -299,14 +304,27 @@ public final class CameraActivity extends AppCompatActivity {
     }
 
     /**
-     * onTap is called to speak the tapped TextBlock, if any, out loud.
+     * onTap is called to turn the image to a coherent text.
      *
      * @param rawX - the raw position of the tap
      * @param rawY - the raw position of the tap.
      * @return true if the tap was on a TextBlock
      */
     private boolean onTap(float rawX, float rawY) {
-        // TODO: Speak the text when the user taps on screen.
+
+        InputStream stream = getResources().openRawResource(R.raw.receiptdemo); //TODO: Replace this with a demo/real toggle
+        Bitmap bitmap = BitmapFactory.decodeStream(stream);
+
+        Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+        //SparseArray<Face> faces = safeDetector.detect(frame);
+
+        //textRecognizer.detect(image);
+
+        Snackbar.make(graphicOverlay, "Demo data built",
+                Snackbar.LENGTH_LONG)
+                .show();
+
+
         return false;
     }
 
