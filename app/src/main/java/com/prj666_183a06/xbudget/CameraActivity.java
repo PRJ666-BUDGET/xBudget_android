@@ -14,16 +14,19 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -37,6 +40,7 @@ import com.prj666_183a06.xbudget.camera.GraphicOverlay;
 import com.google.android.gms.vision.text.TextRecognizer;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -91,7 +95,7 @@ public final class CameraActivity extends AppCompatActivity {
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-        Snackbar.make(graphicOverlay, "Tap to Speak. Pinch/Stretch to zoom",
+        Snackbar.make(graphicOverlay, "Tap to capture receipt",
                 Snackbar.LENGTH_LONG)
                 .show();
 
@@ -314,16 +318,29 @@ public final class CameraActivity extends AppCompatActivity {
 
         InputStream stream = getResources().openRawResource(R.raw.receiptdemo); //TODO: Replace this with a demo/real toggle
         Bitmap bitmap = BitmapFactory.decodeStream(stream);
-
         Frame frame = new Frame.Builder().setBitmap(bitmap).build();
-        //SparseArray<Face> faces = safeDetector.detect(frame);
 
-        //textRecognizer.detect(image);
+
+        SparseArray<TextBlock> items = textRecognizer.detect(frame);
 
         Snackbar.make(graphicOverlay, "Demo data built",
                 Snackbar.LENGTH_LONG)
                 .show();
 
+        //CameraImageView
+        ImageView image = (ImageView) findViewById(R.id.CameraImageView);
+        image.setImageBitmap(bitmap);
+
+        image.setVisibility(View.VISIBLE);
+
+        for (int i = 0; i < items.size(); ++i) {
+            TextBlock item = items.valueAt(i);
+            if (item != null && item.getValue() != null) {
+                Log.d("OcrDetectorProcessor", "Text detected! " + item.getValue());
+                CameraOverlay graphic = new CameraOverlay(graphicOverlay, item);
+                graphicOverlay.add(graphic);
+            }
+        }
 
         return false;
     }
