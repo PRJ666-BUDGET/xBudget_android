@@ -27,6 +27,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -68,6 +69,8 @@ public final class CameraActivity extends AppCompatActivity {
 
     private TextRecognizer textRecognizer;
 
+    private ImageView image;
+    private TextView textOut;
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -78,6 +81,8 @@ public final class CameraActivity extends AppCompatActivity {
 
         preview = (CameraSourcePreview) findViewById(R.id.preview);
         graphicOverlay = (GraphicOverlay<CameraOverlay>) findViewById(R.id.graphicOverlay);
+        image = (ImageView) findViewById(R.id.CameraImageView);
+        textOut = (TextView) findViewById(R.id.ReceiptTextDisplay);
 
         // Set good defaults for capturing text.
         boolean autoFocus = true;
@@ -316,31 +321,37 @@ public final class CameraActivity extends AppCompatActivity {
      */
     private boolean onTap(float rawX, float rawY) {
 
+        //quickly react to press
+        image.setVisibility(View.VISIBLE);
+
+        //collect image
         InputStream stream = getResources().openRawResource(R.raw.receiptdemo); //TODO: Replace this with a demo/real toggle
         Bitmap bitmap = BitmapFactory.decodeStream(stream);
+
+        //Display Worked On Image
+        image.setImageBitmap(bitmap);
+
+        //Parse Text
         Frame frame = new Frame.Builder().setBitmap(bitmap).build();
-
-
         SparseArray<TextBlock> items = textRecognizer.detect(frame);
 
         Snackbar.make(graphicOverlay, "Demo data built",
                 Snackbar.LENGTH_LONG)
                 .show();
 
-        //CameraImageView
-        ImageView image = (ImageView) findViewById(R.id.CameraImageView);
-        image.setImageBitmap(bitmap);
-
-        image.setVisibility(View.VISIBLE);
-
+        //Turn Text To String
+        String output = new String();
         for (int i = 0; i < items.size(); ++i) {
             TextBlock item = items.valueAt(i);
             if (item != null && item.getValue() != null) {
-                Log.d("OcrDetectorProcessor", "Text detected! " + item.getValue());
-                CameraOverlay graphic = new CameraOverlay(graphicOverlay, item);
-                graphicOverlay.add(graphic);
+                output = output + item.getValue();
             }
         }
+
+        textOut.setText(output);
+        textOut.setVisibility(View.VISIBLE);
+
+
 
         return false;
     }
