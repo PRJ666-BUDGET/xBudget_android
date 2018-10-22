@@ -29,15 +29,15 @@ public class OCRParser implements Detector.Processor<TextBlock> {
     @Override
     public void receiveDetections(Detector.Detections<TextBlock> detections) {
         graphicOverlay.clear();
-        SparseArray<TextBlock> items = detections.getDetectedItems();
-        for (int i = 0; i < items.size(); ++i) {
-            TextBlock item = items.valueAt(i);
-            if (item != null && item.getValue() != null) {
-                Log.d("OcrDetectorProcessor", "Text detected! " + item.getValue());
-                CameraOverlay graphic = new CameraOverlay(graphicOverlay, item);
-                graphicOverlay.add(graphic);
-            }
-        }
+//        SparseArray<TextBlock> items = detections.getDetectedItems();
+//        for (int i = 0; i < items.size(); ++i) {
+//            TextBlock item = items.valueAt(i);
+//            if (item != null && item.getValue() != null) {
+//                Log.d("OcrDetectorProcessor", "Text detected! " + item.getValue());
+//                CameraOverlay graphic = new CameraOverlay(graphicOverlay, item);
+//                graphicOverlay.add(graphic);
+//            }
+//        }
     }
 
     /**
