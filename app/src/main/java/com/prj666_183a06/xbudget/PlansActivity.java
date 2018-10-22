@@ -138,31 +138,28 @@ public class PlansActivity extends Fragment {
 
             Toast.makeText(getActivity(), "Plan is created.", Toast.LENGTH_SHORT).show();
         }
-        else if (requestCode == EDIT_PLAN_REQUEST && resultCode == RESULT_OK) {
-
-            int id = data.getIntExtra(CreateUpdatePlanActivity.PLAN_ID, -1);
-
-            if (id == -1) {
-                Toast.makeText(getActivity(), "Plan cannot be updated.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
+        else if (requestCode == VIEW_PLAN_REQUEST && resultCode == RESULT_OK) {
             String type = data.getStringExtra(CreateUpdatePlanActivity.PLAN_TYPE);
             String title = data.getStringExtra(CreateUpdatePlanActivity.PLAN_TITLE);
             double amount = data.getDoubleExtra(CreateUpdatePlanActivity.PLAN_AMOUNT, 0.00);
             String period = data.getStringExtra(CreateUpdatePlanActivity.PLAN_PERIOD);
 
-            PlanEntity plan = new PlanEntity(type ,title, amount, period);
-            plan.setPlanId(id);
-            planViewModel.update(plan);
+            int id = data.getIntExtra(CreateUpdatePlanActivity.PLAN_ID, -1);
 
-            Toast.makeText(getActivity(), "Plan is now updated.", Toast.LENGTH_SHORT).show();
-        }
-        else if (requestCode == VIEW_PLAN_REQUEST && resultCode == RESULT_OK) {
-            Toast.makeText(getActivity(), "Your were from view screen.", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "onActivityResult: planId: " + id);
+
+            if (id == -1) {
+                Toast.makeText(getActivity(), "BAD REQUEST [PlansActivity.java onActivityResult()], PlanId: " + id, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            PlanEntity plan = new PlanEntity(type ,title, amount, period);
+
+            plan.setPlanId(id);
+            planViewModel.delete(plan);
         }
         else{
-            Toast.makeText(getActivity(), "Create plan got canceled.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "BACK TO LIST VIEW FROM DETAIL VIEW [PlansActivity.java onActivityResult()]", Toast.LENGTH_SHORT).show();
         }
     }
 
