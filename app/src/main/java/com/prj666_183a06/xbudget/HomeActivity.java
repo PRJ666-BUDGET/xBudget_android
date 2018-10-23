@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -28,7 +30,9 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class HomeActivity extends Fragment {
 
@@ -36,16 +40,15 @@ public class HomeActivity extends Fragment {
     private HorizontalBarChart mBar;
     private Typeface tf;
 
-    private double mIncome;
-    private double mSpent;
-    private double mBalance;
-    private double mRate;
-    private TextView mtvIncome, mtvSpent, mtvBalance;
+    private double mIncome, mSpent, mBalance, mRate;
+
+    Fragment fragment;
+    Locale locale;
+    NumberFormat fmt;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         getActivity().setTitle("xBudget");
     }
 
@@ -54,20 +57,19 @@ public class HomeActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.activity_home, container, false);
 
+        // Set Currency
+        locale = Locale.CANADA;
+        fmt = NumberFormat.getCurrencyInstance(locale);
+
         // Get Data
         mIncome = 2000.00;
         mSpent = 1260.00;
         mBalance = mIncome - mSpent;
         mRate = mSpent / mIncome;
 
-        mtvIncome = (TextView) v.findViewById(R.id.tvIncome);
-        mtvIncome.setText(String.valueOf(mIncome));
-
-        mtvSpent = (TextView) v.findViewById(R.id.tvSpent);
-        mtvSpent.setText(String.valueOf(mSpent));
-
-        mtvBalance = (TextView) v.findViewById(R.id.tvBalance);
-        mtvBalance.setText(String.valueOf(mBalance));
+        // Text View & Image View
+        getTextView(v);
+        getImageView(v);
 
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -81,16 +83,73 @@ public class HomeActivity extends Fragment {
             }
         });
 
-        // Line Chart
-        mLine = v.findViewById(R.id.lineChart1);
-        mLine.getDescription().setEnabled(false);
+        // Get Bar & Line Chart
+        getBarChart(v);
+        getLineChart(v);
 
-        Legend lgdLine = mLine.getLegend();
-        lgdLine.setForm(Legend.LegendForm.LINE);
+        return v;
+    }
 
-        mLine.setData(generateLineData());
+    private void getImageView(View v) {
+        ImageView mImgIncome, mImgSpent, mImgBal;
 
-        // Bar Chart
+        mImgIncome = (ImageView) v.findViewById(R.id.img_income);
+        mImgSpent = (ImageView) v.findViewById(R.id.img_spent);
+        mImgBal = (ImageView) v.findViewById(R.id.img_balance);
+
+        // Direct to other views
+        mImgIncome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragment = new PlansActivity();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, fragment);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
+
+        mImgSpent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragment = new ExpenseActivity();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, fragment);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
+
+        mImgBal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragment = new ReportActivity();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, fragment);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
+    }
+
+    private void getTextView(View v) {
+        TextView mtvIncome, mtvSpent, mtvBalance;
+        String currencyIncome, currencySpent, currencyBal;
+
+        mtvIncome = (TextView) v.findViewById(R.id.tvIncome);
+        currencyIncome = fmt.format(this.mIncome);
+        mtvIncome.setText(currencyIncome);
+
+        mtvSpent = (TextView) v.findViewById(R.id.tvSpent);
+        currencySpent = fmt.format(this.mSpent);
+        mtvSpent.setText(currencySpent);
+
+        mtvBalance = (TextView) v.findViewById(R.id.tvBalance);
+        currencyBal = fmt.format(this.mBalance);
+        mtvBalance.setText(currencyBal);
+    }
+
+    private void getBarChart(View v) {
         mBar = v.findViewById(R.id.barChart1);
         mBar.getDescription().setEnabled(false);
 
@@ -111,7 +170,6 @@ public class HomeActivity extends Fragment {
         leftAxis.setTextColor(Color.GRAY);
         leftAxis.setAxisMinimum(0f);
         leftAxis.setAxisMaximum(100f);
-//        leftAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
 
         Legend lgdBar = mBar.getLegend();
         lgdBar.setTypeface(tf);
@@ -119,7 +177,16 @@ public class HomeActivity extends Fragment {
 
         mBar.setDrawValueAboveBar(false);
         mBar.invalidate();
-        return v;
+    }
+
+    private void getLineChart(View v) {
+        mLine = v.findViewById(R.id.lineChart1);
+        mLine.getDescription().setEnabled(false);
+
+        Legend lgdLine = mLine.getLegend();
+        lgdLine.setForm(Legend.LegendForm.LINE);
+
+        mLine.setData(generateLineData());
     }
 
     protected BarData generateBarData() {
