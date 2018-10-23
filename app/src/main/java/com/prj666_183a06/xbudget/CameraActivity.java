@@ -11,22 +11,30 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 import com.prj666_183a06.xbudget.camera.CameraSourcePreview;
@@ -34,7 +42,11 @@ import com.prj666_183a06.xbudget.camera.GraphicOverlay;
 import com.google.android.gms.vision.text.TextRecognizer;
 
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+
+import static com.google.android.gms.vision.Frame.ROTATION_270;
 
 public final class CameraActivity extends AppCompatActivity {
     private static final String TAG = "OcrCaptureActivity";
@@ -58,7 +70,12 @@ public final class CameraActivity extends AppCompatActivity {
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
 
+    private TextRecognizer textRecognizer;
 
+    private ImageView image;
+    private TextView textOut;
+
+    private Bitmap bitmap;
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -69,6 +86,8 @@ public final class CameraActivity extends AppCompatActivity {
 
         preview = (CameraSourcePreview) findViewById(R.id.preview);
         graphicOverlay = (GraphicOverlay<CameraOverlay>) findViewById(R.id.graphicOverlay);
+        image = (ImageView) findViewById(R.id.CameraImageView);
+        textOut = (TextView) findViewById(R.id.ReceiptTextDisplay);
 
         // Set good defaults for capturing text.
         boolean autoFocus = true;
@@ -86,7 +105,7 @@ public final class CameraActivity extends AppCompatActivity {
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-        Snackbar.make(graphicOverlay, "Tap to Speak. Pinch/Stretch to zoom",
+        Snackbar.make(graphicOverlay, "Tap to capture receipt",
                 Snackbar.LENGTH_LONG)
                 .show();
 
@@ -151,7 +170,7 @@ public final class CameraActivity extends AppCompatActivity {
         // is set to receive the text recognition results, track the text, and maintain
         // graphics for each text block on screen.  The factory is used by the multi-processor to
         // create a separate tracker instance for each text block.
-        TextRecognizer textRecognizer = new TextRecognizer.Builder(context).build();
+        textRecognizer = new TextRecognizer.Builder(context).build();
         textRecognizer.setProcessor(new OCRParser(graphicOverlay));
 
         if (!textRecognizer.isOperational()) {
@@ -183,8 +202,8 @@ public final class CameraActivity extends AppCompatActivity {
         cameraSource =
                 new CameraSource.Builder(getApplicationContext(), textRecognizer)
                         .setFacing(CameraSource.CAMERA_FACING_BACK)
-                        .setRequestedPreviewSize(1280, 1024)
-                        .setRequestedFps(2.0f)
+                        //.setRequestedPreviewSize(100, 250)
+                        .setRequestedFps(1.0f)
                         .setAutoFocusEnabled(true)
                         .build();
     }
@@ -299,14 +318,58 @@ public final class CameraActivity extends AppCompatActivity {
     }
 
     /**
-     * onTap is called to speak the tapped TextBlock, if any, out loud.
+     * onTap is called to turn the image to a coherent text.
      *
      * @param rawX - the raw position of the tap
      * @param rawY - the raw position of the tap.
      * @return true if the tap was on a TextBlock
      */
     private boolean onTap(float rawX, float rawY) {
-        // TODO: Speak the text when the user taps on screen.
+
+        //quickly react to press
+        image.setVisibility(View.VISIBLE);
+
+        //collect image
+//        InputStream stream = getResources().openRawResource(R.raw.receiptdemo); //TODO: Replace this with a demo/real toggle
+//        Bitmap bitmap = BitmapFactory.decodeStream(stream);
+
+
+        cameraSource.takePicture(null, new CameraSource.PictureCallback(){
+
+            @Override
+            public void onPictureTaken(byte[] data) {
+
+                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                image.setImageBitmap(bitmap);
+
+                //scale image
+                Matrix matrix = new Matrix();
+                matrix.postScale((float)0.50, (float)0.50);
+                matrix.postRotate(90);
+                bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+
+                //Parse Text
+                Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+                SparseArray<TextBlock> items = textRecognizer.detect(frame);
+
+                Snackbar.make(graphicOverlay, "Demo data built",
+                        Snackbar.LENGTH_LONG)
+                        .show();
+
+                //Turn Text To String
+                String output = new String();
+                for (int i = 0; i < items.size(); ++i) {
+                    TextBlock item = items.valueAt(i);
+                    if (item != null && item.getValue() != null) {
+                        output = output + item.getValue();
+                    }
+                }
+
+                textOut.setText(output);
+                textOut.setVisibility(View.VISIBLE);
+            }
+
+        });
         return false;
     }
 
