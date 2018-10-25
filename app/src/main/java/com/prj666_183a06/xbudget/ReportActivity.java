@@ -31,7 +31,7 @@ import java.util.ArrayList;
 public class ReportActivity extends Fragment {
 
     private PieChart mPie;
-    private LineChart mLine;
+    private float mTotalExpenses;
 
     private Typeface tf;
 
@@ -53,6 +53,12 @@ public class ReportActivity extends Fragment {
         View v = inflater.inflate(R.layout.activity_report, container, false);
 
         // Pie Chart
+        generatePieChart(v);
+
+        return v;
+    }
+
+    private void generatePieChart(View v) {
         mPie = v.findViewById(R.id.pieChart1);
         mPie.getDescription().setEnabled(false);
 
@@ -69,9 +75,8 @@ public class ReportActivity extends Fragment {
         lgdPie.setDrawInside(false);
 
         mPie.setData(generatePieData());
-
-        return v;
     }
+
     private SpannableString generateCenterText() {
         SpannableString s = new SpannableString("Expensess\nJuly 2018");
         s.setSpan(new RelativeSizeSpan(2f), 0, 8, 0);
@@ -85,12 +90,25 @@ public class ReportActivity extends Fragment {
 
         ArrayList<PieEntry> entries = new ArrayList<PieEntry>();
 
-        for(int i = 0; i < count; i++) {
-            entries.add(new PieEntry((float) ((Math.random() * 60) + 40), "Expenses " + (i+1)));
-        }
+        float totalExpenses;
+        float v_grocery = 400;
+        float v_clothes = 120;
+        float v_transportation = 150;
+        float v_drink = 50;
+        float v_eatout = 250;
+        float v_financing = 130;
+        float v_insurance = 350;
+
+        entries.add(new PieEntry((float) v_grocery, "Grocery"));
+        entries.add(new PieEntry((float) v_clothes, "Clothes"));
+        entries.add(new PieEntry((float) v_transportation, "Transportation"));
+        entries.add(new PieEntry((float) v_drink, "Drink"));
+        entries.add(new PieEntry((float) v_eatout, "Eatout"));
+        entries.add(new PieEntry((float) v_financing, "Financing"));
+        entries.add(new PieEntry((float) v_insurance, "Insurance"));
 
         PieDataSet ds = new PieDataSet(entries, "Expenses July 2018");
-        ds.setColors(ColorTemplate.VORDIPLOM_COLORS);
+        ds.setColors(ColorTemplate.COLORFUL_COLORS);
         ds.setSliceSpace(2f);
         ds.setValueTextColor(Color.WHITE);
         ds.setValueTextSize(12f);
