@@ -35,6 +35,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.text.Line;
+import com.google.android.gms.vision.text.Text;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 import com.prj666_183a06.xbudget.camera.CameraSourcePreview;
@@ -45,6 +47,7 @@ import com.google.android.gms.vision.text.TextRecognizer;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import static com.google.android.gms.vision.Frame.ROTATION_270;
 
@@ -360,8 +363,13 @@ public final class CameraActivity extends AppCompatActivity {
                 String output = new String();
                 for (int i = 0; i < items.size(); ++i) {
                     TextBlock item = items.valueAt(i);
-                    if (item != null && item.getValue() != null) {
-                        output = output + item.getValue();
+                    //pull lines out of block
+                    List<Line> lines = (List<Line>) item.getComponents();
+                    for (int j = 0; j < lines.size(); ++j) {
+                        Line line = lines.get(j);
+                        if (line != null && line.getValue() != null) {
+                            output = output + line.getValue() + " " + line.getBoundingBox().left + ", " + line.getBoundingBox().top + System.lineSeparator();
+                        }
                     }
                 }
 
