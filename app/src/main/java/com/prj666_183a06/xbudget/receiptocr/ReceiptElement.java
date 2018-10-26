@@ -15,21 +15,53 @@ public class ReceiptElement {
     private Line line;
     private String value;
     private Float numValue = null;
-    private Boolean isNumber = false;
+    private Boolean isNumber;
+    private String numberChar = "[\\doli]";
+    private String decimalChar = "[\\,\\.]";
     List<String> possibleAssociation;
 
     ReceiptElement(Line nline){
         line = nline;
-        value = line.getValue();
-        if(parseNumber() ){
-            isNumber = true;
-        }
-
+        value = line.getValue().toLowerCase();
+        isNumber = parseNumber();
     }
 
     private boolean parseNumber(){
+
+        //sorted from most likely to least likely indicator of type
+        if(value.matches(decimalChar + numberChar + numberChar + "Z")) {
+            //Almost Guarantee number
+            return true;
+        }
+        //check for X.XX value
+        if(value.matches(decimalChar + numberChar + numberChar)) {
+            //Very Likely number
+            return true;
+        }
+        //check if there is a number
+        if(value.matches("[\\d]")){
+            //possible number
+            return true;
+        }
+        //check if there is a decemal
+        if(value.matches("[\\.\\,]")) {
+            //possible number
+            return true;
+        }
+        //check if letters are common numbers
+        if(value.matches("[oli]")) {
+            //possible number
+            return true;
+        }
+        //check if there are letters
+        if(value.matches("[\\w]")) {
+            //possible word
+            return false;
+        }
+        //unknown
         return false;
     }
+
     public boolean inNumber() {
         return isNumber;
     }
