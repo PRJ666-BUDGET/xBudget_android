@@ -1,4 +1,4 @@
-package com.prj666_183a06.xbudget;
+package com.prj666_183a06.xbudget.receiptocr;
 
 import android.graphics.Canvas;
 import android.graphics.Color;

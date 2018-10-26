@@ -1,4 +1,4 @@
-package com.prj666_183a06.xbudget;
+package com.prj666_183a06.xbudget.receiptocr;
 
 
 import android.Manifest;
@@ -14,8 +14,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.hardware.Camera;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -36,22 +34,18 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.Line;
-import com.google.android.gms.vision.text.Text;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
+import com.prj666_183a06.xbudget.R;
 import com.prj666_183a06.xbudget.camera.CameraSourcePreview;
 import com.prj666_183a06.xbudget.camera.GraphicOverlay;
-import com.google.android.gms.vision.text.TextRecognizer;
 
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.google.android.gms.vision.Frame.ROTATION_270;
 import static com.google.android.gms.vision.Frame.ROTATION_90;
 
 public final class CameraActivity extends AppCompatActivity {
