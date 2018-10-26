@@ -47,9 +47,12 @@ import com.google.android.gms.vision.text.TextRecognizer;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.google.android.gms.vision.Frame.ROTATION_270;
+import static com.google.android.gms.vision.Frame.ROTATION_90;
 
 public final class CameraActivity extends AppCompatActivity {
     private static final String TAG = "OcrCaptureActivity";
@@ -329,55 +332,76 @@ public final class CameraActivity extends AppCompatActivity {
      */
     private boolean onTap(float rawX, float rawY) {
 
-        //quickly react to press
-        image.setVisibility(View.VISIBLE);
+        cameraSource.takePicture(new CameraSource.ShutterCallback() {
+                     @Override
+                     public void onShutter() {
+                         textOut.setText("Loading Please Wait Message"); //TODO: replace please wait message with something more permanent
+                         textOut.setVisibility(View.VISIBLE);
+                     }
+                 },
+                new CameraSource.PictureCallback() {
+                    @Override
+                    public void onPictureTaken(byte[] data) {
 
-        //collect image
-//        InputStream stream = getResources().openRawResource(R.raw.receiptdemo); //TODO: Replace this with a demo/real toggle
-//        Bitmap bitmap = BitmapFactory.decodeStream(stream);
+                        cameraSource.stop();
 
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 
-        cameraSource.takePicture(null, new CameraSource.PictureCallback(){
+                        //scale image
+                        Matrix matrix = new Matrix();
+                        matrix.postScale((float) 0.50, (float) 0.50);
+                        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
 
-            @Override
-            public void onPictureTaken(byte[] data) {
+                        //Parse Text
+                        Frame frame = new Frame.Builder().setBitmap(bitmap).setRotation(ROTATION_90).build();
+                        SparseArray<TextBlock> items = textRecognizer.detect(frame);
 
-                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                image.setImageBitmap(bitmap);
+                        Snackbar.make(graphicOverlay, "Demo data built",
+                                Snackbar.LENGTH_LONG)
+                                .show();
 
-                //scale image
-                Matrix matrix = new Matrix();
-                matrix.postScale((float)0.50, (float)0.50);
-                matrix.postRotate(90);
-                bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
-
-                //Parse Text
-                Frame frame = new Frame.Builder().setBitmap(bitmap).build();
-                SparseArray<TextBlock> items = textRecognizer.detect(frame);
-
-                Snackbar.make(graphicOverlay, "Demo data built",
-                        Snackbar.LENGTH_LONG)
-                        .show();
-
-                //Turn Text To String
-                String output = new String();
-                for (int i = 0; i < items.size(); ++i) {
-                    TextBlock item = items.valueAt(i);
-                    //pull lines out of block
-                    List<Line> lines = (List<Line>) item.getComponents();
-                    for (int j = 0; j < lines.size(); ++j) {
-                        Line line = lines.get(j);
-                        if (line != null && line.getValue() != null) {
-                            output = output + line.getValue() + " " + line.getBoundingBox().left + ", " + line.getBoundingBox().top + System.lineSeparator();
+                        //Parse Objects to text with layout
+                        List<String> output = new ArrayList<String>();
+                        List<Integer> xAxis = new ArrayList<Integer>();
+                        List<Integer> yAxis = new ArrayList<Integer>();
+                        for (int i = 0; i < items.size(); ++i) {
+                            TextBlock item = items.valueAt(i);
+                            //pull lines out of block
+                            List<Line> lines = (List<Line>) item.getComponents();
+                            for (int j = 0; j < lines.size(); ++j) {
+                                Line line = lines.get(j);
+                                if (line != null && line.getValue() != null) {
+                                    output.add(line.getValue());
+                                    xAxis.add(line.getBoundingBox().left / 50);
+                                    yAxis.add(line.getBoundingBox().top / 50);
+                                }
+                            }
                         }
+
+                        //bubble sort the list=
+                        for (int i = 0; i < output.size(); i++)
+
+                            // Last i elements are already in place
+                            for (int j = 0; j < output.size() - i - 1; j++)
+                                if (yAxis.get(j) > yAxis.get(j + 1)) {
+                                    Collections.swap(yAxis, j, j + 1);
+                                    Collections.swap(xAxis, j, j + 1);
+                                    Collections.swap(output, j, j + 1);
+                                }
+
+                        String layout = new String();
+                        for (String row : output) {
+                            layout = layout + row + System.lineSeparator();
+                        }
+
+                        textOut.setText(layout);
+
+                        //TODO: Predict total, look for "Total" "Takeout Total" remove colo
+                        //TODO: Convert comma to period
+                        //TODO Arange rows and columns
                     }
-                }
 
-                textOut.setText(output);
-                textOut.setVisibility(View.VISIBLE);
-            }
-
-        });
+                });
         return false;
     }
 
