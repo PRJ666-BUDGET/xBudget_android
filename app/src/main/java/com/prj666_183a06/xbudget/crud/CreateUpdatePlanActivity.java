@@ -3,7 +3,6 @@ package com.prj666_183a06.xbudget.crud;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -89,10 +88,9 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
 
         int planId = getIntent().getIntExtra(PLAN_ID, -1);
 
-        Log.d(TAG, "savePlan: PLAN_ID: " + planId +"====================================================");
-
         if (planId != -1) {
             data.putExtra(PLAN_ID, planId);
+            Toast.makeText(this, "PLAN ID: " + planId + " IS UPDATED.", Toast.LENGTH_SHORT).show();
         }
 
         setResult(RESULT_OK, data);
