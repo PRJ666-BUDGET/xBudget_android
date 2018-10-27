@@ -115,6 +115,7 @@ public class PlansActivity extends Fragment {
                 intent.putExtra(DetailPlanActivity.PLAN_PERIOD, plan.getPlanPeriod());
                 Log.d(TAG, "onItemClick: PLAN_ID:" + plan.getPlanId() + "------------------------------------");
 
+                // Plan updates & delete are added
                 startActivityForResult(intent, DELETE_PLAN_REQUEST);
             }
         });
@@ -161,7 +162,7 @@ public class PlansActivity extends Fragment {
             planViewModel.delete(plan);
         }
         else{
-//            Toast.makeText(getActivity(), "BACK TO LIST VIEW FROM DETAIL VIEW [PlansActivity.java onActivityResult()]", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "BACK TO LIST VIEW FROM DETAIL VIEW [PlansActivity.java onActivityResult()]", Toast.LENGTH_SHORT).show();
         }
     }
 

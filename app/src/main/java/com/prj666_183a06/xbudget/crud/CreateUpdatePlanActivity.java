@@ -90,7 +90,7 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
 
         if (planId != -1) {
             data.putExtra(PLAN_ID, planId);
-//            Toast.makeText(this, "PLAN ID: " + planId + " IS UPDATED.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "PLAN ID: " + planId + " IS UPDATED.", Toast.LENGTH_SHORT).show();
         }
 
         setResult(RESULT_OK, data);
