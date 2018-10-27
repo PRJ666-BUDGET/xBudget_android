@@ -191,7 +191,10 @@ public class DetailPlanActivity extends AppCompatActivity {
             planViewModel.update(plan);
 
             Toast.makeText(this, title + " is updated.", Toast.LENGTH_SHORT).show();
+<<<<<<< HEAD
 
+=======
+>>>>>>> Detail to list view go back button has fixed
             finish();
         }
         else{
