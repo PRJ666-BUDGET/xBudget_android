@@ -111,7 +111,13 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
                 savePlan();
                 return true;
             default:
-                return super.onOptionsItemSelected(item);
+                if ( getFragmentManager().getBackStackEntryCount() > 0)
+                {
+                    getFragmentManager().popBackStack();
+                    return false;
+                }
+                super.onBackPressed();
+                return true;
         }
     }
 
