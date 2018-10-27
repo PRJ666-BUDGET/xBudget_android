@@ -173,7 +173,7 @@ public class DetailPlanActivity extends AppCompatActivity {
             finish();
         }
         else{
-            Toast.makeText(this, "BAD REQUEST [DetailPlanActivity.java: onActivityResult()].", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "UPDATE CANCEL REQUEST [DetailPlanActivity.java: onActivityResult()].", Toast.LENGTH_SHORT).show();
         }
     }
 
