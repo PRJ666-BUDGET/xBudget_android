@@ -71,7 +71,7 @@ public class DetailPlanActivity extends AppCompatActivity {
         amountRecord.setText(String.valueOf(intent.getDoubleExtra(PLAN_AMOUNT, 0.00)));
         periodRecord.setText(intent.getStringExtra(PLAN_PERIOD));
 
-        Toast.makeText(this, "PlanId " + getId() + " is loaded.", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "PlanId " + getId() + " is loaded.", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -127,7 +127,7 @@ public class DetailPlanActivity extends AppCompatActivity {
 
 
                 startActivityForResult(newIntent, EDIT_PLAN_REQUEST);
-                Toast.makeText(this, "UPDATE REQUEST [DetailPlanActivity.java onOptionsItemSelected()], itemId: " + itemId, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "UPDATE REQUEST [DetailPlanActivity.java onOptionsItemSelected()], itemId: " + itemId, Toast.LENGTH_SHORT).show();
                 return true;
 
             default:
@@ -162,6 +162,7 @@ public class DetailPlanActivity extends AppCompatActivity {
             PlanEntity plan = new PlanEntity(type ,title, amount, period);
             plan.setPlanId(id);
             planViewModel.update(plan);
+
             Toast.makeText(this, "Plan is now updated.", Toast.LENGTH_SHORT).show();
             finish();
         }
