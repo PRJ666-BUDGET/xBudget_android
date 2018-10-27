@@ -98,7 +98,7 @@ public class PlansActivity extends Fragment {
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 planViewModel.delete(adapter.getPlanPosition(viewHolder.getAdapterPosition()));
-                Toast.makeText(getActivity(), "Plan deleted.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"Plan deleted.", Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(recyclerView);
 
@@ -107,12 +107,14 @@ public class PlansActivity extends Fragment {
             @Override
             public void onItemClick(PlanEntity plan) {
                 Intent intent = new Intent(getActivity(), DetailPlanActivity.class);
+
                 intent.putExtra(DetailPlanActivity.PLAN_ID, plan.getPlanId());
                 intent.putExtra(DetailPlanActivity.PLAN_TYPE, plan.getPlanType());
                 intent.putExtra(DetailPlanActivity.PLAN_TITLE, plan.getPlanTitle());
                 intent.putExtra(DetailPlanActivity.PLAN_AMOUNT, plan.getPlanAmount());
                 intent.putExtra(DetailPlanActivity.PLAN_PERIOD, plan.getPlanPeriod());
                 Log.d(TAG, "onItemClick: PLAN_ID:" + plan.getPlanId() + "------------------------------------");
+
                 startActivityForResult(intent, DELETE_PLAN_REQUEST);
             }
         });
@@ -159,7 +161,7 @@ public class PlansActivity extends Fragment {
             planViewModel.delete(plan);
         }
         else{
-            Toast.makeText(getActivity(), "BACK TO LIST VIEW FROM DETAIL VIEW [PlansActivity.java onActivityResult()]", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), "BACK TO LIST VIEW FROM DETAIL VIEW [PlansActivity.java onActivityResult()]", Toast.LENGTH_SHORT).show();
         }
     }
 

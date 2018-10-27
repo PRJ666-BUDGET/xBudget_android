@@ -72,11 +72,11 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
 
         // Input validation
         if (title.trim().isEmpty() || editTextAmount.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Incomplete create form", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please complete the create form.", Toast.LENGTH_SHORT).show();
             return;
         } else if (amount > 10000) {
 
-            Toast.makeText(this, "Plan amount cannot be greater than $10000", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Plan amount cannot be greater than $10000.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -90,7 +90,7 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
 
         if (planId != -1) {
             data.putExtra(PLAN_ID, planId);
-            Toast.makeText(this, "PLAN ID: " + planId + " IS UPDATED.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "PLAN ID: " + planId + " IS UPDATED.", Toast.LENGTH_SHORT).show();
         }
 
         setResult(RESULT_OK, data);
