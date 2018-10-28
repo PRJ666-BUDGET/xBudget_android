@@ -8,21 +8,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class ExpenseConfirm extends AppCompatActivity {
+public class ExpenseEditConfirm extends AppCompatActivity {
     TextView js;
     static JSONObject obj, temp;
     static JSONArray arr;
@@ -88,9 +86,7 @@ public class ExpenseConfirm extends AppCompatActivity {
         ExpenseJSON jsonDude = new ExpenseJSON();
         Intent intent = getIntent();
 
-        js = (TextView) findViewById(R.id.jsonTest);
-        type = intent.getStringExtra("type");
-
+        js = findViewById(R.id.jsonTest);
 
         String jsonString = readFromFile(getApplicationContext());
         Log.e("string", jsonString);
@@ -107,11 +103,19 @@ public class ExpenseConfirm extends AppCompatActivity {
             arr = new JSONArray(jsonString);
             Log.e("arr", arr.toString());
 
-
             obj = new JSONObject(jsonDude.jsonToString(result));
             Log.e("obj", obj.toString());
 
-            arr.put(obj);
+            ret = new JSONArray();
+            position = intent.getIntExtra("position", 0);
+
+            for(int i = 0; i < arr.length() ; i++){
+                if(position != i){
+                    ret.put(arr.getJSONObject(i));
+                }else{
+                    ret.put(obj);
+                }
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -122,17 +126,16 @@ public class ExpenseConfirm extends AppCompatActivity {
                         "Item: " +  intent.getStringExtra("itemExtra")+ "\n" +
                         "Date: " +  intent.getStringExtra("dateExtra")+ "\n" +
                         "Cost: " +  intent.getStringExtra("costExtra")+ "\n" +
-                        "Are you sure you want to submit";
-
+                        "Are you sure you want to edit?";
 
         js.setText(output);
 
-        Log.e("arr final", arr.toString());
+        Log.e("ret final", ret.toString());
         Button confirmButton = (Button) findViewById(R.id.confirm);
         confirmButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                writeToFile(arr.toString());
+                writeToFile(ret.toString());
                 finish();
             }
         });

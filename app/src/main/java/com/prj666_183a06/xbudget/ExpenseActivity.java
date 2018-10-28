@@ -91,15 +91,13 @@ public class ExpenseActivity extends Fragment {
                     Intent intent;
                     switch(menuItem.getItemId()){
                         case 0:
-                            intent = new Intent (getActivity(), ExpenseCreateActivity.class);
+                            intent = new Intent (getActivity(), ExpenseEdit.class);
                             intent.putExtra("position", listPosition);
-                            intent.putExtra("type", "edit");
                             startActivity(intent);
                             break;
                         case 1:
-                            intent = new Intent (getActivity(), ExpenseConfirm.class);
+                            intent = new Intent (getActivity(), ExpenseDelete.class);
                             intent.putExtra("position", listPosition);
-                            intent.putExtra("type", "delete");
                             startActivity(intent);
                             break;
                     }
@@ -155,7 +153,6 @@ public class ExpenseActivity extends Fragment {
             @Override
             public void onClick(View v){
                 Intent intent = new Intent (getActivity(), ExpenseCreateActivity.class);
-                intent.putExtra("type", "new");
                 startActivity(intent);
             }
         });
