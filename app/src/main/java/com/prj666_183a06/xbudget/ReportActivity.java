@@ -13,15 +13,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.FileUtils;
@@ -31,6 +38,7 @@ import java.util.ArrayList;
 public class ReportActivity extends Fragment {
 
     private PieChart mPie;
+    private BarChart mBar;
     private float mTotalExpenses;
 
     private Typeface tf;
@@ -54,8 +62,64 @@ public class ReportActivity extends Fragment {
 
         // Pie Chart
         generatePieChart(v);
+        getBarChart(v);
 
         return v;
+    }
+
+    private void getBarChart(View v) {
+        mBar = v.findViewById(R.id.barChart2);
+        mBar.getDescription().setEnabled(false);
+
+        mBar.setData(generateBarData());
+        mBar.setDrawGridBackground(false);
+
+        XAxis xAxis = mBar.getXAxis();
+        xAxis.setDrawGridLines(false);
+        xAxis.setDrawAxisLine(false);
+        xAxis.setDrawLabels(false);
+
+        YAxis rightAxis = mBar.getAxisRight();
+        rightAxis.setEnabled(false);
+        rightAxis.setDrawLabels(false);
+        rightAxis.setDrawGridLines(false);
+
+        YAxis leftAxis = mBar.getAxisLeft();
+        leftAxis.setTextColor(Color.GRAY);
+        leftAxis.setAxisMinimum(0f);
+        leftAxis.setAxisMaximum(100f);
+
+        Legend lgdBar = mBar.getLegend();
+        lgdBar.setTypeface(tf);
+        lgdBar.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+
+        mBar.setDrawValueAboveBar(false);
+        mBar.invalidate();
+    }
+
+    protected BarData generateBarData() {
+        ArrayList<BarEntry> entries = new ArrayList<BarEntry>();
+//        for(int i = 0; i < 3; i++) {
+//            entries.add(new BarEntry(i, (float) ((Math.random() * 60) + 40), "Expenses " + (i+1)));
+//        }
+
+        float v_expenses = 70;
+        float v_balance = 100 - v_expenses;
+
+        entries.add(new BarEntry(1, new float[] {v_expenses, v_balance}, ""));
+
+        BarDataSet ds = new BarDataSet(entries, "");
+        ds.setDrawIcons(false);
+        ds.setColors(ColorTemplate.VORDIPLOM_COLORS[4], ColorTemplate.VORDIPLOM_COLORS[3]);
+        ds.setStackLabels(new String[]{"Expenses", "Balance"});
+
+        ArrayList<IBarDataSet> iBarDataSets = new ArrayList<IBarDataSet>();
+        iBarDataSets.add(ds);
+
+        BarData barData = new BarData(ds);
+        barData.setValueFormatter(new MyValueFormatter());
+
+        return barData;
     }
 
     private void generatePieChart(View v) {
