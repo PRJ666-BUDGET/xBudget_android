@@ -1,6 +1,5 @@
 package com.prj666_183a06.xbudget;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -20,18 +19,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ExpenseCreateActivity extends AppCompatActivity {
+public class ExpenseEdit extends AppCompatActivity {
     EditText storeInput, itemInput, costInput;
     TextView dateInput;
     public static boolean loop = true;
@@ -82,11 +77,12 @@ public class ExpenseCreateActivity extends AppCompatActivity {
         dateInput = (TextView) findViewById(R.id.dateText);
         itemInput = (EditText) findViewById(R.id.itemText);
         costInput = (EditText) findViewById(R.id.costText);
-        dateTester = (TextView) findViewById(R.id.dateText);
 
         String jsonarr = readFromFile(getApplicationContext());
-        Log.e("jsonarr", jsonarr);
         Intent intent = getIntent();
+        type = intent.getStringExtra("type");
+
+        Log.e("type", type);
 
         try {
             arr = new JSONArray(jsonarr);
@@ -95,10 +91,33 @@ public class ExpenseCreateActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        position = arr.length();
+        if(intent.getStringExtra("type").equals("edit")){
+            position = (intent.getIntExtra("position", 0));
+        }else{
+            position = arr.length();
+        }
 
         Log.e("position", ""+position);
 
+        if(type.equals("edit")){
+            try{
+                obj = arr.getJSONObject(position);
+                storeInput.setText(obj.getString("store"));
+                itemInput.setText(obj.getString("item"));
+                dateInput.setText(obj.getString("date"));
+                costInput.setText(obj.getString("cost"));
+
+                //{"store":"testing","date":"Date","item":"testing","cost":"3.3"
+            }catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+
+        Log.e("position", ""+position);
+
+        dateTester = (TextView) findViewById(R.id.dateText);
         dateTester.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -110,7 +129,7 @@ public class ExpenseCreateActivity extends AppCompatActivity {
                 int day = cal.get(Calendar.DAY_OF_MONTH);
 
                 DatePickerDialog dialogue = new DatePickerDialog(
-                        ExpenseCreateActivity.this,
+                        ExpenseEdit.this,
                         android.R.style.Theme_Holo_Light_Dialog_MinWidth,
                         dateListener, year, month, day);
 
@@ -136,13 +155,14 @@ public class ExpenseCreateActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent intent2 = new Intent(ExpenseCreateActivity.this, ExpenseConfirm.class);
+
+                Intent intent2 = new Intent(ExpenseEdit.this, ExpenseConfirm.class);
 
                 intent2.putExtra("storeExtra", storeInput.getText().toString());
                 intent2.putExtra("dateExtra", dateInput.getText().toString());
                 intent2.putExtra("itemExtra", itemInput.getText().toString());
                 intent2.putExtra("costExtra", costInput.getText().toString());
-                intent2.putExtra("type", "new");
+                intent2.putExtra("type", type);
                 intent2.putExtra("position", position);
 
                 startActivity(intent2);

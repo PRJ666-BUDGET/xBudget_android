@@ -24,9 +24,12 @@ import java.io.InputStreamReader;
 
 public class ExpenseConfirm extends AppCompatActivity {
     TextView js;
-    static JSONObject obj;
+    static JSONObject obj, temp;
     static JSONArray arr;
-
+    static JSONArray ret;
+    static int position;
+    static String type;
+    static String output = "";
     private String readFromFile(Context context) {
 
         String ret = "";
@@ -81,54 +84,67 @@ public class ExpenseConfirm extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_createconfirm);
 
-        File file = new File("jsonStorage.json");
-
         ExpenseObj result;
         ExpenseJSON jsonDude = new ExpenseJSON();
         Intent intent = getIntent();
 
+        js = (TextView) findViewById(R.id.jsonTest);
+        type = intent.getStringExtra("type");
+
 
         String jsonString = readFromFile(getApplicationContext());
-        try {
-            arr = new JSONArray(jsonString);
-        }catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        Log.d("string", jsonString);
+        Log.e("string", jsonString);
+
         result = new ExpenseObj(
                 intent.getStringExtra("storeExtra"),
                 intent.getStringExtra("dateExtra"),
                 intent.getStringExtra("itemExtra"),
                 intent.getStringExtra("costExtra")
         );
-
+        /*
         try{
+
+            arr = new JSONArray(jsonString);
             obj = new JSONObject(jsonDude.jsonToString(result));
-            arr.put(obj);
+
+            if(jsonString.equals("[]")){
+                arr.put(obj);
+            }else {
+                for (int i = 0; i < arr.length(); i++) {
+                    temp = (JSONObject) arr.get(i);
+                    Log.e("i", "" + i);
+
+                    if (i == position) {
+                        Log.e("obj", obj.toString());
+                        ret.put(obj);
+                        Log.e("obj", obj.toString());
+                    } else {
+                        Log.e("temp", temp.toString());
+                        ret.put(temp);
+                        Log.e("temp", temp.toString());
+                    }
+                }
+            }
+
+            output =
+                    "Store:"  + temp.getString("store") + "\n" +
+                            "Item: " + temp.getString("item") + "\n" +
+                            "Date: " + temp.getString("date") + "\n" +
+                            "Cost: " + temp.getString("cost") + "\n" +
+                            "Are you sure you want to submit";
+
+            js.setText(output);
+
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
-
-        String output =
-                "Store:"  + intent.getStringExtra("storeExtra") + "\n" +
-                        "Date: " + intent.getStringExtra("dateExtra") + "\n" +
-                        "Item: " + intent.getStringExtra("itemExtra") + "\n" +
-                        "Cost: " + intent.getStringExtra("costExtra") +
-                        "\n Are you sure you want to submit?";
-
-        js = (TextView) findViewById(R.id.jsonTest);
-        if(obj.toString() != null){
-            js.setText(output);
-        }
+        */
 
         Button confirmButton = (Button) findViewById(R.id.confirm);
         confirmButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                writeToFile(arr.toString());
+                writeToFile(ret.toString());
                 finish();
             }
         });
