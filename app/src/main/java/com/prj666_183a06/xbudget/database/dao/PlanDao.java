@@ -33,4 +33,10 @@ public interface PlanDao {
     @Query("DELETE FROM plan_table")
     void deleteAllPlan();
 
+    @Query("SELECT * FROM plan_table WHERE plan_type='income'")
+    LiveData<List<PlanEntity>> getPlanIncomeTotal();
+
+    @Query("SELECT * FROM plan_table WHERE plan_type='saving'")
+    LiveData<List<PlanEntity>> getPlanSavingTotal();
+
 }
