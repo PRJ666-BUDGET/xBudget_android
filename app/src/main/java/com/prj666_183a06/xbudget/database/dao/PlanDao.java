@@ -33,6 +33,7 @@ public interface PlanDao {
     @Query("DELETE FROM plan_table")
     void deleteAllPlan();
 
+<<<<<<< HEAD
     @Query("SELECT SUM(plan_amount)*365/12 FROM plan_table WHERE plan_type='income' AND plan_period='daily'")
     double getPlanIncomeTotalDaily();
 
@@ -44,12 +45,19 @@ public interface PlanDao {
 
     @Query("SELECT SUM(plan_amount) FROM plan_table WHERE plan_type='income' AND plan_period='monthly'")
     double getPlanIncomeTotalMonthly();
+=======
+    @Query("SELECT * FROM plan_table WHERE plan_type='income'")
+    LiveData<List<PlanEntity>> getPlanIncomeTotal();
+>>>>>>> getPlanIncomeTotal() & getPlanSavingTotal() are added
 
     @Query("SELECT * FROM plan_table WHERE plan_type='saving'")
     LiveData<List<PlanEntity>> getPlanSavingTotal();
 
+<<<<<<< HEAD
     //outside stuff
 
 
 
+=======
+>>>>>>> getPlanIncomeTotal() & getPlanSavingTotal() are added
 }
