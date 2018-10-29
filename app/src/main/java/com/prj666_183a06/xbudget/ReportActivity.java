@@ -28,12 +28,14 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.FileUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ReportActivity extends Fragment {
 
@@ -68,58 +70,71 @@ public class ReportActivity extends Fragment {
     }
 
     private void getBarChart(View v) {
+
+        String[] months = new String[] {"Grocery", "TTC", "School", "Clothes"};
+
         mBar = v.findViewById(R.id.barChart2);
         mBar.getDescription().setEnabled(false);
 
         mBar.setData(generateBarData());
-        mBar.setDrawGridBackground(false);
 
         XAxis xAxis = mBar.getXAxis();
-        xAxis.setDrawGridLines(false);
-        xAxis.setDrawAxisLine(false);
-        xAxis.setDrawLabels(false);
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(months));
+        mBar.getAxisLeft().setAxisMinimum(0);
+        xAxis.setPosition(XAxis.XAxisPosition.TOP);
+//        xAxis.setGranularity(1);
+        xAxis.setCenterAxisLabels(true);
+        xAxis.setGranularityEnabled(true);
+        float barSpace = 0.02f;
+        float groupSpace = 0.38f;
+        int groupCount = 4;
 
-        YAxis rightAxis = mBar.getAxisRight();
-        rightAxis.setEnabled(false);
-        rightAxis.setDrawLabels(false);
-        rightAxis.setDrawGridLines(false);
+        mBar.getXAxis().setAxisMinimum(0);
+        mBar.getXAxis().setAxisMaximum(0 + mBar.getBarData().getGroupWidth(groupSpace, barSpace) * groupCount);
+        mBar.groupBars(0, groupSpace, barSpace); // perform the "explicit" grouping
 
-        YAxis leftAxis = mBar.getAxisLeft();
-        leftAxis.setTextColor(Color.GRAY);
-        leftAxis.setAxisMinimum(0f);
-        leftAxis.setAxisMaximum(100f);
-
-        Legend lgdBar = mBar.getLegend();
-        lgdBar.setTypeface(tf);
-        lgdBar.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-
-        mBar.setDrawValueAboveBar(false);
         mBar.invalidate();
     }
 
     protected BarData generateBarData() {
-        ArrayList<BarEntry> entries = new ArrayList<BarEntry>();
-//        for(int i = 0; i < 3; i++) {
-//            entries.add(new BarEntry(i, (float) ((Math.random() * 60) + 40), "Expenses " + (i+1)));
-//        }
+        ArrayList<BarEntry> entries1 = new ArrayList<BarEntry>();
+        ArrayList<BarEntry> entries2 = new ArrayList<BarEntry>();
 
-        float v_expenses = 70;
-        float v_balance = 100 - v_expenses;
+        List<Float> arr_plan = new ArrayList<Float>();
+        List<Float> arr_actual = new ArrayList<Float>();
 
-        entries.add(new BarEntry(1, new float[] {v_expenses, v_balance}, ""));
+        arr_plan.add(120f);
+        arr_plan.add(75f);
+        arr_plan.add(55f);
+        arr_plan.add(164f);
 
-        BarDataSet ds = new BarDataSet(entries, "");
-        ds.setDrawIcons(false);
-        ds.setColors(ColorTemplate.VORDIPLOM_COLORS[4], ColorTemplate.VORDIPLOM_COLORS[3]);
-        ds.setStackLabels(new String[]{"Expenses", "Balance"});
+        arr_actual.add(120f);
+        arr_actual.add(80f);
+        arr_actual.add(20f);
+        arr_actual.add(20f);
 
-        ArrayList<IBarDataSet> iBarDataSets = new ArrayList<IBarDataSet>();
-        iBarDataSets.add(ds);
+        entries1.add(new BarEntry(1, 120f));
+        entries1.add(new BarEntry(2, 75f));
+        entries1.add(new BarEntry(3, 55f));
+        entries1.add(new BarEntry(4, 164f));
 
-        BarData barData = new BarData(ds);
-        barData.setValueFormatter(new MyValueFormatter());
+        entries2.add(new BarEntry(1, 120f));
+        entries2.add(new BarEntry(2, 80f));
+        entries2.add(new BarEntry(3, 20f));
+        entries2.add(new BarEntry(4, 20f));
 
-        return barData;
+        BarDataSet set1, set2;
+        set1 = new BarDataSet(entries1, "Plan");
+        set1.setColor(Color.rgb(164, 228, 251));
+
+        set2 = new BarDataSet(entries2, "Actual");
+        set2.setColor(Color.rgb(193, 37, 82));
+
+        BarData data = new BarData(set1, set2);
+        mBar.setData(data);
+        data.setBarWidth(0.3f);
+
+        return data;
     }
 
     private void generatePieChart(View v) {
@@ -142,7 +157,7 @@ public class ReportActivity extends Fragment {
     }
 
     private SpannableString generateCenterText() {
-        SpannableString s = new SpannableString("Expensess\nJuly 2018");
+        SpannableString s = new SpannableString("Expenses");
         s.setSpan(new RelativeSizeSpan(2f), 0, 8, 0);
         s.setSpan(new ForegroundColorSpan(Color.GRAY), 8, s.length(), 0);
 
@@ -171,14 +186,14 @@ public class ReportActivity extends Fragment {
         entries.add(new PieEntry((float) v_financing, "Financing"));
         entries.add(new PieEntry((float) v_insurance, "Insurance"));
 
-        PieDataSet ds = new PieDataSet(entries, "Expenses July 2018");
+        PieDataSet ds = new PieDataSet(entries, "");
         ds.setColors(ColorTemplate.COLORFUL_COLORS);
         ds.setSliceSpace(2f);
         ds.setValueTextColor(Color.WHITE);
         ds.setValueTextSize(12f);
 
         PieData d = new PieData(ds);
-        d.setValueTypeface(tf);
+//        d.setValueTypeface(tf);
 
         return d;
     }
