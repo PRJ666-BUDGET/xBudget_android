@@ -67,6 +67,16 @@ public class ExpenseEdit extends AppCompatActivity {
         return ret;
     }
 
+    private void getDate(TextView d){
+        Calendar cal = Calendar.getInstance();
+        Date date = new Date();
+
+        int year = cal.get(Calendar.YEAR) ;
+        int month = cal.get(Calendar.MONTH) ;
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+        dateTester.setText((month+1)+"/"+day+"/"+year);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +88,8 @@ public class ExpenseEdit extends AppCompatActivity {
         costInput = (EditText) findViewById(R.id.costText);
         dateTester = (TextView) findViewById(R.id.dateText);
 
+        getDate(dateTester);
+        
         String jsonarr = readFromFile(getApplicationContext());
         Intent intent = getIntent();
         position = intent.getIntExtra("position", 0);

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -18,6 +19,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.prj666_183a06.xbudget.crud.CreateUpdatePlanActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -148,10 +151,19 @@ public class ExpenseActivity extends Fragment {
 
         registerForContextMenu(listStore);
 
-        Button createButton = view.findViewById(R.id.create);
+        /*Button createButton = view.findViewById(R.id.create);
         createButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                Intent intent = new Intent (getActivity(), ExpenseCreateActivity.class);
+                startActivity(intent);
+            }
+        });*/
+
+        FloatingActionButton buttonCreatePlan = view.findViewById(R.id.fab_add_plan);
+        buttonCreatePlan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 Intent intent = new Intent (getActivity(), ExpenseCreateActivity.class);
                 startActivity(intent);
             }

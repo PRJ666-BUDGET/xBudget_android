@@ -21,8 +21,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class ExpenseEditConfirm extends AppCompatActivity {
-    TextView js;
-    static JSONObject obj, temp;
+    TextView js, op;
+    static JSONObject obj;
     static JSONArray arr;
     static JSONArray ret;
     static int position;
@@ -77,6 +77,7 @@ public class ExpenseEditConfirm extends AppCompatActivity {
     }
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -87,6 +88,7 @@ public class ExpenseEditConfirm extends AppCompatActivity {
         Intent intent = getIntent();
 
         js = findViewById(R.id.jsonTest);
+        op = findViewById(R.id.textConfirm);
 
         String jsonString = readFromFile(getApplicationContext());
         Log.e("string", jsonString);
@@ -121,14 +123,12 @@ public class ExpenseEditConfirm extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        output =
-                "Store:"  + intent.getStringExtra("storeExtra") + "\n" +
-                        "Item: " +  intent.getStringExtra("itemExtra")+ "\n" +
-                        "Date: " +  intent.getStringExtra("dateExtra")+ "\n" +
-                        "Cost: " +  intent.getStringExtra("costExtra")+ "\n" +
-                        "Are you sure you want to edit?";
-
-        js.setText(output);
+        op.setText("Are you sure you want to edit?\n");
+        js.setText(
+                "\nStore: "  + intent.getStringExtra("storeExtra") + "\n" +
+                "Item: " +  intent.getStringExtra("itemExtra")+ "\n" +
+                "Date: " +  intent.getStringExtra("dateExtra")+ "\n" +
+                "Cost: " +  intent.getStringExtra("costExtra")+ "\n");
 
         Log.e("ret final", ret.toString());
         Button confirmButton = (Button) findViewById(R.id.confirm);

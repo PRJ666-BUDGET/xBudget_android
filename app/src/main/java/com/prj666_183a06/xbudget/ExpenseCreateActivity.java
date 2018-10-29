@@ -73,6 +73,17 @@ public class ExpenseCreateActivity extends AppCompatActivity {
         return ret;
     }
 
+    private void getDate(TextView d){
+        Calendar cal = Calendar.getInstance();
+        Date date = new Date();
+
+        int year = cal.get(Calendar.YEAR) ;
+        int month = cal.get(Calendar.MONTH) ;
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+        dateTester.setText((month+1)+"/"+day+"/"+year);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -84,6 +95,7 @@ public class ExpenseCreateActivity extends AppCompatActivity {
         costInput = (EditText) findViewById(R.id.costText);
         dateTester = (TextView) findViewById(R.id.dateText);
 
+        getDate(dateTester);
         String jsonarr = readFromFile(getApplicationContext());
         Log.e("jsonarr", jsonarr);
         Intent intent = getIntent();
@@ -116,7 +128,6 @@ public class ExpenseCreateActivity extends AppCompatActivity {
 
                 dialogue.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialogue.show();
-
 
                 dateListener = new DatePickerDialog.OnDateSetListener() {
                     @Override

@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class ExpenseDelete extends AppCompatActivity {
-    TextView js;
+    TextView js, op;
     static JSONObject obj;
     static JSONArray arr;
     static int position;
@@ -84,6 +84,8 @@ public class ExpenseDelete extends AppCompatActivity {
         Intent intent = getIntent();
 
         js = findViewById(R.id.jsonTest);
+        op = findViewById(R.id.textConfirm);
+
 
         String jsonString = readFromFile(getApplicationContext());
         Log.e("string", jsonString);
@@ -100,14 +102,15 @@ public class ExpenseDelete extends AppCompatActivity {
             Log.e("obj", obj.toString());
 
             arr.remove(position);
-            output =
-                    "Store:"  + obj.getString("store:") + "\n" +
-                    "Item: " +  obj.getString("item:")+ "\n" +
-                    "Date: " +  obj.getString("date:")+ "\n" +
-                    "Cost: " +  obj.getString("store:")+ "\n" +
-                    "Are you sure you want to delete?";
 
-            js.setText(output);
+            Log.e("output text", output);
+            Log.e("obj store", obj.getString("store"));
+            op.setText("Are you sure you want to delete?\n");
+            js.setText(
+                    "\nStore: "  + obj.getString("store") + "\n" +
+                    "Item: " +  obj.getString("item")+ "\n" +
+                    "Date: " +  obj.getString("date")+ "\n" +
+                    "Cost: " +  obj.getString("cost")+ "\n");
 
         } catch (JSONException e) {
             e.printStackTrace();
