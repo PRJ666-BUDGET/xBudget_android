@@ -37,6 +37,8 @@ import com.github.mikephil.charting.utils.FileUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.mikephil.charting.data.PieDataSet.ValuePosition.OUTSIDE_SLICE;
+
 public class ReportActivity extends Fragment {
 
     private PieChart mPie;
@@ -144,16 +146,17 @@ public class ReportActivity extends Fragment {
         mPie.getDescription().setEnabled(false);
 
         mPie.setCenterText(generateCenterText());
-        mPie.setCenterTextSize(10f);
+        mPie.setCenterTextSize(8f);
+        mPie.setEntryLabelColor(Color.DKGRAY);
 
         mPie.setHoleRadius(45f);
         mPie.setTransparentCircleRadius(50f);
 
         Legend lgdPie = mPie.getLegend();
-        lgdPie.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        lgdPie.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        lgdPie.setOrientation(Legend.LegendOrientation.VERTICAL);
-        lgdPie.setDrawInside(false);
+//        lgdPie.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+//        lgdPie.setOrientation(Legend.LegendOrientation.VERTICAL);
+//        lgdPie.setDrawInside(false);
+        lgdPie.setEnabled(false);
 
         mPie.setData(generatePieData());
     }
@@ -182,7 +185,7 @@ public class ReportActivity extends Fragment {
 
         entries.add(new PieEntry((float) v_grocery, "Grocery"));
         entries.add(new PieEntry((float) v_clothes, "Clothes"));
-        entries.add(new PieEntry((float) v_transportation, "Transportation"));
+        entries.add(new PieEntry((float) v_transportation, "TTC"));
         entries.add(new PieEntry((float) v_drink, "Drink"));
         entries.add(new PieEntry((float) v_eatout, "Eatout"));
         entries.add(new PieEntry((float) v_financing, "Financing"));
@@ -193,6 +196,8 @@ public class ReportActivity extends Fragment {
         ds.setSliceSpace(2f);
         ds.setValueTextColor(Color.WHITE);
         ds.setValueTextSize(12f);
+        ds.setValueLineColor(Color.DKGRAY);
+        ds.setXValuePosition(OUTSIDE_SLICE);
 
         PieData d = new PieData(ds);
 //        d.setValueTypeface(tf);
