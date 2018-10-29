@@ -202,7 +202,7 @@ public class HomeActivity extends Fragment {
 
         BarDataSet ds = new BarDataSet(entries, "");
         ds.setDrawIcons(false);
-        ds.setColors(ColorTemplate.VORDIPLOM_COLORS[4], ColorTemplate.VORDIPLOM_COLORS[3]);
+        ds.setColors(MyColorTemplate.VORDIPLOM_COLORS[4], MyColorTemplate.VORDIPLOM_COLORS[3]);
         ds.setStackLabels(new String[]{"Expenses", "Balance"});
 
         ArrayList<IBarDataSet> iBarDataSets = new ArrayList<IBarDataSet>();
@@ -233,7 +233,7 @@ public class HomeActivity extends Fragment {
         budget_ds = new LineDataSet(budget_arrList, "My Budget");
         budget_ds.setLineWidth(2f);
         budget_ds.setDrawCircles(false);
-        budget_ds.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+        budget_ds.setColor(MyColorTemplate.VORDIPLOM_COLORS[0]);
 
         iLineDataSets.add(budget_ds);
 
@@ -247,7 +247,7 @@ public class HomeActivity extends Fragment {
         expenses_ds = new LineDataSet(expenses_arrList, "My Expenses");
         expenses_ds.setLineWidth(2f);
         expenses_ds.setDrawCircles(false);
-        expenses_ds.setColor(ColorTemplate.VORDIPLOM_COLORS[4]);
+        expenses_ds.setColor(MyColorTemplate.VORDIPLOM_COLORS[4]);
 
         iLineDataSets.add(expenses_ds);
 

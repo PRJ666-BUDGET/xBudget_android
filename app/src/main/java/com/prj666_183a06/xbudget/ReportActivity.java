@@ -45,6 +45,8 @@ public class ReportActivity extends Fragment {
 
     private Typeface tf;
 
+    String[] str_label;
+
     public ReportActivity() {
 
     }
@@ -71,7 +73,7 @@ public class ReportActivity extends Fragment {
 
     private void getBarChart(View v) {
 
-        String[] months = new String[] {"Grocery", "TTC", "School", "Clothes"};
+        str_label = new String[] {"Grocery", "TTC", "School", "Clothes"};
 
         mBar = v.findViewById(R.id.barChart2);
         mBar.getDescription().setEnabled(false);
@@ -79,7 +81,7 @@ public class ReportActivity extends Fragment {
         mBar.setData(generateBarData());
 
         XAxis xAxis = mBar.getXAxis();
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(months));
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(str_label));
         mBar.getAxisLeft().setAxisMinimum(0);
         xAxis.setPosition(XAxis.XAxisPosition.TOP);
 //        xAxis.setGranularity(1);
@@ -187,7 +189,7 @@ public class ReportActivity extends Fragment {
         entries.add(new PieEntry((float) v_insurance, "Insurance"));
 
         PieDataSet ds = new PieDataSet(entries, "");
-        ds.setColors(ColorTemplate.COLORFUL_COLORS);
+        ds.setColors(MyColorTemplate.COLORFUL_COLORS);
         ds.setSliceSpace(2f);
         ds.setValueTextColor(Color.WHITE);
         ds.setValueTextSize(12f);
