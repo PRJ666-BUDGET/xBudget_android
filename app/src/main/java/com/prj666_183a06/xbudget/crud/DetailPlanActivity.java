@@ -128,6 +128,7 @@ public class DetailPlanActivity extends AppCompatActivity {
 
                 startActivityForResult(newIntent, EDIT_PLAN_REQUEST);
 //                Toast.makeText(this, "UPDATE REQUEST [DetailPlanActivity.java onOptionsItemSelected()], itemId: " + itemId, Toast.LENGTH_SHORT).show();
+
                 return true;
 
             default:
