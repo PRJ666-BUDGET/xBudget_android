@@ -39,19 +39,19 @@ import java.util.List;
 
 import static com.github.mikephil.charting.data.PieDataSet.ValuePosition.OUTSIDE_SLICE;
 
+
 public class ReportActivity extends Fragment {
 
     private PieChart mPie;
     private BarChart mBar;
-    private float mTotalExpenses;
 
     private Typeface tf;
 
-    String[] str_label;
+    List<String> str_label;
+    private final int count_Category = 10;
+    private List<Float> arr_plan;
+    private List<Float> arr_actual;
 
-    public ReportActivity() {
-
-    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -66,17 +66,41 @@ public class ReportActivity extends Fragment {
 
         View v = inflater.inflate(R.layout.activity_report, container, false);
 
-        // Pie Chart
-        generatePieChart(v);
+        // View Charts
+        getPieChart(v);
         getBarChart(v);
 
         return v;
     }
 
+    private void getStringLabels(){
+        str_label = new ArrayList<String>();
+        str_label.add("Grocery");
+        str_label.add("TTC");
+        str_label.add("School");
+        str_label.add("Clothes");
+    }
+
+    protected void getPlanData(){
+
+        arr_plan = new ArrayList<Float>();
+
+        arr_plan.add(120f);
+        arr_plan.add(75f);
+        arr_plan.add(55f);
+        arr_plan.add(164f);
+    }
+
+    protected void getActualData(){
+        arr_actual = new ArrayList<Float>();
+
+        arr_actual.add(120f);
+        arr_actual.add(80f);
+        arr_actual.add(20f);
+        arr_actual.add(20f);
+    }
+
     private void getBarChart(View v) {
-
-        str_label = new String[] {"Grocery", "TTC", "School", "Clothes"};
-
         mBar = v.findViewById(R.id.barChart2);
         mBar.getDescription().setEnabled(false);
 
@@ -86,7 +110,6 @@ public class ReportActivity extends Fragment {
         xAxis.setValueFormatter(new IndexAxisValueFormatter(str_label));
         mBar.getAxisLeft().setAxisMinimum(0);
         xAxis.setPosition(XAxis.XAxisPosition.TOP);
-//        xAxis.setGranularity(1);
         xAxis.setCenterAxisLabels(true);
         xAxis.setGranularityEnabled(true);
         float barSpace = 0.02f;
@@ -101,37 +124,23 @@ public class ReportActivity extends Fragment {
     }
 
     protected BarData generateBarData() {
-        ArrayList<BarEntry> entries1 = new ArrayList<BarEntry>();
-        ArrayList<BarEntry> entries2 = new ArrayList<BarEntry>();
+        ArrayList<BarEntry> entries_plan = new ArrayList<BarEntry>();
+        ArrayList<BarEntry> entries_actual = new ArrayList<BarEntry>();
 
-        List<Float> arr_plan = new ArrayList<Float>();
-        List<Float> arr_actual = new ArrayList<Float>();
+        getPlanData();
+        getActualData();
+        getStringLabels();
 
-        arr_plan.add(120f);
-        arr_plan.add(75f);
-        arr_plan.add(55f);
-        arr_plan.add(164f);
-
-        arr_actual.add(120f);
-        arr_actual.add(80f);
-        arr_actual.add(20f);
-        arr_actual.add(20f);
-
-        entries1.add(new BarEntry(1, 120f));
-        entries1.add(new BarEntry(2, 75f));
-        entries1.add(new BarEntry(3, 55f));
-        entries1.add(new BarEntry(4, 164f));
-
-        entries2.add(new BarEntry(1, 120f));
-        entries2.add(new BarEntry(2, 80f));
-        entries2.add(new BarEntry(3, 20f));
-        entries2.add(new BarEntry(4, 20f));
+        for(int i=0; i < arr_plan.size(); i++ ){
+            entries_plan.add(new BarEntry(i+1, arr_plan.get(i)));
+            entries_actual.add(new BarEntry(i+1, arr_actual.get(i)));
+        }
 
         BarDataSet set1, set2;
-        set1 = new BarDataSet(entries1, "Plan");
+        set1 = new BarDataSet(entries_plan, "Plan");
         set1.setColor(Color.rgb(164, 228, 251));
 
-        set2 = new BarDataSet(entries2, "Actual");
+        set2 = new BarDataSet(entries_actual, "Actual");
         set2.setColor(Color.rgb(193, 37, 82));
 
         BarData data = new BarData(set1, set2);
@@ -141,24 +150,44 @@ public class ReportActivity extends Fragment {
         return data;
     }
 
-    private void generatePieChart(View v) {
+    private void getPieChart(View v) {
         mPie = v.findViewById(R.id.pieChart1);
         mPie.getDescription().setEnabled(false);
 
         mPie.setCenterText(generateCenterText());
         mPie.setCenterTextSize(8f);
-        mPie.setEntryLabelColor(Color.DKGRAY);
+//        mPie.setEntryLabelColor(Color.DKGRAY);
+        mPie.setEntryLabelColor(Color.WHITE);
 
         mPie.setHoleRadius(45f);
         mPie.setTransparentCircleRadius(50f);
 
         Legend lgdPie = mPie.getLegend();
-//        lgdPie.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-//        lgdPie.setOrientation(Legend.LegendOrientation.VERTICAL);
-//        lgdPie.setDrawInside(false);
         lgdPie.setEnabled(false);
 
         mPie.setData(generatePieData());
+    }
+
+    protected PieData generatePieData() {
+        ArrayList<PieEntry> entries_spent = new ArrayList<PieEntry>();
+
+        getActualData();
+        getStringLabels();
+
+        for(int i = 0; i < arr_actual.size(); i++){
+            entries_spent.add(new PieEntry((float) arr_actual.get(i), str_label.get(i)));
+        }
+
+        PieDataSet ds = new PieDataSet(entries_spent, "");
+        ds.setColors(MyColorTemplate.COLORFUL_COLORS);
+        ds.setSliceSpace(2f);
+        ds.setValueTextColor(Color.WHITE);
+        ds.setValueTextSize(12f);
+//        ds.setValueLineColor(Color.DKGRAY);
+//        ds.setXValuePosition(OUTSIDE_SLICE);
+
+        PieData d = new PieData(ds);
+        return d;
     }
 
     private SpannableString generateCenterText() {
@@ -167,42 +196,6 @@ public class ReportActivity extends Fragment {
         s.setSpan(new ForegroundColorSpan(Color.GRAY), 8, s.length(), 0);
 
         return s;
-    }
-
-    protected PieData generatePieData() {
-        int count = 7;
-
-        ArrayList<PieEntry> entries = new ArrayList<PieEntry>();
-
-        float totalExpenses;
-        float v_grocery = 400;
-        float v_clothes = 120;
-        float v_transportation = 150;
-        float v_drink = 50;
-        float v_eatout = 250;
-        float v_financing = 130;
-        float v_insurance = 350;
-
-        entries.add(new PieEntry((float) v_grocery, "Grocery"));
-        entries.add(new PieEntry((float) v_clothes, "Clothes"));
-        entries.add(new PieEntry((float) v_transportation, "TTC"));
-        entries.add(new PieEntry((float) v_drink, "Drink"));
-        entries.add(new PieEntry((float) v_eatout, "Eatout"));
-        entries.add(new PieEntry((float) v_financing, "Financing"));
-        entries.add(new PieEntry((float) v_insurance, "Insurance"));
-
-        PieDataSet ds = new PieDataSet(entries, "");
-        ds.setColors(MyColorTemplate.COLORFUL_COLORS);
-        ds.setSliceSpace(2f);
-        ds.setValueTextColor(Color.WHITE);
-        ds.setValueTextSize(12f);
-        ds.setValueLineColor(Color.DKGRAY);
-        ds.setXValuePosition(OUTSIDE_SLICE);
-
-        PieData d = new PieData(ds);
-//        d.setValueTypeface(tf);
-
-        return d;
     }
 
 }
