@@ -29,32 +29,32 @@ public class ReceiptElement {
     private boolean parseNumber(){
 
         //sorted from most likely to least likely indicator of type
-        if(value.matches(decimalChar + numberChar + numberChar + "Z")) {
+        if(value.contains(decimalChar + numberChar + numberChar + "Z")) {
             //Almost Guarantee number
             return true;
         }
         //check for X.XX value
-        if(value.matches(decimalChar + numberChar + numberChar)) {
+        if(value.contains(decimalChar + numberChar + numberChar)) {
             //Very Likely number
             return true;
         }
         //check if there is a number
-        if(value.matches("[\\d]")){
+        if(value.contains("[\\d]")){
             //possible number
             return true;
         }
         //check if there is a decemal
-        if(value.matches("[\\.\\,]")) {
+        if(value.contains("[\\.\\,]")) {
             //possible number
             return true;
         }
         //check if letters are common numbers
-        if(value.matches("[oli]")) {
+        if(value.contains("[oli]")) {
             //possible number
             return true;
         }
         //check if there are letters
-        if(value.matches("[\\w]")) {
+        if(value.contains("[\\w]")) {
             //possible word
             return false;
         }
