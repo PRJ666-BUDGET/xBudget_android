@@ -47,11 +47,15 @@ public interface PlanDao {
     double getPlanIncomeTotalMonthly();
 =======
     @Query("SELECT * FROM plan_table WHERE plan_type='income'")
+<<<<<<< HEAD
     LiveData<List<PlanEntity>> getPlanIncomeTotal();
 >>>>>>> getPlanIncomeTotal() & getPlanSavingTotal() are added
+=======
+    LiveData<List<PlanEntity>> getPlanIncomeList();
+>>>>>>> PlanDao and PlanRepository are changed
 
     @Query("SELECT * FROM plan_table WHERE plan_type='saving'")
-    LiveData<List<PlanEntity>> getPlanSavingTotal();
+    LiveData<List<PlanEntity>> getPlanSavingList();
 
 <<<<<<< HEAD
     //outside stuff
