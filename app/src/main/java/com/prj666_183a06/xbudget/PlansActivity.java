@@ -114,7 +114,6 @@ public class PlansActivity extends Fragment {
                 intent.putExtra(DetailPlanActivity.PLAN_AMOUNT, plan.getPlanAmount());
                 intent.putExtra(DetailPlanActivity.PLAN_PERIOD, plan.getPlanPeriod());
                 Log.d(TAG, "onItemClick: PLAN_ID:" + plan.getPlanId() + "------------------------------------");
-
                 startActivityForResult(intent, DELETE_PLAN_REQUEST);
             }
         });
