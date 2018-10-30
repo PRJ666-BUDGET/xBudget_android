@@ -12,7 +12,16 @@ public class ReceiptElement {
     // needed by just looking at the dollar values and identify possible strings associated with
     // that number
 
+    public Line getLine() {
+        return line;
+    }
+
     private Line line;
+
+    public String getValue() {
+        return value;
+    }
+
     private String value;
     private Float numValue = null;
     private Boolean isNumber;

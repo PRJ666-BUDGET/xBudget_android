@@ -383,9 +383,38 @@ public final class CameraActivity extends AppCompatActivity {
                                     Collections.swap(output, j, j + 1);
                                 }
 
+
+
+                        //make lines into elements
+                        ArrayList<ReceiptElement> receiptElements = new ArrayList<>();
+                        for (int i = 0; i < items.size(); ++i) {
+                            TextBlock item = items.valueAt(i);
+                            List<Line> lines = (List<Line>) item.getComponents();
+                            for (int j = 0; j < lines.size(); ++j) {
+                                Line line = lines.get(j);
+                                if (line != null && line.getValue() != null) {
+                                    receiptElements.add(new ReceiptElement(line));
+                                }
+                            }
+                        }
+
+                        //bubble sort elements
+                        for (int i = 0; i < receiptElements.size(); i++) {
+                            // Last i elements are already in place
+                            for (int j = 0; j < receiptElements.size() - i - 1; j++) {
+                                if (receiptElements.get(j).getLine().getBoundingBox().top > receiptElements.get(j + 1).getLine().getBoundingBox().top) {
+                                    Collections.swap(receiptElements, j, j + 1);
+                                }
+                            }
+                        }
+
                         String layout = new String();
-                        for (String row : output) {
-                            layout = layout + row + System.lineSeparator();
+                        for (int i = 0; i < receiptElements.size(); i++) {
+                            layout += receiptElements.get(i).getValue();
+
+                            if(receiptElements.get(i).inNumber()) layout += " DETECTED NUMBER";
+                            layout +=  System.lineSeparator();
+
                         }
 
                         textOut.setText(layout);
