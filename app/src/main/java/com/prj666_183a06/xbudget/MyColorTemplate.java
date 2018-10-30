@@ -46,6 +46,44 @@ public class MyColorTemplate {
             rgb("#2ecc71"), rgb("#f1c40f"), rgb("#e74c3c"), rgb("#3498db")
     };
 
+    public static final int[] COOL_COLORS = {
+            Color.rgb(65, 179, 247), Color.rgb(89, 219, 241), Color.rgb(115, 235, 174), Color.rgb(101, 168, 196), Color.rgb(154, 147, 236),
+            Color.rgb(129, 203, 248), Color.rgb(158, 231, 250), Color.rgb(181, 249, 211), Color.rgb(170, 206, 226), Color.rgb(202, 185, 241),
+            Color.rgb(0, 173, 206), Color.rgb(0, 197, 144), Color.rgb(0, 65, 89), Color.rgb(140, 101, 211), Color.rgb(0, 82, 165)
+    };
+
+    public static final int[] BEACH_COLORS = {
+            Color.rgb(177, 221, 161), Color.rgb(60, 214, 230), Color.rgb(6, 194, 244),Color.rgb(255, 134, 66), Color.rgb(195, 183, 172),
+            Color.rgb(229, 243, 207), Color.rgb(151, 234, 244), Color.rgb(95, 216, 250), Color.rgb(244, 220, 181), Color.rgb(231, 227, 215),
+            Color.rgb(229, 243, 207), Color.rgb(151, 234, 244), Color.rgb(195, 54, 44), Color.rgb(129, 108, 91), Color.rgb(102, 141, 60)
+    };
+
+    public static final int[] CUTE_COLORS = {
+            Color.rgb(201, 147, 212), Color.rgb(141, 182, 199), Color.rgb(202, 159, 146), Color.rgb(177, 194, 122), Color.rgb(89, 173, 208),
+            Color.rgb(209, 141, 178), Color.rgb(193, 179, 142), Color.rgb(249, 205, 151), Color.rgb(178, 226, 137), Color.rgb(112, 149, 225),
+            Color.rgb(241, 195, 208), Color.rgb(209, 198, 191), Color.rgb(227, 217, 176), Color.rgb(81, 192, 191), Color.rgb(159, 163, 227)
+    };
+
+    public static final int[] EARTH_COLORS = {
+            Color.rgb(219, 202, 105), Color.rgb(189, 208, 156), Color.rgb(163, 173, 184), Color.rgb(169, 161, 140), Color.rgb(185, 156, 107),
+            Color.rgb(213, 117, 0), Color.rgb(102, 141, 60), Color.rgb(131, 146, 159), Color.rgb(129, 108, 91), Color.rgb(133, 87, 35),
+            Color.rgb(143, 59, 27), Color.rgb(64, 79, 36), Color.rgb(78, 97, 114), Color.rgb(73, 56, 41), Color.rgb(97, 52, 24)
+    };
+
+    public static final int[] BEAUTIFUL_COLORS = {
+            Color.rgb(255, 169, 206), Color.rgb(173, 222, 250), Color.rgb(204, 255, 0), Color.rgb(108, 92, 50), Color.rgb(255, 202, 43),
+            Color.rgb(241, 80, 149), Color.rgb(80, 168, 227), Color.rgb(184, 214, 2), Color.rgb(127, 66, 51), Color.rgb(244, 101, 40),
+            Color.rgb(238, 47, 127), Color.rgb(64, 120, 211), Color.rgb(127, 176, 5), Color.rgb(124, 20, 77), Color.rgb(237, 2, 11)
+    };
+
+    public static final int[] WARM_COLORS = {
+            Color.rgb(238, 197, 169), Color.rgb(199, 195, 151), Color.rgb(231, 227, 181), Color.rgb(211, 201, 206), Color.rgb(195, 142, 99),
+            Color.rgb(229, 174, 134), Color.rgb(157, 151, 84), Color.rgb(223, 210, 124), Color.rgb(183, 166, 173), Color.rgb(172, 11, 61),
+            Color.rgb(228, 153, 105), Color.rgb(110, 118, 73), Color.rgb(180,  168, 81), Color.rgb(132, 109, 116), Color.rgb(121, 63, 13)
+    };
+
+
+
     /**
      * Converts the given hex-color-string to rgb.
      *
