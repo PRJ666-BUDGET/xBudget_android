@@ -27,9 +27,8 @@ public class ExpenseConfirm extends AppCompatActivity {
     static JSONObject obj;
     static JSONArray arr;
     static String type;
-    static String output = "";
-    private String readFromFile(Context context) {
 
+    private String readFromFile(Context context) {
         String ret = "";
 
         try {

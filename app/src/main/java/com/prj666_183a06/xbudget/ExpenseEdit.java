@@ -89,7 +89,7 @@ public class ExpenseEdit extends AppCompatActivity {
         dateTester = (TextView) findViewById(R.id.dateText);
 
         getDate(dateTester);
-        
+
         String jsonarr = readFromFile(getApplicationContext());
         Intent intent = getIntent();
         position = intent.getIntExtra("position", 0);
