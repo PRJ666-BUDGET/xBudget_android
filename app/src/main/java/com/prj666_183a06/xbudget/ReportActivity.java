@@ -179,7 +179,7 @@ public class ReportActivity extends Fragment {
         }
 
         PieDataSet ds = new PieDataSet(entries_spent, "");
-        ds.setColors(MyColorTemplate.COLORFUL_COLORS);
+        ds.setColors(MyColorTemplate.CUTE_COLORS);
         ds.setSliceSpace(2f);
         ds.setValueTextColor(Color.WHITE);
         ds.setValueTextSize(12f);
