@@ -8,28 +8,27 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class ExpenseConfirm extends AppCompatActivity {
+public class ExpenseDelete extends AppCompatActivity {
     TextView js, op;
     static JSONObject obj;
     static JSONArray arr;
+    static int position;
     static String type;
     static String output = "";
-    
     private String readFromFile(Context context) {
+
         String ret = "";
 
         try {
@@ -82,50 +81,42 @@ public class ExpenseConfirm extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_createconfirm);
 
-        ExpenseObj result;
-        ExpenseJSON jsonDude = new ExpenseJSON();
         Intent intent = getIntent();
 
         js = findViewById(R.id.jsonTest);
         op = findViewById(R.id.textConfirm);
 
-        type = intent.getStringExtra("type");
-
 
         String jsonString = readFromFile(getApplicationContext());
         Log.e("string", jsonString);
 
-        result = new ExpenseObj(
-                intent.getStringExtra("storeExtra"),
-                intent.getStringExtra("dateExtra"),
-                intent.getStringExtra("itemExtra"),
-                intent.getStringExtra("costExtra")
-        );
+        position = intent.getIntExtra("position", 0);
+        Log.e("position", ""+position);
 
         try{
 
             arr = new JSONArray(jsonString);
             Log.e("arr", arr.toString());
 
-
-            obj = new JSONObject(jsonDude.jsonToString(result));
+            obj = arr.getJSONObject(position);
             Log.e("obj", obj.toString());
 
-            arr.put(obj);
+            arr.remove(position);
+
+            Log.e("output text", output);
+            Log.e("obj store", obj.getString("store"));
+            op.setText("Are you sure you want to delete?\n");
+            js.setText(
+                    "\nStore: "  + obj.getString("store") + "\n" +
+                    "Item: " +  obj.getString("item")+ "\n" +
+                    "Date: " +  obj.getString("date")+ "\n" +
+                    "Cost: " +  obj.getString("cost")+ "\n");
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-
-        op.setText("Are you sure you want to submit?\n");
-        js.setText(
-                "\nStore: "  + intent.getStringExtra("storeExtra").trim() + "\n" +
-                "Item: " +  intent.getStringExtra("itemExtra")+ "\n" +
-                "Date: " +  intent.getStringExtra("dateExtra")+ "\n" +
-                "Cost: " +  intent.getStringExtra("costExtra")+ "\n");
-
-        Log.e("arr final", arr.toString());
+        Log.e("ret final", arr.toString());
         Button confirmButton = (Button) findViewById(R.id.confirm);
         confirmButton.setOnClickListener(new View.OnClickListener(){
             @Override

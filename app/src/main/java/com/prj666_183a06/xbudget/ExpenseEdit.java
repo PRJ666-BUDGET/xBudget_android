@@ -1,6 +1,5 @@
 package com.prj666_183a06.xbudget;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -20,18 +19,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ExpenseCreateActivity extends AppCompatActivity {
+public class ExpenseEdit extends AppCompatActivity {
     EditText storeInput, itemInput, costInput;
     TextView dateInput;
     public static boolean loop = true;
@@ -50,21 +45,20 @@ public class ExpenseCreateActivity extends AppCompatActivity {
         try {
             InputStream inputStream = context.openFileInput("jsonStorage.json");
 
-            if ( inputStream != null ) {
+            if (inputStream != null) {
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                 String receiveString;
                 StringBuilder stringBuilder = new StringBuilder();
 
-                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                while ((receiveString = bufferedReader.readLine()) != null) {
                     stringBuilder.append(receiveString);
                 }
 
                 inputStream.close();
                 ret = stringBuilder.toString();
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             Log.e("login activity", "File not found: " + e.toString());
         } catch (IOException e) {
             Log.e("login activity", "Can not read file: " + e.toString());
@@ -83,9 +77,8 @@ public class ExpenseCreateActivity extends AppCompatActivity {
 
         dateTester.setText((month+1)+"/"+day+"/"+year);
     }
-
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_createexpense);
 
@@ -96,33 +89,46 @@ public class ExpenseCreateActivity extends AppCompatActivity {
         dateTester = (TextView) findViewById(R.id.dateText);
 
         getDate(dateTester);
+        
         String jsonarr = readFromFile(getApplicationContext());
-        Log.e("jsonarr", jsonarr);
         Intent intent = getIntent();
+        position = intent.getIntExtra("position", 0);
+        Log.e("position", "" + position);
 
         try {
             arr = new JSONArray(jsonarr);
-        }catch (JSONException e) {
+            Log.e("arr", arr.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        try {
+            obj = arr.getJSONObject(position);
+            storeInput.setText(obj.getString("store"));
+            itemInput.setText(obj.getString("item"));
+            dateInput.setText(obj.getString("date"));
+            costInput.setText(obj.getString("cost"));
+            Log.e("obj", obj.toString());
+            //{"store":"testing","date":"Date","item":"testing","cost":"3.3"
+        } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-        position = arr.length();
 
-        Log.e("position", ""+position);
-
-        dateTester.setOnClickListener(new View.OnClickListener(){
+        dateTester.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 Calendar cal = Calendar.getInstance();
                 Date date = new Date();
 
-                int year = cal.get(Calendar.YEAR) ;
-                int month = cal.get(Calendar.MONTH) ;
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH);
                 int day = cal.get(Calendar.DAY_OF_MONTH);
 
                 DatePickerDialog dialogue = new DatePickerDialog(
-                        ExpenseCreateActivity.this,
+                        ExpenseEdit.this,
                         android.R.style.Theme_Holo_Light_Dialog_MinWidth,
                         dateListener, year, month, day);
 
@@ -135,26 +141,25 @@ public class ExpenseCreateActivity extends AppCompatActivity {
                         month = month + 1;
                         Log.d("DATE TEST", "onDateSet: date:" + year + "/" + month + "/" + day);
 
-                        String date = month  + "/" + day + "/" + year;
+                        String date = month + "/" + day + "/" + year;
                         dateTester.setText(date);
                     }
                 };
             }
         });
 
-
         Button enterData = (Button) findViewById(R.id.submitButton);
-        enterData.setOnClickListener(new View.OnClickListener(){
+        enterData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent intent2 = new Intent(ExpenseCreateActivity.this, ExpenseConfirm.class);
+
+                Intent intent2 = new Intent(ExpenseEdit.this, ExpenseEditConfirm.class);
 
                 intent2.putExtra("storeExtra", storeInput.getText().toString());
                 intent2.putExtra("dateExtra", dateInput.getText().toString());
                 intent2.putExtra("itemExtra", itemInput.getText().toString());
                 intent2.putExtra("costExtra", costInput.getText().toString());
-                intent2.putExtra("type", "new");
                 intent2.putExtra("position", position);
 
                 startActivity(intent2);
@@ -163,7 +168,7 @@ public class ExpenseCreateActivity extends AppCompatActivity {
         });
 
         Button back = (Button) findViewById(R.id.backButton);
-        back.setOnClickListener(new View.OnClickListener(){
+        back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
