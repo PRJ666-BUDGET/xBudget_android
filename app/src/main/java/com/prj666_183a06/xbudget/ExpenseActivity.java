@@ -1,9 +1,11 @@
 package com.prj666_183a06.xbudget;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -11,11 +13,14 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.prj666_183a06.xbudget.crud.CreateUpdatePlanActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +44,7 @@ public class ExpenseActivity extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("Expense");
     }
+
 
     private String readFromFile(Context context) {
 
@@ -67,6 +73,7 @@ public class ExpenseActivity extends Fragment {
             Log.e("login activity", "Can not read file: " + e.toString());
         }
 
+        Log.e("return", ret);
         return ret;
     }
 
@@ -82,12 +89,19 @@ public class ExpenseActivity extends Fragment {
                 @Override
                 public boolean onMenuItemClick(MenuItem menuItem) {
 
+                    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuItem.getMenuInfo();
+                    int listPosition = info.position;
+                    Intent intent;
                     switch(menuItem.getItemId()){
                         case 0:
-                            Toast.makeText(getContext(), menuItem.getItemId() + " Edit", Toast.LENGTH_SHORT).show();
+                            intent = new Intent (getActivity(), ExpenseEdit.class);
+                            intent.putExtra("position", listPosition);
+                            startActivity(intent);
                             break;
                         case 1:
-                            Toast.makeText(getContext(), menuItem.getItemId() + " Delete", Toast.LENGTH_SHORT).show();
+                            intent = new Intent (getActivity(), ExpenseDelete.class);
+                            intent.putExtra("position", listPosition);
+                            startActivity(intent);
                             break;
                     }
                     return false;
@@ -103,8 +117,8 @@ public class ExpenseActivity extends Fragment {
 
         View view = inflater.inflate(R.layout.activity_expense, container, false);
         String very = readFromFile(getContext());
-        //TextView te = view.findViewById(R.id.jsonText);
-        //te.setText(very);
+
+        Log.e("very", very);
 
         //populate
 
@@ -116,10 +130,10 @@ public class ExpenseActivity extends Fragment {
             for(int i = 0; i < temp.length(); i++){
                 jsonObj = temp.getJSONObject(i);
                 items.add(
+                        jsonObj.getString("store") + "\n" +
                         jsonObj.getString("item") + "\n" +
-                                jsonObj.getString("store") + "\n" +
-                                jsonObj.getString("cost") + "\n" +
-                                jsonObj.getString("date")  );
+                        jsonObj.getString("cost") + "\n" +
+                        jsonObj.getString("date"));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -137,10 +151,19 @@ public class ExpenseActivity extends Fragment {
 
         registerForContextMenu(listStore);
 
-        Button createButton = view.findViewById(R.id.create);
+        /*Button createButton = view.findViewById(R.id.create);
         createButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                Intent intent = new Intent (getActivity(), ExpenseCreateActivity.class);
+                startActivity(intent);
+            }
+        });*/
+
+        FloatingActionButton buttonCreatePlan = view.findViewById(R.id.fab_add_plan);
+        buttonCreatePlan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 Intent intent = new Intent (getActivity(), ExpenseCreateActivity.class);
                 startActivity(intent);
             }

@@ -151,9 +151,7 @@ public class DetailPlanActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == EDIT_PLAN_REQUEST && resultCode == RESULT_OK) {
-
             int id = data.getIntExtra(CreateUpdatePlanActivity.PLAN_ID, -1);
-
             Log.d(TAG, "onActivityResult: planId: " + id);
 
             if (id == -1) {
@@ -171,6 +169,7 @@ public class DetailPlanActivity extends AppCompatActivity {
             planViewModel.update(plan);
 
             Toast.makeText(this, title + " is updated.", Toast.LENGTH_SHORT).show();
+
             finish();
         }
         else{
