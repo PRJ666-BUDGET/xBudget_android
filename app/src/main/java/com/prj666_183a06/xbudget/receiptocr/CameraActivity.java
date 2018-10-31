@@ -413,6 +413,8 @@ public final class CameraActivity extends AppCompatActivity {
                             layout += receiptElements.get(i).getValue();
 
                             if(receiptElements.get(i).inNumber()) layout += " DETECTED NUMBER";
+                            if(receiptElements.get(i).isTotal()) layout += " DETECTED TOTAL";
+
                             layout +=  System.lineSeparator();
 
                         }

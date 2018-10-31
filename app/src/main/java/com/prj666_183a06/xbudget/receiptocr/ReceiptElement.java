@@ -5,6 +5,7 @@ import com.google.android.gms.vision.text.Line;
 import org.w3c.dom.NamedNodeMap;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class ReceiptElement {
     //Theory: The elements of a receipt that have importants are the objects,
@@ -36,9 +37,12 @@ public class ReceiptElement {
     }
 
     private boolean parseNumber(){
-
         //sorted from most likely to least likely indicator of type
-        if(value.contains(decimalChar + numberChar + numberChar + "Z")) {
+        if(Pattern.compile(decimalChar + numberChar + numberChar + "Z").matcher(value).find()) {
+            //Almost Guarantee number
+            return true;
+        }
+        if(Pattern.compile(decimalChar + numberChar + numberChar).matcher(value).find()) {
             //Almost Guarantee number
             return true;
         }
@@ -48,9 +52,9 @@ public class ReceiptElement {
             return true;
         }
         //check if there is a number
-        if(value.contains("[\\d]")){
+        if(Pattern.compile("[\\d]").matcher(value).find()) {
             //possible number
-            return true;
+            //return true;
         }
         //check if there is a decemal
         if(value.contains("[\\.\\,]")) {
@@ -68,6 +72,14 @@ public class ReceiptElement {
             return false;
         }
         //unknown
+        return false;
+    }
+
+    public boolean isTotal(){
+        if(Pattern.compile("total").matcher(value).find()) {
+            //possible total
+            return true;
+        }
         return false;
     }
 
