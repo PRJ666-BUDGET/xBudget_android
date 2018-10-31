@@ -34,7 +34,7 @@ public class PlansActivity extends Fragment {
     private static final String TAG = "PlansFragment";
 
     public static final int ADD_PLAN_REQUEST = 1;
-    public static final int VIEW_PLAN_REQUEST = 2;
+    public static final int DELETE_PLAN_REQUEST = 2;
     public static final int EDIT_PLAN_REQUEST = 3;
 
     private PlanViewModel planViewModel;
@@ -98,7 +98,7 @@ public class PlansActivity extends Fragment {
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 planViewModel.delete(adapter.getPlanPosition(viewHolder.getAdapterPosition()));
-                Toast.makeText(getActivity(), "Plan deleted.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"Plan deleted.", Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(recyclerView);
 
@@ -107,13 +107,14 @@ public class PlansActivity extends Fragment {
             @Override
             public void onItemClick(PlanEntity plan) {
                 Intent intent = new Intent(getActivity(), DetailPlanActivity.class);
+
                 intent.putExtra(DetailPlanActivity.PLAN_ID, plan.getPlanId());
                 intent.putExtra(DetailPlanActivity.PLAN_TYPE, plan.getPlanType());
                 intent.putExtra(DetailPlanActivity.PLAN_TITLE, plan.getPlanTitle());
                 intent.putExtra(DetailPlanActivity.PLAN_AMOUNT, plan.getPlanAmount());
                 intent.putExtra(DetailPlanActivity.PLAN_PERIOD, plan.getPlanPeriod());
                 Log.d(TAG, "onItemClick: PLAN_ID:" + plan.getPlanId() + "------------------------------------");
-                startActivityForResult(intent, VIEW_PLAN_REQUEST);
+                startActivityForResult(intent, DELETE_PLAN_REQUEST);
             }
         });
 
@@ -138,31 +139,28 @@ public class PlansActivity extends Fragment {
 
             Toast.makeText(getActivity(), "Plan is created.", Toast.LENGTH_SHORT).show();
         }
-        else if (requestCode == EDIT_PLAN_REQUEST && resultCode == RESULT_OK) {
-
-            int id = data.getIntExtra(CreateUpdatePlanActivity.PLAN_ID, -1);
-
-            if (id == -1) {
-                Toast.makeText(getActivity(), "Plan cannot be updated.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
+        else if (requestCode == DELETE_PLAN_REQUEST && resultCode == RESULT_OK) {
             String type = data.getStringExtra(CreateUpdatePlanActivity.PLAN_TYPE);
             String title = data.getStringExtra(CreateUpdatePlanActivity.PLAN_TITLE);
             double amount = data.getDoubleExtra(CreateUpdatePlanActivity.PLAN_AMOUNT, 0.00);
             String period = data.getStringExtra(CreateUpdatePlanActivity.PLAN_PERIOD);
 
-            PlanEntity plan = new PlanEntity(type ,title, amount, period);
-            plan.setPlanId(id);
-            planViewModel.update(plan);
+            int id = data.getIntExtra(CreateUpdatePlanActivity.PLAN_ID, -1);
 
-            Toast.makeText(getActivity(), "Plan is now updated.", Toast.LENGTH_SHORT).show();
-        }
-        else if (requestCode == VIEW_PLAN_REQUEST && resultCode == RESULT_OK) {
-            Toast.makeText(getActivity(), "Your were from view screen.", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "onActivityResult: planId: " + id);
+
+            if (id == -1) {
+                Toast.makeText(getActivity(), "BAD REQUEST [PlansActivity.java onActivityResult()], PlanId: " + id, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            PlanEntity plan = new PlanEntity(type ,title, amount, period);
+
+            plan.setPlanId(id);
+            planViewModel.delete(plan);
         }
         else{
-            Toast.makeText(getActivity(), "Create plan got canceled.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), "BACK TO LIST VIEW FROM DETAIL VIEW [PlansActivity.java onActivityResult()]", Toast.LENGTH_SHORT).show();
         }
     }
 
