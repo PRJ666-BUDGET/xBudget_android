@@ -1,11 +1,9 @@
-package com.prj666_183a06.xbudget;
-
-import android.util.Log;
-import android.util.SparseArray;
+package com.prj666_183a06.xbudget.receiptocr;
 
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.text.TextBlock;
 import com.prj666_183a06.xbudget.camera.GraphicOverlay;
+import com.prj666_183a06.xbudget.receiptocr.CameraOverlay;
 
 /**
  * A very simple Processor which gets detected TextBlocks and adds them to the overlay
