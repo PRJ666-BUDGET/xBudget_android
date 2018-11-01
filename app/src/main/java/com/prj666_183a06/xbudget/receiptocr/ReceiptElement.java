@@ -24,6 +24,11 @@ public class ReceiptElement {
     }
 
     private String value;
+
+    public Float getNumValue() {
+        return numValue;
+    }
+
     private Float numValue = null;
     private Boolean isNumber;
     private String numberChar = "[\\doli]";
@@ -34,6 +39,10 @@ public class ReceiptElement {
         line = nline;
         value = line.getValue().toLowerCase();
         isNumber = parseNumber();
+        if(isNumber){
+            value.replaceAll(",","."); //make decimal
+            numValue = Float.parseFloat(value.replaceAll("[^\\d.]+|\\.(?!\\d)", ""));
+        }
     }
 
     private boolean parseNumber(){

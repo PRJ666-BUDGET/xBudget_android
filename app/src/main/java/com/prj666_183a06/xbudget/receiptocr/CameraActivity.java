@@ -74,6 +74,7 @@ public final class CameraActivity extends AppCompatActivity {
 
     private ImageView image;
     private TextView textOut;
+    private TextView receiptSum;
 
     private Bitmap bitmap;
     /**
@@ -88,6 +89,7 @@ public final class CameraActivity extends AppCompatActivity {
         graphicOverlay = (GraphicOverlay<CameraOverlay>) findViewById(R.id.graphicOverlay);
         image = (ImageView) findViewById(R.id.CameraImageView);
         textOut = (TextView) findViewById(R.id.ReceiptTextDisplay);
+        receiptSum = (TextView) findViewById(R.id.ReceiptSum);
 
         // Set good defaults for capturing text.
         boolean autoFocus = true;
@@ -424,6 +426,43 @@ public final class CameraActivity extends AppCompatActivity {
                         //TODO: Predict total, look for "Total" "Takeout Total" remove colo
                         //TODO: Convert comma to period
                         //TODO Arange rows and columns
+
+                        String summary;
+
+                        //get all elements that are detected as 'total'
+                        ArrayList<ReceiptElement> possibleTotals = new ArrayList<>();
+                        for (int i = 0; i < receiptElements.size(); i++){
+                            if(receiptElements.get(i).isTotal()){
+                                //find what number is associated
+                                int closestIndex = 0;
+                                float closestValue = 99999;
+                                for(int j = 0; j < receiptElements.size(); j++){
+                                    if(receiptElements.get(j).inNumber()){
+                                        if(     Math.abs(receiptElements.get(j).getLine().getBoundingBox().top) -
+                                                Math.abs(receiptElements.get(i).getLine().getBoundingBox().top)
+                                                < Math.abs(closestValue)){
+                                            closestValue = receiptElements.get(j).getNumValue();
+                                            closestIndex = j;
+                                        }
+                                    }
+                                }
+                                possibleTotals.add(receiptElements.get(closestIndex));
+                            }
+                        }
+
+                        //get largest of possible total
+                        int largestTotalIndex = 0;
+                        int largestTotalValue = 0;
+                        for(int i = 0; i < possibleTotals.size(); i++){
+                            if(possibleTotals.get(i).getNumValue() > largestTotalValue){
+                                largestTotalIndex = i;
+                            }
+                        }
+
+                        summary = "Total is:" + possibleTotals.get(largestTotalIndex).getValue();
+                        receiptSum.setText(summary);
+
+
                     }
 
                 });
