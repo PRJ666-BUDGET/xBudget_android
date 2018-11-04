@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,6 +51,8 @@ public class ExpenseCreateActivity extends AppCompatActivity {
         try {
             InputStream inputStream = context.openFileInput("jsonStorage.json");
 
+            Log.e("location", context.getFileStreamPath("jsonStorage.json").getAbsolutePath());
+
             if ( inputStream != null ) {
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
@@ -68,6 +71,8 @@ public class ExpenseCreateActivity extends AppCompatActivity {
             Log.e("login activity", "File not found: " + e.toString());
         } catch (IOException e) {
             Log.e("login activity", "Can not read file: " + e.toString());
+            Toast.makeText(getApplicationContext(), "Can't get file", Toast.LENGTH_SHORT).show();
+            finish();
         }
 
         return ret;
@@ -89,11 +94,12 @@ public class ExpenseCreateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_createexpense);
 
-        storeInput = (EditText) findViewById(R.id.storeText);
-        dateInput = (TextView) findViewById(R.id.dateText);
-        itemInput = (EditText) findViewById(R.id.itemText);
-        costInput = (EditText) findViewById(R.id.costText);
-        dateTester = (TextView) findViewById(R.id.dateText);
+
+        storeInput = findViewById(R.id.storeText);
+        dateInput = findViewById(R.id.dateText);
+        itemInput = findViewById(R.id.itemText);
+        costInput = findViewById(R.id.costText);
+        dateTester = findViewById(R.id.dateText);
 
         getDate(dateTester);
         String jsonarr = readFromFile(getApplicationContext());
@@ -150,15 +156,17 @@ public class ExpenseCreateActivity extends AppCompatActivity {
 
                 Intent intent2 = new Intent(ExpenseCreateActivity.this, ExpenseConfirm.class);
 
-                intent2.putExtra("storeExtra", storeInput.getText().toString());
-                intent2.putExtra("dateExtra", dateInput.getText().toString());
-                intent2.putExtra("itemExtra", itemInput.getText().toString());
-                intent2.putExtra("costExtra", costInput.getText().toString());
-                intent2.putExtra("type", "new");
-                intent2.putExtra("position", position);
 
-                startActivity(intent2);
-                finish();
+                    intent2.putExtra("storeExtra", storeInput.getText().toString());
+                    intent2.putExtra("dateExtra", dateInput.getText().toString());
+                    intent2.putExtra("itemExtra", itemInput.getText().toString());
+                    intent2.putExtra("costExtra", costInput.getText().toString());
+                    intent2.putExtra("type", "new");
+                    intent2.putExtra("position", position);
+
+                    startActivity(intent2);
+                    finish();
+
             }
         });
 

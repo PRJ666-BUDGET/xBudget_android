@@ -1,6 +1,7 @@
 package com.prj666_183a06.xbudget;
 
 import android.app.Activity;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,11 +17,15 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.prj666_183a06.xbudget.adapter.ExpenseListAdapter;
 import com.prj666_183a06.xbudget.crud.CreateUpdatePlanActivity;
+import com.prj666_183a06.xbudget.pojo.Expense;
+import com.prj666_183a06.xbudget.viewmodel.ExpenseViewModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,9 +40,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class ExpenseActivity extends Fragment {
+import static android.app.Activity.RESULT_OK;
 
-    static int index;
+public class ExpenseActivity extends Fragment{
+
+    private ExpenseViewModel eViewModel;
+    private ExpenseListAdapter adapater;
+
+    private TextView expenseId;
+    private EditText expenseName;
+    private EditText expenseCost;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -45,12 +57,15 @@ public class ExpenseActivity extends Fragment {
         getActivity().setTitle("Expense");
     }
 
-
     private String readFromFile(Context context) {
 
         String ret = "";
 
         try {
+            File file = new File("/data/data/com.prj666_183a06.xbudget/files/jsonStorage.json");
+            if(!file.exists()){
+                file.createNewFile();
+            }
             InputStream inputStream = context.openFileInput("jsonStorage.json");
 
             if ( inputStream != null ) {
@@ -75,6 +90,12 @@ public class ExpenseActivity extends Fragment {
 
         Log.e("return", ret);
         return ret;
+    }
+
+    private void clearFields() {
+        expenseId.setText("");
+        expenseName.setText("");
+        expenseCost.setText("");
     }
 
     @Override
@@ -116,58 +137,58 @@ public class ExpenseActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.activity_expense, container, false);
-        String very = readFromFile(getContext());
 
-        Log.e("very", very);
+        eViewModel = ViewModelProviders.of(this).get(ExpenseViewModel.class);
 
-        //populate
+        expenseId = getView().findViewById(R.id.expenseId);
+        expenseName = getView().findViewById(R.id.expenseName);
+        expenseCost = getView().findViewById(R.id.expenseCost);
 
-        ArrayList<String> items = new ArrayList<>();
-        JSONArray temp;
-        JSONObject jsonObj;
-        try{
-            temp = new JSONArray(very);
-            for(int i = 0; i < temp.length(); i++){
-                jsonObj = temp.getJSONObject(i);
-                items.add(
-                        jsonObj.getString("store") + "\n" +
-                        jsonObj.getString("item") + "\n" +
-                        jsonObj.getString("cost") + "\n" +
-                        jsonObj.getString("date"));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        listenerSetup();
+        observerSetup();
+        recyclerSetup();
+
+        private void listenerSetup() {
+
+            Button addButton = getView().findViewById(R.id.addButton);
+            Button findButton = getView().findViewById(R.id.findButton);
+            Button deleteButton = getView().findViewById(R.id.deleteButton);
+
+            addButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    String name = expenseName.getText().toString();
+                    String cost = expenseCost.getText().toString();
+
+
+                    if (!name.equals("") && !quantity.equals("")) {
+                        Expense expense = new Expense(name,
+                                Double.parseDouble(cost));
+                        eViewModel.insertExpense(expense);
+                        clearFields();
+                    } else {
+                        expenseId.setText("Incomplete information");
+                    }
+                }
+            });
+
+            findButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    eViewModel.findExpense(expenseName.getText().toString());
+                }
+            });
+
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    eViewModel.deleteExpense(expenseName.getText().toString());
+                    clearFields();
+                }
+            });
         }
 
-        ArrayAdapter<String> arr =
-                new ArrayAdapter<>(getActivity(),
-                        R.layout.button_layout, items);
-
-
-        ListView listStore = view.findViewById(R.id.listId);
-        listStore.setAdapter(arr);
-
-        //end
-
-        registerForContextMenu(listStore);
-
-        /*Button createButton = view.findViewById(R.id.create);
-        createButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                Intent intent = new Intent (getActivity(), ExpenseCreateActivity.class);
-                startActivity(intent);
-            }
-        });*/
-
-        FloatingActionButton buttonCreatePlan = view.findViewById(R.id.fab_add_plan);
-        buttonCreatePlan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent (getActivity(), ExpenseCreateActivity.class);
-                startActivity(intent);
-            }
-        });
         return view;
     }
 }
