@@ -436,11 +436,13 @@ public final class CameraActivity extends AppCompatActivity {
                                 //find what number is associated
                                 int closestIndex = -1;
                                 float closestValue = 99999;
+                                int secondClosestIndex = -1;
                                 for(int j = 0; j < receiptElements.size(); j++){
                                     if(receiptElements.get(j).inNumber()){
                                         if(     Math.abs(receiptElements.get(j).getLine().getBoundingBox().top) -
                                                 Math.abs(receiptElements.get(i).getLine().getBoundingBox().top)
                                                 < Math.abs(closestValue)){
+                                            secondClosestIndex = closestIndex;
                                             closestValue = receiptElements.get(j).getNumValue();
                                             closestIndex = j;
                                         }
@@ -448,6 +450,9 @@ public final class CameraActivity extends AppCompatActivity {
                                 }
                                 if(closestIndex != -1) {
                                     possibleTotals.add(receiptElements.get(closestIndex));
+                                }
+                                if(secondClosestIndex != -1) {
+                                    possibleTotals.add(receiptElements.get(secondClosestIndex));
                                 }
                             }
                         }
