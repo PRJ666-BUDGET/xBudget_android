@@ -427,14 +427,14 @@ public final class CameraActivity extends AppCompatActivity {
                         //TODO: Convert comma to period
                         //TODO Arange rows and columns
 
-                        String summary;
+                        String summary = "";
 
                         //get all elements that are detected as 'total'
                         ArrayList<ReceiptElement> possibleTotals = new ArrayList<>();
                         for (int i = 0; i < receiptElements.size(); i++){
                             if(receiptElements.get(i).isTotal()){
                                 //find what number is associated
-                                int closestIndex = 0;
+                                int closestIndex = -1;
                                 float closestValue = 99999;
                                 for(int j = 0; j < receiptElements.size(); j++){
                                     if(receiptElements.get(j).inNumber()){
@@ -446,20 +446,28 @@ public final class CameraActivity extends AppCompatActivity {
                                         }
                                     }
                                 }
-                                possibleTotals.add(receiptElements.get(closestIndex));
+                                if(closestIndex != -1) {
+                                    possibleTotals.add(receiptElements.get(closestIndex));
+                                }
                             }
                         }
 
                         //get largest of possible total
-                        int largestTotalIndex = 0;
-                        int largestTotalValue = 0;
-                        for(int i = 0; i < possibleTotals.size(); i++){
-                            if(possibleTotals.get(i).getNumValue() > largestTotalValue){
-                                largestTotalIndex = i;
+                        int largestTotalIndex = -1;
+                        if(possibleTotals.size() > 0) {
+                            largestTotalIndex = 0;
+                            for (int i = 0; i < possibleTotals.size(); i++) {
+                                if (possibleTotals.get(i).getNumValue() > possibleTotals.get(largestTotalIndex).getNumValue()) {
+                                    largestTotalIndex = i;
+                                }
                             }
                         }
 
-                        summary = "Total is:" + possibleTotals.get(largestTotalIndex).getValue();
+                        if(largestTotalIndex != -1) {
+                            summary = "Total is:" + possibleTotals.get(largestTotalIndex).getValue();
+                        } else {
+                            summary = "Total not found";
+                        }
                         receiptSum.setText(summary);
 
 
