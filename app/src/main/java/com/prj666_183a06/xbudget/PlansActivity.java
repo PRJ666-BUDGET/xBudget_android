@@ -19,13 +19,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.prj666_183a06.xbudget.adapter.PlanAdapter;
 import com.prj666_183a06.xbudget.crud.CreateUpdatePlanActivity;
 import com.prj666_183a06.xbudget.crud.DetailPlanActivity;
+import com.prj666_183a06.xbudget.database.Plans;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
 import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -38,6 +43,9 @@ public class PlansActivity extends Fragment {
     public static final int EDIT_PLAN_REQUEST = 3;
 
     private PlanViewModel planViewModel;
+
+    private DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+    private DatabaseReference planRef = mRootRef.child("plans");
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -139,6 +147,31 @@ public class PlansActivity extends Fragment {
             planViewModel.insert(plan);
 
             Toast.makeText(getActivity(), "Plan is created.", Toast.LENGTH_SHORT).show();
+
+            String key = planRef.push().getKey();
+            double tempAmount = 0;
+
+            switch (period){
+                case "daily":
+                    tempAmount = amount * 365 / 12;
+                    break;
+                case "weekly":
+                    tempAmount = amount * 52 / 12;
+                    break;
+                case "bi-weekly":
+                    tempAmount = amount * 26 /12;
+                    break;
+                default:
+                    tempAmount = amount;
+            }
+
+            Plans plans = new Plans(type, title, tempAmount, period);
+            Map<String, Object> plansValue = plans.toMap();
+
+            Map<String, Object> planUpdates = new HashMap<>();
+            planUpdates.put(key, plansValue);
+
+            planRef.updateChildren(planUpdates);
         }
         else if (requestCode == DELETE_PLAN_REQUEST && resultCode == RESULT_OK) {
             String type = data.getStringExtra(CreateUpdatePlanActivity.PLAN_TYPE);
@@ -159,6 +192,10 @@ public class PlansActivity extends Fragment {
 
             plan.setPlanId(id);
             planViewModel.delete(plan);
+
+            planRef.removeValue();
+//            planRef.setValue(null);
+
         }
         else{
 //            Toast.makeText(getActivity(), "BACK TO LIST VIEW FROM DETAIL VIEW [PlansActivity.java onActivityResult()]", Toast.LENGTH_SHORT).show();
