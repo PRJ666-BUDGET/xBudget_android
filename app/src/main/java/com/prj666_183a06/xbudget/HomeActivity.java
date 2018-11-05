@@ -29,6 +29,13 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.prj666_183a06.xbudget.database.Plans;
 import com.prj666_183a06.xbudget.receiptocr.CameraActivity;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
 
@@ -52,10 +59,54 @@ public class HomeActivity extends Fragment {
     Locale locale;
     NumberFormat fmt;
 
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference mRootRef = database.getReference();
+    private DatabaseReference planRef = mRootRef.child("plans");
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("xBudget");
+
+        // Write a message to the database - test
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRef = database.getReference("message");
+//        myRef.setValue("Hello, World!");
+
+//        planRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                mIncome = 0;
+//                for (DataSnapshot planData:dataSnapshot.getChildren()) {
+//                    Plans planValue = planData.getValue(Plans.class);
+//                    mIncome += planValue.getPlan_amount();
+//                }
+//            }
+//
+//        @Override
+//        public void onCancelled(DatabaseError databaseError) {
+//
+//        }
+//    });
+
+        planRef.addValueEventListener(new ValueEventListener() {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mIncome = 0;
+                for (DataSnapshot planData : dataSnapshot.getChildren()) {
+                    Plans planValue = planData.getValue(Plans.class);
+                    if(planValue.getPlan_type().equals("income")){
+                        mIncome += planValue.getPlan_amount();
+//                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.out.println("The read failed!!!");
+            }
+        });
+
     }
 
     @Nullable
@@ -68,7 +119,7 @@ public class HomeActivity extends Fragment {
         fmt = NumberFormat.getCurrencyInstance(locale);
 
         // Get Data
-        mIncome = 2000.00;
+//        mIncome = 2000.00;
         mSpent = 1260.00;
         mBalance = mIncome - mSpent;
         mRate = mSpent / mIncome;
@@ -165,12 +216,12 @@ public class HomeActivity extends Fragment {
         str_label.add("30");
     }
 
-    protected void getPlanData(){
-
-        arr_plan = new ArrayList<Float>();
-
-        arr_plan.add(2000f);
-    }
+//    protected void getPlanData(){
+//
+//        arr_plan = new ArrayList<Float>();
+//
+//        arr_plan.add(2000f);
+//    }
 
     protected void getSpentData(){
         arr_spent = new ArrayList<Float>();
@@ -257,13 +308,12 @@ public class HomeActivity extends Fragment {
 
         ArrayList<ILineDataSet> iLineDataSets = new ArrayList<ILineDataSet>();
 
-        getPlanData();
+//        getPlanData();
         getSpentData();
         getStringLabels();
 
-        // Budget Dataset
         for(int i=1; i < 31; i+=7){
-            budget_arrList.add(new Entry(i, arr_plan.get(0)));
+            budget_arrList.add(new Entry(i, (float) mIncome));
         }
 
         int temp = 0;
