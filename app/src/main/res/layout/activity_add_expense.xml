@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".ExpenseAddEditExpenseR">
+
+    <EditText
+        android:id="@+id/edit_text_store"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Store"
+        android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/edit_text_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Item"
+        android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/edit_text_cost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Cost"
+        android:inputType="numberDecimal"/>
+
+    <TextView
+        android:id="@+id/edit_date_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Date"
+        android:textSize="18dp"
+        android:inputType="text"/>
+
+</LinearLayout>
