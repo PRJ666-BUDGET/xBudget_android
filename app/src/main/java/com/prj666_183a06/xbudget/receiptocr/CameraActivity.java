@@ -13,7 +13,13 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -41,6 +47,7 @@ import com.prj666_183a06.xbudget.camera.CameraSourcePreview;
 import com.prj666_183a06.xbudget.camera.GraphicOverlay;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,6 +97,14 @@ public final class CameraActivity extends AppCompatActivity {
         image = (ImageView) findViewById(R.id.CameraImageView);
         textOut = (TextView) findViewById(R.id.ReceiptTextDisplay);
         receiptSum = (TextView) findViewById(R.id.ReceiptSum);
+
+//        //display alignment box
+//        Paint rectPaint = new Paint();//TODO: Get better variable names
+//        rectPaint.setColor(Color.RED);
+////        rectPaint.setStyle(Paint.Style.STROKE);
+////        rectPaint.setStrokeWidth(4.0f);
+//        Canvas canvas =  new Canvas();
+//        canvas.drawRect(50, 500, 500, 500, rectPaint);
 
         // Set good defaults for capturing text.
         boolean autoFocus = true;
@@ -145,6 +160,20 @@ public final class CameraActivity extends AppCompatActivity {
                 .setAction(R.string.ok, listener)
                 .show();
 
+    }
+
+    protected void onDraw(Canvas canvas) {
+        int canvasW = graphicOverlay.getWidth();
+        int canvasH = graphicOverlay.getHeight();
+        Point centerOfCanvas = new Point(canvasW / 2, canvasH / 2);
+        int rectW = 100;
+        int rectH = 100;
+        int left = centerOfCanvas.x - (rectW / 2);
+        int top = centerOfCanvas.y - (rectH / 2);
+        int right = centerOfCanvas.x + (rectW / 2);
+        int bottom = centerOfCanvas.y + (rectH / 2);
+        Rect rect = new Rect(left, top, right, bottom);
+        canvas.drawRect(rect, new Paint());
     }
 
     @Override
@@ -345,14 +374,22 @@ public final class CameraActivity extends AppCompatActivity {
 
                         //scale image
                         Matrix matrix = new Matrix();
-                        matrix.postScale((float) 0.50, (float) 0.50);
+                        matrix.postScale((float) 0.8, (float) 0.8);
                         bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
 
+                        //rotate to portrait (Samsung Fix)
+                        if (bitmap.getWidth() > bitmap.getHeight()) {
+                            matrix = new Matrix();
+                            matrix.postRotate(90);
+                            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+                        }
+
                         //Parse Text
-                        Frame frame = new Frame.Builder().setBitmap(bitmap).setRotation(ROTATION_90).build();
+                        Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+
                         SparseArray<TextBlock> items = textRecognizer.detect(frame);
 
-                        Snackbar.make(graphicOverlay, "Demo data built",
+                        Snackbar.make(graphicOverlay, "Text Displayed",
                                 Snackbar.LENGTH_LONG)
                                 .show();
 
