@@ -13,7 +13,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.prj666_183a06.xbudget.R;
+import com.prj666_183a06.xbudget.database.Plans;
 
 public class CreateUpdatePlanActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -30,6 +33,9 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
     private EditText editTextAmount;
     private Spinner spinnerType;
     private Spinner spinnerPeriod;
+
+    private DatabaseReference planRef = FirebaseDatabase.getInstance().getReference("plans");
+    double prev_amount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +67,9 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
             editTextAmount.setText(String.valueOf(intent.getDoubleExtra(PLAN_AMOUNT, 0.00)));
             spinnerType.setSelection(getIndex(spinnerType, intent.getStringExtra(PLAN_TYPE)));
             spinnerPeriod.setSelection(getIndex(spinnerPeriod, intent.getStringExtra(PLAN_PERIOD)));
+
+            prev_amount = Double.parseDouble(editTextAmount.getText().toString());
+
         } else {
             setTitle("Create Plan");
         }
@@ -79,6 +88,29 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
             Toast.makeText(this, "Plan amount cannot be greater than $10000.", Toast.LENGTH_SHORT).show();
             return;
         }
+        double current_amount = 0;
+        current_amount = amount;
+        if (prev_amount != current_amount) {
+            current_amount = current_amount - prev_amount;
+        }
+
+        switch (spinnerPeriod.getSelectedItem().toString()){
+            case "daily":
+                current_amount = current_amount * 365 / 12;
+                break;
+            case "weekly":
+                current_amount = current_amount * 52 / 12;
+                break;
+            case "bi-weekly":
+                current_amount = current_amount * 26 /12;
+                break;
+            default:
+                current_amount = current_amount;
+        }
+
+        String id = planRef.push().getKey();
+        Plans plans = new Plans(spinnerType.getSelectedItem().toString(), title, current_amount, spinnerPeriod.getSelectedItem().toString());
+        planRef.child(id).setValue(plans);
 
         Intent data = new Intent();
         data.putExtra(PLAN_TYPE, spinnerType.getSelectedItem().toString());

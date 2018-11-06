@@ -252,6 +252,9 @@ public class HomeActivity extends Fragment {
 //        arr_plan.add(2000f);
 //    }
 
+    public double getCurrentTotal() {
+        return mIncome;
+    }
     protected void getSpentData(){
         arr_spent = new ArrayList<Float>();
 
