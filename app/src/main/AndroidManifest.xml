@@ -29,13 +29,8 @@
             android:parentActivityName=".MainActivity"/>
         <activity android:name=".crud.DetailPlanActivity"
             android:parentActivityName=".MainActivity"/>
-        <activity android:name=".ExpenseCreateActivity"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".ExpenseEdit"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".ExpenseEditConfirm"/>
-        <activity android:name=".ExpenseDelete"/>
-        <activity android:name=".ExpenseConfirm"/>
+        <activity android:name=".ExpenseAddEditExpenseR"/>
+        <activity android:name=".CameraActivity"></activity>
         <activity android:name=".receiptocr.CameraActivity"></activity>
     </application>
 

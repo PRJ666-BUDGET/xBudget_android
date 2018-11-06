@@ -1,14 +1,12 @@
-package com.prj666_183a06.xbudget.database.entity;
+package com.prj666_183a06.xbudget.ExpenseRoom;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-import com.prj666_183a06.xbudget.model.Expense;
-
 @Entity(tableName = "expense_table")
-public class ExpenseEntity implements Expense {
+public class Expense{
 
     @NonNull
     @PrimaryKey(autoGenerate = true)
@@ -18,24 +16,22 @@ public class ExpenseEntity implements Expense {
     @ColumnInfo(name = "expense_store")
     private String expenseStore;
 
-    @ColumnInfo(name = "expense_date")
-    private String expenseDate;
-
-    @ColumnInfo(name = "expense_category")
-    private double expenseCategory;
-
     @ColumnInfo(name = "expense_item")
     private String expenseItem;
 
-    @ColumnInfo(name = "expense_total")
-    private  String expenseTotal;
+    @ColumnInfo(name = "expense_cost")
+    private double expenseCost;
 
-    public ExpenseEntity(String expenseStore, String expenseDate, double expenseCategory, String expenseItem, String expenseTotal) {
+
+    @ColumnInfo(name = "expense_date")
+    private String expenseDate;
+
+    public Expense(String expenseStore, String expenseDate, String expenseItem, double expenseCost) {
         this.expenseStore = expenseStore;
-        this.expenseDate = expenseDate;
-        this.expenseCategory = expenseCategory;
+        //this.expenseCategory = expenseCategory;
         this.expenseItem = expenseItem;
-        this.expenseTotal = expenseTotal;
+        this.expenseDate = expenseDate;
+        this.expenseCost = expenseCost;
     }
 
     @NonNull
@@ -63,13 +59,6 @@ public class ExpenseEntity implements Expense {
         this.expenseDate = expenseDate;
     }
 
-    public double getExpenseCategory() {
-        return expenseCategory;
-    }
-
-    public void setExpenseCategory(double expenseCategory) {
-        this.expenseCategory = expenseCategory;
-    }
 
     public String getExpenseItem() {
         return expenseItem;
@@ -79,11 +68,11 @@ public class ExpenseEntity implements Expense {
         this.expenseItem = expenseItem;
     }
 
-    public String getExpenseTotal() {
-        return expenseTotal;
+    public double getExpenseCost() {
+        return expenseCost;
     }
 
-    public void setExpenseTotal(String expenseTotal) {
-        this.expenseTotal = expenseTotal;
+    public void setExpenseCost(double expenseTotal) {
+        this.expenseCost = expenseTotal;
     }
 }
