@@ -39,6 +39,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/preview_box"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="75dp"
+            android:paddingRight="75dp"
+            android:src="@drawable/preview_rectangle" />
+
         <com.prj666_183a06.xbudget.camera.GraphicOverlay
             android:id="@+id/graphicOverlay"
             android:layout_width="match_parent"

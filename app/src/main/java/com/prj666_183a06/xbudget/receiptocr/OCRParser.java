@@ -1,5 +1,8 @@
 package com.prj666_183a06.xbudget.receiptocr;
 
+import android.util.Log;
+import android.util.SparseArray;
+
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.text.TextBlock;
 import com.prj666_183a06.xbudget.camera.GraphicOverlay;
@@ -26,7 +29,7 @@ public class OCRParser implements Detector.Processor<TextBlock> {
      */
     @Override
     public void receiveDetections(Detector.Detections<TextBlock> detections) {
-        graphicOverlay.clear();
+//        graphicOverlay.clear();
 //        SparseArray<TextBlock> items = detections.getDetectedItems();
 //        for (int i = 0; i < items.size(); ++i) {
 //            TextBlock item = items.valueAt(i);

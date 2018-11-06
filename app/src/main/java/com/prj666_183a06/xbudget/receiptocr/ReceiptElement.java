@@ -31,7 +31,7 @@ public class ReceiptElement {
 
     private Float numValue = null;
     private Boolean isNumber;
-    private String numberChar = "[\\doli]";
+    private String numberChar = "[\\doli]"; //TODO 9 can be interpreted as g
     private String decimalChar = "[\\,\\.]";
     List<String> possibleAssociation;
 
@@ -46,7 +46,11 @@ public class ReceiptElement {
     }
 
     private boolean parseNumber(){
-        //sorted from most likely to least likely indicator of type
+        //sorted from most liakely to least likely indicator of type
+        if(Pattern.compile(decimalChar + ".*" + decimalChar).matcher(value).find()) {
+            //multiple decimals
+            return false;
+        }
         if(Pattern.compile(decimalChar + numberChar + numberChar + "Z").matcher(value).find()) {
             //Almost Guarantee number
             return true;
@@ -58,7 +62,7 @@ public class ReceiptElement {
         //check for X.XX value
         if(value.contains(decimalChar + numberChar + numberChar)) {
             //Very Likely number
-            return true;
+            //return true;
         }
         //check if there is a number
         if(Pattern.compile("[\\d]").matcher(value).find()) {
@@ -68,17 +72,17 @@ public class ReceiptElement {
         //check if there is a decemal
         if(value.contains("[\\.\\,]")) {
             //possible number
-            return true;
+            //return true;
         }
         //check if letters are common numbers
         if(value.contains("[oli]")) {
             //possible number
-            return true;
+            //return true;
         }
         //check if there are letters
         if(value.contains("[\\w]")) {
             //possible word
-            return false;
+            //return false;
         }
         //unknown
         return false;
