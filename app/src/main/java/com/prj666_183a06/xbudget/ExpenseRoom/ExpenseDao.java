@@ -27,6 +27,8 @@ public interface ExpenseDao {
     @Query("SELECT * FROM expense_table ORDER BY expense_date DESC")
     LiveData<List<Expense>> getAllExpense();
 
-    @Query("SELECT * FROM expense_table")
+    //Outside stuff
+    @Query("SELECT SUM(expense_cost) FROM expense_table")
     double getTotalCost();
+
 }
