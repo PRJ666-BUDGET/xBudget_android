@@ -1,4 +1,4 @@
-package com.prj666_183a06.xbudget;
+package com.prj666_183a06.xbudget.receiptocr;
 
 
 import android.Manifest;
@@ -14,8 +14,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.hardware.Camera;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -35,18 +33,20 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.text.Line;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
+import com.prj666_183a06.xbudget.R;
 import com.prj666_183a06.xbudget.camera.CameraSourcePreview;
 import com.prj666_183a06.xbudget.camera.GraphicOverlay;
-import com.google.android.gms.vision.text.TextRecognizer;
 
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import static com.google.android.gms.vision.Frame.ROTATION_270;
+import static com.google.android.gms.vision.Frame.ROTATION_90;
 
 public final class CameraActivity extends AppCompatActivity {
     private static final String TAG = "OcrCaptureActivity";
@@ -74,6 +74,7 @@ public final class CameraActivity extends AppCompatActivity {
 
     private ImageView image;
     private TextView textOut;
+    private TextView receiptSum;
 
     private Bitmap bitmap;
     /**
@@ -88,6 +89,7 @@ public final class CameraActivity extends AppCompatActivity {
         graphicOverlay = (GraphicOverlay<CameraOverlay>) findViewById(R.id.graphicOverlay);
         image = (ImageView) findViewById(R.id.CameraImageView);
         textOut = (TextView) findViewById(R.id.ReceiptTextDisplay);
+        receiptSum = (TextView) findViewById(R.id.ReceiptSum);
 
         // Set good defaults for capturing text.
         boolean autoFocus = true;
@@ -326,50 +328,144 @@ public final class CameraActivity extends AppCompatActivity {
      */
     private boolean onTap(float rawX, float rawY) {
 
-        //quickly react to press
-        image.setVisibility(View.VISIBLE);
+        cameraSource.takePicture(new CameraSource.ShutterCallback() {
+                     @Override
+                     public void onShutter() {
+                         textOut.setText("Loading Please Wait Message"); //TODO: replace please wait message with something more permanent
+                         textOut.setVisibility(View.VISIBLE);
+                     }
+                 },
+                new CameraSource.PictureCallback() {
+                    @Override
+                    public void onPictureTaken(byte[] data) {
 
-        //collect image
-//        InputStream stream = getResources().openRawResource(R.raw.receiptdemo); //TODO: Replace this with a demo/real toggle
-//        Bitmap bitmap = BitmapFactory.decodeStream(stream);
+                        cameraSource.stop();
+
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+
+                        //scale image
+                        Matrix matrix = new Matrix();
+                        matrix.postScale((float) 0.50, (float) 0.50);
+                        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+
+                        //Parse Text
+                        Frame frame = new Frame.Builder().setBitmap(bitmap).setRotation(ROTATION_90).build();
+                        SparseArray<TextBlock> items = textRecognizer.detect(frame);
+
+                        Snackbar.make(graphicOverlay, "Demo data built",
+                                Snackbar.LENGTH_LONG)
+                                .show();
+
+                        //Parse Objects to text with layout
+                        List<String> output = new ArrayList<String>();
+                        List<Integer> xAxis = new ArrayList<Integer>();
+                        List<Integer> yAxis = new ArrayList<Integer>();
+                        for (int i = 0; i < items.size(); ++i) {
+                            TextBlock item = items.valueAt(i);
+                            //pull lines out of block
+                            List<Line> lines = (List<Line>) item.getComponents();
+                            for (int j = 0; j < lines.size(); ++j) {
+                                Line line = lines.get(j);
+                                if (line != null && line.getValue() != null) {
+                                    output.add(line.getValue());
+                                    xAxis.add(line.getBoundingBox().left / 50);
+                                    yAxis.add(line.getBoundingBox().top / 50);
+                                }
+                            }
+                        }
+
+                        //bubble sort the list=
+                        for (int i = 0; i < output.size(); i++)
+
+                            // Last i elements are already in place
+                            for (int j = 0; j < output.size() - i - 1; j++)
+                                if (yAxis.get(j) > yAxis.get(j + 1)) {
+                                    Collections.swap(yAxis, j, j + 1);
+                                    Collections.swap(xAxis, j, j + 1);
+                                    Collections.swap(output, j, j + 1);
+                                }
 
 
-        cameraSource.takePicture(null, new CameraSource.PictureCallback(){
 
-            @Override
-            public void onPictureTaken(byte[] data) {
+                        //make lines into elements
+                        ArrayList<ReceiptElement> receiptElements = new ArrayList<>();
+                        for (int i = 0; i < items.size(); ++i) {
+                            TextBlock item = items.valueAt(i);
+                            List<Line> lines = (List<Line>) item.getComponents();
+                            for (int j = 0; j < lines.size(); ++j) {
+                                Line line = lines.get(j);
+                                if (line != null && line.getValue() != null) {
+                                    receiptElements.add(new ReceiptElement(line));
+                                }
+                            }
+                        }
 
-                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                image.setImageBitmap(bitmap);
+                        //bubble sort elements
+                        for (int i = 0; i < receiptElements.size(); i++) {
+                            // Last i elements are already in place
+                            for (int j = 0; j < receiptElements.size() - i - 1; j++) {
+                                if (receiptElements.get(j).getLine().getBoundingBox().top > receiptElements.get(j + 1).getLine().getBoundingBox().top) {
+                                    Collections.swap(receiptElements, j, j + 1);
+                                }
+                            }
+                        }
 
-                //scale image
-                Matrix matrix = new Matrix();
-                matrix.postScale((float)0.50, (float)0.50);
-                matrix.postRotate(90);
-                bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+                        String layout = new String();
+                        for (int i = 0; i < receiptElements.size(); i++) {
+                            layout += receiptElements.get(i).getValue();
 
-                //Parse Text
-                Frame frame = new Frame.Builder().setBitmap(bitmap).build();
-                SparseArray<TextBlock> items = textRecognizer.detect(frame);
+                            if(receiptElements.get(i).inNumber()) layout += " DETECTED NUMBER";
+                            if(receiptElements.get(i).isTotal()) layout += " DETECTED TOTAL";
 
-                Snackbar.make(graphicOverlay, "Demo data built",
-                        Snackbar.LENGTH_LONG)
-                        .show();
+                            layout +=  System.lineSeparator();
 
-                //Turn Text To String
-                String output = new String();
-                for (int i = 0; i < items.size(); ++i) {
-                    TextBlock item = items.valueAt(i);
-                    if (item != null && item.getValue() != null) {
-                        output = output + item.getValue();
+                        }
+
+                        textOut.setText(layout);
+
+                        //TODO: Predict total, look for "Total" "Takeout Total" remove colo
+                        //TODO: Convert comma to period
+                        //TODO Arange rows and columns
+
+                        String summary;
+
+                        //get all elements that are detected as 'total'
+                        ArrayList<ReceiptElement> possibleTotals = new ArrayList<>();
+                        for (int i = 0; i < receiptElements.size(); i++){
+                            if(receiptElements.get(i).isTotal()){
+                                //find what number is associated
+                                int closestIndex = 0;
+                                float closestValue = 99999;
+                                for(int j = 0; j < receiptElements.size(); j++){
+                                    if(receiptElements.get(j).inNumber()){
+                                        if(     Math.abs(receiptElements.get(j).getLine().getBoundingBox().top) -
+                                                Math.abs(receiptElements.get(i).getLine().getBoundingBox().top)
+                                                < Math.abs(closestValue)){
+                                            closestValue = receiptElements.get(j).getNumValue();
+                                            closestIndex = j;
+                                        }
+                                    }
+                                }
+                                possibleTotals.add(receiptElements.get(closestIndex));
+                            }
+                        }
+
+                        //get largest of possible total
+                        int largestTotalIndex = 0;
+                        int largestTotalValue = 0;
+                        for(int i = 0; i < possibleTotals.size(); i++){
+                            if(possibleTotals.get(i).getNumValue() > largestTotalValue){
+                                largestTotalIndex = i;
+                            }
+                        }
+
+                        summary = "Total is:" + possibleTotals.get(largestTotalIndex).getValue();
+                        receiptSum.setText(summary);
+
+
                     }
-                }
 
-                textOut.setText(output);
-                textOut.setVisibility(View.VISIBLE);
-            }
-
-        });
+                });
         return false;
     }
 
