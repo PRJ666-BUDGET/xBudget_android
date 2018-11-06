@@ -46,4 +46,8 @@ public class ExpenseViewModel extends AndroidViewModel {
         repository.deleteAll();
     }
 
+    public double getTotal(){
+        return repository.getTotalCost();
+    }
+
 }

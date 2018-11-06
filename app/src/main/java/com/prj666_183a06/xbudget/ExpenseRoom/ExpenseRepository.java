@@ -3,6 +3,7 @@ package com.prj666_183a06.xbudget.ExpenseRoom;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.util.List;
 
@@ -39,8 +40,30 @@ public class ExpenseRepository /*implements AsyncResult*/ {
     }
 
     public double getTotalCost(){
-        return 0;
+        getTotalAsyncTask arr = new getTotalAsyncTask(expenseDao);
+        arr.execute();
+        return arr.ret();
     }
+
+    private static class getTotalAsyncTask extends AsyncTask<Expense, Void, Void>{
+        private ExpenseDao expenseDao;
+        private static double ret;
+        private getTotalAsyncTask(ExpenseDao expenseDao){
+            this.expenseDao = expenseDao;
+        }
+
+        @Override
+        protected Void doInBackground(Expense...expenses){
+            this.ret = expenseDao.getTotalCost();
+            Log.e("ret in background", ""+ret);
+            return null;
+        }
+        public double ret(){
+            Log.e("ret in function", ""+ret);
+            return ret;
+        }
+    }
+
     private static class InsertExpenseAsyncTask extends AsyncTask<Expense, Void, Void>{
         private ExpenseDao expenseDao;
 

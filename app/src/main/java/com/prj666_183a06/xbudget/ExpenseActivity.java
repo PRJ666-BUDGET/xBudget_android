@@ -48,6 +48,15 @@ public class ExpenseActivity extends Fragment{
             }
         });
 
+        /*FloatingActionButton buttonTest = view.findViewById(R.id.test);
+        buttonTest.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), test_activity.class);
+                startActivity(intent);
+            }
+        });*/
+
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
@@ -62,6 +71,7 @@ public class ExpenseActivity extends Fragment{
                 adapter.submitList(expenses);
             }
         });
+
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override

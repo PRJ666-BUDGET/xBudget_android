@@ -6,6 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
 
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
@@ -21,9 +22,12 @@
         app:layout_anchor="@+id/recycler_view"
         app:layout_anchorGravity="right|bottom"/>
 
-    <TextView
+    <!--<android.support.design.widget.FloatingActionButton
+        android:id="@+id/test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""/>
+        android:src="@drawable/ic_add"
+        app:layout_anchor="@+id/recycler_view"
+        app:layout_anchorGravity="bottom"/>-->
 
 </android.support.design.widget.CoordinatorLayout>
