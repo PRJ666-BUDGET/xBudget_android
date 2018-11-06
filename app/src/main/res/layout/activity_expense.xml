@@ -6,11 +6,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
 
+
+    <TextView
+        android:id="@+id/double_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Testing"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:listitem="@layout/expense_item"/>
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/button_add_expense"
@@ -20,10 +28,12 @@
         android:src="@drawable/ic_add"
         app:layout_anchor="@+id/recycler_view"
         app:layout_anchorGravity="right|bottom"/>
-
-    <TextView
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""/>
+        android:src="@drawable/ic_add"
+        app:layout_anchor="@+id/recycler_view"
+        app:layout_anchorGravity="bottom"/>
 
 </android.support.design.widget.CoordinatorLayout>
