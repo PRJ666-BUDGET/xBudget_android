@@ -31,7 +31,7 @@ public class ReceiptElement {
 
     private Float numValue = null;
     private Boolean isNumber;
-    private String numberChar = "[\\doli]";
+    private String numberChar = "[\\doli]"; //TODO 9 can be interpreted as g
     private String decimalChar = "[\\,\\.]";
     List<String> possibleAssociation;
 
