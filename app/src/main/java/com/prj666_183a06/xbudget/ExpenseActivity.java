@@ -48,14 +48,14 @@ public class ExpenseActivity extends Fragment{
             }
         });
 
-        FloatingActionButton buttonTest = view.findViewById(R.id.test);
+        /*FloatingActionButton buttonTest = view.findViewById(R.id.test);
         buttonTest.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), test_activity.class);
                 startActivity(intent);
             }
-        });
+        });*/
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
