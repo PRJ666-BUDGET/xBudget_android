@@ -9,14 +9,14 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import com.prj666_183a06.xbudget.database.dao.ExpenseDao;
+import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseDao;
 import com.prj666_183a06.xbudget.database.dao.PlanDao;
-import com.prj666_183a06.xbudget.database.entity.ExpenseEntity;
+import com.prj666_183a06.xbudget.ExpenseRoom.Expense;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
 
 import static com.prj666_183a06.xbudget.database.AppDatabase.DATABASE_VERSION;
 
-@Database(entities = {PlanEntity.class, ExpenseEntity.class}, version = DATABASE_VERSION)
+@Database(entities = {PlanEntity.class, Expense.class}, version = DATABASE_VERSION)
 public abstract class AppDatabase extends RoomDatabase {
 
     // for Singleton
