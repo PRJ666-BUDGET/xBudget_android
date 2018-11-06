@@ -12,28 +12,45 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Store"
-        android:inputType="text"/>
+        android:inputType="text" />
 
     <EditText
         android:id="@+id/edit_text_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Item"
-        android:inputType="text"/>
+        android:inputType="text" />
 
     <EditText
         android:id="@+id/edit_text_cost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Cost"
-        android:inputType="numberDecimal"/>
+        android:inputType="numberDecimal" />
 
-    <TextView
-        android:id="@+id/edit_date_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Date"
-        android:textSize="18dp"
-        android:inputType="text"/>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/date_text"
+            style="@style/Base.Widget.AppCompat.EditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:hint="Date: " />
+
+        <TextView
+            android:id="@+id/edit_date_view"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/date_text"
+            android:gravity="center"
+            android:hint="Date"
+            android:inputType="text"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium.Inverse"
+            android:textColor="#000000" />
+    </RelativeLayout>
 
 </LinearLayout>

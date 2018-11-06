@@ -23,7 +23,6 @@ public class ExpenseRepository /*implements AsyncResult*/ {
     }
 
     public void update(Expense expense){
-
         new UpdateExpenseAsyncTask(expenseDao).execute(expense);
     }
 
@@ -39,6 +38,9 @@ public class ExpenseRepository /*implements AsyncResult*/ {
         return allExpenses;
     }
 
+    public double getTotalCost(){
+        return 0;
+    }
     private static class InsertExpenseAsyncTask extends AsyncTask<Expense, Void, Void>{
         private ExpenseDao expenseDao;
 
@@ -66,6 +68,7 @@ public class ExpenseRepository /*implements AsyncResult*/ {
             return null;
         }
     }
+
     private static class DeleteExpenseAsyncTask extends AsyncTask<Expense, Void, Void>{
         private ExpenseDao expenseDao;
 

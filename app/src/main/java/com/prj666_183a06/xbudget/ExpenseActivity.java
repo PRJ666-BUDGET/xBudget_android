@@ -33,39 +33,6 @@ public class ExpenseActivity extends Fragment{
     public static final int EDIT_REQUEST= 2;
     private ExpenseViewModel expenseViewModel;
 
-    /*@Override
-    public void onCreateContextMenu(final ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        menu.setHeaderTitle("Context Menu");
-        menu.add(0, 0, 0, "Edit");
-        menu.add(0, 1, 0, "Delete");
-
-        /*for(int i = 0; i < menu.size(); i++){
-            menu.getItem(i).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem menuItem) {
-
-                    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuItem.getMenuInfo();
-                    int listPosition = info.position;
-                    Intent intent;
-                    switch(menuItem.getItemId()){
-                        case 0:
-                            intent = new Intent (getActivity(), ExpenseEdit.class);
-                            intent.putExtra("position", listPosition);
-                            startActivity(intent);
-                            break;
-                        case 1:
-                            intent = new Intent (getActivity(), ExpenseDelete.class);
-                            intent.putExtra("position", listPosition);
-                            startActivity(intent);
-                            break;
-                    }
-                    return false;
-                }
-            });
-        }
-    }*/
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -92,7 +59,7 @@ public class ExpenseActivity extends Fragment{
         expenseViewModel.getAllExpenses().observe(this, new Observer<List<Expense>>() {
             @Override
             public void onChanged(@Nullable List<Expense> expenses) {
-                adapter.setExpenses(expenses);
+                adapter.submitList(expenses);
             }
         });
 
@@ -121,6 +88,7 @@ public class ExpenseActivity extends Fragment{
                 startActivityForResult(intent, EDIT_REQUEST);
             }
         });
+        
         return view;
     }
 
