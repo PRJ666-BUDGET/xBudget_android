@@ -3,6 +3,7 @@ package com.prj666_183a06.xbudget.database;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.prj666_183a06.xbudget.database.dao.PlanDao;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
@@ -13,15 +14,37 @@ public class PlanRepository {
 
     private PlanDao planDao;
     private LiveData<List<PlanEntity>> planList;
-    private LiveData<List<PlanEntity>> planIncomeTotal;
-    private LiveData<List<PlanEntity>> planSavingTotal;
 
     public PlanRepository(Application application) {
         AppDatabase database = AppDatabase.getInstance(application);
         planDao = database.planDao();
         planList = planDao.getAllPlans();
-        planIncomeTotal = planDao.getPlanIncomeTotal();
-        planSavingTotal = planDao.getPlanSavingTotal();
+    }
+
+    public double getTotalCost(){
+        getTotalAsyncTask arr = new getTotalAsyncTask(planDao);
+        arr.execute();
+        return arr.ret();
+    }
+
+    private static class getTotalAsyncTask extends AsyncTask<PlanEntity, Void, Void>{
+        private PlanDao planDao_total;
+        private static double ret;
+        private getTotalAsyncTask(PlanDao planDao_total){
+            this.planDao_total = planDao_total;
+        }
+
+        @Override
+        protected Void doInBackground(PlanEntity...plans){
+            this.ret = planDao_total.getPlanIncomeTotalDaily() + planDao_total.getPlanIncomeTotalWeekly()
+                       + planDao_total.getPlanIncomeTotalBiweekly() + planDao_total.getPlanIncomeTotalMonthly();
+            Log.e("ret in background", ""+ret);
+            return null;
+        }
+        public double ret(){
+            Log.e("ret in function", ""+ret);
+            return ret;
+        }
     }
 
     public void getPlanById(PlanEntity plan) {
@@ -47,10 +70,6 @@ public class PlanRepository {
     public LiveData<List<PlanEntity>> getPlanList() {
         return planList;
     }
-
-    public LiveData<List<PlanEntity>> getPlanIncomeTotal() { return planIncomeTotal; }
-
-    public LiveData<List<PlanEntity>> getPlanSavingTotal() { return planSavingTotal; }
 
     // TODO: 2018-10-16 planDao.getPlanById(position)
     private static class GetPlanAsyncTask extends  AsyncTask<PlanEntity, Void, Void> {
