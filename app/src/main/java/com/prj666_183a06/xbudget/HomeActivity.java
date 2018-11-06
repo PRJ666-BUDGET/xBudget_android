@@ -1,5 +1,6 @@
 package com.prj666_183a06.xbudget;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -29,8 +30,10 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseViewModel;
 import com.prj666_183a06.xbudget.receiptocr.CameraActivity;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
+import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -52,10 +55,20 @@ public class HomeActivity extends Fragment {
     Locale locale;
     NumberFormat fmt;
 
+    private PlanViewModel planViewModel;
+    private ExpenseViewModel expenseViewModel;
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("xBudget");
+
+        //initialize and define the ExepnseViewModel example object
+//        planViewModel = ViewModelProviders.of(this).get(PlanViewModel.class);
+//        mIncome = planViewModel.getTotal();
+
+//        expenseViewModel = ViewModelProviders.of(this).get(ExpenseViewModel.class);
+//        mSpent = expenseViewModel.getTotal();
     }
 
     @Nullable
@@ -68,8 +81,12 @@ public class HomeActivity extends Fragment {
         fmt = NumberFormat.getCurrencyInstance(locale);
 
         // Get Data
-        mIncome = 2000.00;
-        mSpent = 1260.00;
+        planViewModel = ViewModelProviders.of(this).get(PlanViewModel.class);
+        mIncome = planViewModel.getTotal();
+
+        expenseViewModel = ViewModelProviders.of(this).get(ExpenseViewModel.class);
+//        mSpent = 1260.00;
+        mSpent = expenseViewModel.getTotal();
         mBalance = mIncome - mSpent;
         mRate = mSpent / mIncome;
 
@@ -165,12 +182,12 @@ public class HomeActivity extends Fragment {
         str_label.add("30");
     }
 
-    protected void getPlanData(){
-
-        arr_plan = new ArrayList<Float>();
-
-        arr_plan.add(2000f);
-    }
+//    protected void getPlanData(){
+//
+//        arr_plan = new ArrayList<Float>();
+//
+//        arr_plan.add(2000f);
+//    }
 
     protected void getSpentData(){
         arr_spent = new ArrayList<Float>();
@@ -225,7 +242,7 @@ public class HomeActivity extends Fragment {
     protected BarData generateBarData() {
         ArrayList<BarEntry> entries = new ArrayList<BarEntry>();
 
-        float v_expenses = 70;
+        float v_expenses = (float) (mSpent/mIncome * 100);
         float v_balance = 100 - v_expenses;
 
         entries.add(new BarEntry(1, new float[] {v_expenses, v_balance}, ""));
@@ -246,8 +263,6 @@ public class HomeActivity extends Fragment {
 
     protected LineData generateLineData() {
         PlanEntity plan = new PlanEntity("income" ,"", 0, "bi-weekly");
-//        PlanEntity plan;
-//        plan.getAllPlans();
 
         ArrayList<Entry> budget_arrList = new ArrayList<Entry>();
         ArrayList<Entry> expenses_arrList = new ArrayList<Entry>();
@@ -257,16 +272,18 @@ public class HomeActivity extends Fragment {
 
         ArrayList<ILineDataSet> iLineDataSets = new ArrayList<ILineDataSet>();
 
-        getPlanData();
+//        getPlanData();
         getSpentData();
         getStringLabels();
 
         // Budget Dataset
         for(int i=1; i < 31; i+=7){
-            budget_arrList.add(new Entry(i, arr_plan.get(0)));
+//            budget_arrList.add(new Entry(i, arr_plan.get(0)));
+            budget_arrList.add(new Entry(i, (float) mIncome));
         }
 
         int temp = 0;
+
         // Budget Dataset
         for(int i=1; i < 31; i+=7){
             expenses_arrList.add(new Entry(i, arr_spent.get(temp)));
