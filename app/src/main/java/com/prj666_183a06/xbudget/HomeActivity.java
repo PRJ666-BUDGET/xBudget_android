@@ -54,10 +54,10 @@ public class HomeActivity extends Fragment {
     private HorizontalBarChart mBar;
     private Typeface tf;
 
-    private double mIncome, mSpent, mBalance, mRate;
+    private double mIncome, mSpent, mBalance, mRate, mAccSpent;
     List<String> str_label;
     private List<Float> arr_plan;
-    private List<Float> arr_spent;
+    private List<Float> arr_spent = new ArrayList<Float>();
 
     Fragment fragment;
     Locale locale;
@@ -243,32 +243,30 @@ public class HomeActivity extends Fragment {
 //    }
 
     protected void getSpentData(){
-        arr_spent = new ArrayList<Float>();
-//        arr_spent.add(0f);
+        expenseRef.addValueEventListener(new ValueEventListener() {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                arr_spent.clear();
+                mAccSpent = 0;
+                for (DataSnapshot planData : dataSnapshot.getChildren()) {
+                    Expenses expensesValue = planData.getValue(Expenses.class);
+                    mAccSpent += expensesValue.getExpenseCost();
+                    arr_spent.add((float) mAccSpent);
+                }
+            }
 
-//        expenseRef.addValueEventListener(new ValueEventListener() {
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                arr_spent.clear();
-//                for (DataSnapshot planData : dataSnapshot.getChildren()) {
-//                    Expenses expensesValue = planData.getValue(Expenses.class);
-//                    arr_spent.add((float) expensesValue.getExpenseCost());
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError error) {
-//                System.out.println("The read failed!!!");
-//            }
-//        });
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.out.println("The read failed!!!");
+            }
+        });
 
         if (arr_spent.size() == 0) {
-            arr_spent.add(170f);
+            arr_spent.add(0f);
             arr_spent.add(220f);
             arr_spent.add(530f);
             arr_spent.add(700f);
             arr_spent.add(1070f);
         }
-
     }
 
     private void getBarChart(View v) {
@@ -359,7 +357,10 @@ public class HomeActivity extends Fragment {
 //            expenses_arrList.add(new Entry(i, arr_spent.get(temp)));
 //            temp++;
 //        }
-        for(int i=1; i < arr_spent.size(); i++){
+
+        expenses_arrList.add(new Entry(0, 0f));
+
+        for(int i=1; i <= arr_spent.size(); i++){
             expenses_arrList.add(new Entry(i, arr_spent.get(temp)));
             temp++;
         }
