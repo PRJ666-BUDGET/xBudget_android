@@ -16,6 +16,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.prj666_183a06.xbudget.database.Expenses;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -38,6 +42,8 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
     private EditText editStore, editItem, editCost;
     private TextView editDate;
     static DatePickerDialog.OnDateSetListener dateListener;
+    private DatabaseReference expenseRef = FirebaseDatabase.getInstance().getReference("expenses");
+    private double tempAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +97,7 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
             editItem.setText(intent.getStringExtra(EXTRA_ITEM));
             editCost.setText(""+intent.getDoubleExtra(EXTRA_COST, 0.0));
             editDate.setText(intent.getStringExtra(EXTRA_DATE));
+            tempAmount = intent.getDoubleExtra(EXTRA_COST, 0.0);
         }else{
             setTitle("Create Expense");
         }
@@ -129,6 +136,15 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
         if(id != -1){
             data.putExtra(EXTRA_ID, id);
         }
+
+        String expId = expenseRef.push().getKey();
+        double newAmount = Double.valueOf(cost);
+        if (tempAmount != newAmount){
+            newAmount -= tempAmount;
+        }
+
+        Expenses expenses = new Expenses(store, item, newAmount, date);
+        expenseRef.child(expId).setValue(expenses);
 
         setResult(RESULT_OK, data);
         finish();

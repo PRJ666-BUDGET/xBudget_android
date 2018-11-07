@@ -31,6 +31,14 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseViewModel;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.prj666_183a06.xbudget.database.Expenses;
+import com.prj666_183a06.xbudget.database.Plans;
 import com.prj666_183a06.xbudget.receiptocr.CameraActivity;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
 import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
@@ -46,29 +54,28 @@ public class HomeActivity extends Fragment {
     private HorizontalBarChart mBar;
     private Typeface tf;
 
-    private double mIncome, mSpent, mBalance, mRate;
+    private double mIncome, mSpent, mBalance, mRate, mAccSpent;
     List<String> str_label;
     private List<Float> arr_plan;
-    private List<Float> arr_spent;
+    private List<Float> arr_spent = new ArrayList<Float>();
 
     Fragment fragment;
     Locale locale;
     NumberFormat fmt;
 
-    private PlanViewModel planViewModel;
-    private ExpenseViewModel expenseViewModel;
+    private DatabaseReference planRef = FirebaseDatabase.getInstance().getReference("plans");
+    private DatabaseReference expenseRef = FirebaseDatabase.getInstance().getReference("expenses");
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("xBudget");
 
-        //initialize and define the ExepnseViewModel example object
-//        planViewModel = ViewModelProviders.of(this).get(PlanViewModel.class);
-//        mIncome = planViewModel.getTotal();
+        // Write a message to the database - test
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRef = database.getReference("message");
+//        myRef.setValue("Hello, World!");
 
-//        expenseViewModel = ViewModelProviders.of(this).get(ExpenseViewModel.class);
-//        mSpent = expenseViewModel.getTotal();
     }
 
     @Nullable
@@ -80,13 +87,42 @@ public class HomeActivity extends Fragment {
         locale = Locale.CANADA;
         fmt = NumberFormat.getCurrencyInstance(locale);
 
-        // Get Data
-        planViewModel = ViewModelProviders.of(this).get(PlanViewModel.class);
-        mIncome = planViewModel.getTotal();
+        planRef.addValueEventListener(new ValueEventListener() {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mIncome = 0;
+                for (DataSnapshot planData : dataSnapshot.getChildren()) {
+                    Plans planValue = planData.getValue(Plans.class);
+                    if(planValue.getPlan_type().equals("income")){
+                        mIncome += planValue.getPlan_amount();
+                    }
+                }
+            }
 
-        expenseViewModel = ViewModelProviders.of(this).get(ExpenseViewModel.class);
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.out.println("The read failed!!!");
+            }
+        });
+
+        expenseRef.addValueEventListener(new ValueEventListener() {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mSpent = 0;
+                for (DataSnapshot planData : dataSnapshot.getChildren()) {
+                    Expenses expensesValue = planData.getValue(Expenses.class);
+                    mSpent += expensesValue.getExpenseCost();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.out.println("The read failed!!!");
+            }
+        });
+
+//        mIncome = ((MainActivity) getActivity()).getgIncome();
+
+        // Get Data
 //        mSpent = 1260.00;
-        mSpent = expenseViewModel.getTotal();
         mBalance = mIncome - mSpent;
         mRate = mSpent / mIncome;
 
@@ -174,6 +210,23 @@ public class HomeActivity extends Fragment {
 
     private void getStringLabels(){
         str_label = new ArrayList<String>();
+        str_label.add("1");
+
+        expenseRef.addValueEventListener(new ValueEventListener() {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                str_label.clear();
+                for (DataSnapshot planData : dataSnapshot.getChildren()) {
+                    Expenses expensesValue = planData.getValue(Expenses.class);
+                    str_label.add(expensesValue.getExpenseDate());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.out.println("The read failed!!!");
+            }
+        });
+
         str_label.add("5");
         str_label.add("10");
         str_label.add("15");
@@ -190,13 +243,30 @@ public class HomeActivity extends Fragment {
 //    }
 
     protected void getSpentData(){
-        arr_spent = new ArrayList<Float>();
+        expenseRef.addValueEventListener(new ValueEventListener() {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                arr_spent.clear();
+                mAccSpent = 0;
+                for (DataSnapshot planData : dataSnapshot.getChildren()) {
+                    Expenses expensesValue = planData.getValue(Expenses.class);
+                    mAccSpent += expensesValue.getExpenseCost();
+                    arr_spent.add((float) mAccSpent);
+                }
+            }
 
-        arr_spent.add(170f);
-        arr_spent.add(220f);
-        arr_spent.add(530f);
-        arr_spent.add(700f);
-        arr_spent.add(1070f);
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.out.println("The read failed!!!");
+            }
+        });
+
+        if (arr_spent.size() == 0) {
+            arr_spent.add(0f);
+            arr_spent.add(220f);
+            arr_spent.add(530f);
+            arr_spent.add(700f);
+            arr_spent.add(1070f);
+        }
     }
 
     private void getBarChart(View v) {
@@ -276,16 +346,21 @@ public class HomeActivity extends Fragment {
         getSpentData();
         getStringLabels();
 
-        // Budget Dataset
         for(int i=1; i < 31; i+=7){
-//            budget_arrList.add(new Entry(i, arr_plan.get(0)));
             budget_arrList.add(new Entry(i, (float) mIncome));
         }
 
         int temp = 0;
 
         // Budget Dataset
-        for(int i=1; i < 31; i+=7){
+//        for(int i=1; i < 31; i+=7){
+//            expenses_arrList.add(new Entry(i, arr_spent.get(temp)));
+//            temp++;
+//        }
+
+        expenses_arrList.add(new Entry(0, 0f));
+
+        for(int i=1; i <= arr_spent.size(); i++){
             expenses_arrList.add(new Entry(i, arr_spent.get(temp)));
             temp++;
         }

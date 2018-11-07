@@ -19,13 +19,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.prj666_183a06.xbudget.adapter.PlanAdapter;
 import com.prj666_183a06.xbudget.crud.CreateUpdatePlanActivity;
 import com.prj666_183a06.xbudget.crud.DetailPlanActivity;
+import com.prj666_183a06.xbudget.database.Plans;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
 import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -39,11 +47,32 @@ public class PlansActivity extends Fragment {
 
     private PlanViewModel planViewModel;
 
+    private DatabaseReference planRef = FirebaseDatabase.getInstance().getReference("plans");
+    double totalIncome;
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         getActivity().setTitle("Plans");
+
+        planRef.addValueEventListener(new ValueEventListener() {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                totalIncome = 0;
+                for (DataSnapshot planData : dataSnapshot.getChildren()) {
+                    Plans planValue = planData.getValue(Plans.class);
+                    if(planValue.getPlan_type().equals("income")){
+                        totalIncome += planValue.getPlan_amount();
+//                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.out.println("The read failed!!!");
+            }
+        });
     }
 
     @Nullable
@@ -157,8 +186,14 @@ public class PlansActivity extends Fragment {
 
             PlanEntity plan = new PlanEntity(type ,title, amount, period);
 
-            plan.setPlanId(id);
-            planViewModel.delete(plan);
+//            plan.setPlanId(id);
+//            planViewModel.delete(plan);
+//
+//            String tempId = planRef.push().getKey();
+//            double tempAmount = 0;
+//            tempAmount = amount * -1;
+//            Plans plans = new Plans(type, title, tempAmount, period);
+//            planRef.child(tempId).setValue(plans);
         }
         else{
 //            Toast.makeText(getActivity(), "BACK TO LIST VIEW FROM DETAIL VIEW [PlansActivity.java onActivityResult()]", Toast.LENGTH_SHORT).show();
@@ -200,6 +235,12 @@ public class PlansActivity extends Fragment {
             case R.id.delete_allPlan:
                 planViewModel.deleteAllPlans();
                 Toast.makeText(getActivity(), "All Plans are deleted", Toast.LENGTH_SHORT).show();
+
+                String id = planRef.push().getKey();
+                totalIncome *= -1;
+                Plans plans = new Plans("income", "deleteAll", totalIncome, "all");
+                planRef.child(id).setValue(plans);
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
