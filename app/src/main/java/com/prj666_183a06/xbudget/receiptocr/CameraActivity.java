@@ -512,6 +512,10 @@ public final class CameraActivity extends AppCompatActivity {
                         }
                         receiptSum.setText(summary);
 
+                        //display ReceiptFormActivity
+                        Intent myIntent = new Intent(CameraActivity.this, ReceiptFormActivity.class);
+                        myIntent.putExtra("ELEMENTS", receiptElements); //Optional parameters
+                        CameraActivity.this.startActivity(myIntent);
 
                     }
 
