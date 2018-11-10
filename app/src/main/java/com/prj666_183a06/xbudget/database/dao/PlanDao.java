@@ -39,7 +39,7 @@ public interface PlanDao {
     @Query("SELECT SUM(plan_amount)*52/12 FROM plan_table WHERE plan_type='income' AND plan_period='weekly'")
     double getPlanIncomeTotalWeekly();
 
-    @Query("SELECT SUMg(plan_amount)*26/12 FROM plan_table WHERE plan_type='income' AND plan_period='bi-weekly'")
+    @Query("SELECT SUM(plan_amount)*26/12 FROM plan_table WHERE plan_type='income' AND plan_period='bi-weekly'")
     double getPlanIncomeTotalBiweekly();
 
     @Query("SELECT SUM(plan_amount) FROM plan_table WHERE plan_type='income' AND plan_period='monthly'")
