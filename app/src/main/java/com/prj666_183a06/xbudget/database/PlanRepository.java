@@ -14,11 +14,15 @@ public class PlanRepository {
 
     private PlanDao planDao;
     private LiveData<List<PlanEntity>> planList;
+    private LiveData<List<PlanEntity>> planIncomeList;
+    private LiveData<List<PlanEntity>> planSavingList;
 
     public PlanRepository(Application application) {
         AppDatabase database = AppDatabase.getInstance(application);
         planDao = database.planDao();
         planList = planDao.getAllPlans();
+//        planIncomeList = planDao.getPlanIncomeList();
+//        planSavingList = planDao.getPlanSavingList();
     }
 
     public double getTotalCost(){
@@ -70,6 +74,10 @@ public class PlanRepository {
     public LiveData<List<PlanEntity>> getPlanList() {
         return planList;
     }
+
+    public LiveData<List<PlanEntity>> getPlanIncomeList() { return planIncomeList; }
+
+    public LiveData<List<PlanEntity>> getPlanSavingList() { return planSavingList; }
 
     // TODO: 2018-10-16 planDao.getPlanById(position)
     private static class GetPlanAsyncTask extends  AsyncTask<PlanEntity, Void, Void> {

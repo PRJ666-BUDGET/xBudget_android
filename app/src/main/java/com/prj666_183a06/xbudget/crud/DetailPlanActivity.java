@@ -13,11 +13,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.prj666_183a06.xbudget.R;
 import com.prj666_183a06.xbudget.adapter.PlanAdapter;
-import com.prj666_183a06.xbudget.database.Plans;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
 import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
@@ -44,7 +41,7 @@ public class DetailPlanActivity extends AppCompatActivity {
 
     private int id;
 
-    private DatabaseReference planRef = FirebaseDatabase.getInstance().getReference("plans");
+//    private DatabaseReference planRef = FirebaseDatabase.getInstance().getReference("plans");
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -107,24 +104,24 @@ public class DetailPlanActivity extends AppCompatActivity {
                     data.putExtra(PLAN_ID, planId);
                 }
 
-                String tempId = planRef.push().getKey();
-                double tempAmount = 0;
-                tempAmount = Double.parseDouble(amountRecord.getText().toString()) * -1;
-
-                switch (periodRecord.getText().toString()){
-                    case "daily":
-                        tempAmount = tempAmount * 365 / 12;
-                        break;
-                    case "weekly":
-                        tempAmount = tempAmount * 52 / 12;
-                        break;
-                    case "bi-weekly":
-                        tempAmount = tempAmount * 26 /12;
-                        break;
-                }
-
-                Plans plans = new Plans(typeRecord.getText().toString(), titleRecord.getText().toString(), tempAmount, periodRecord.getText().toString());
-                planRef.child(tempId).setValue(plans);
+//                String tempId = planRef.push().getKey();
+//                double tempAmount = 0;
+//                tempAmount = Double.parseDouble(amountRecord.getText().toString()) * -1;
+//
+//                switch (periodRecord.getText().toString()){
+//                    case "daily":
+//                        tempAmount = tempAmount * 365 / 12;
+//                        break;
+//                    case "weekly":
+//                        tempAmount = tempAmount * 52 / 12;
+//                        break;
+//                    case "bi-weekly":
+//                        tempAmount = tempAmount * 26 /12;
+//                        break;
+//                }
+//
+//                Plans plans = new Plans(typeRecord.getText().toString(), titleRecord.getText().toString(), tempAmount, periodRecord.getText().toString());
+//                planRef.child(tempId).setValue(plans);
 
                 setResult(RESULT_OK, data);
                 finish();
@@ -149,10 +146,8 @@ public class DetailPlanActivity extends AppCompatActivity {
                 newIntent.putExtra(CreateUpdatePlanActivity.PLAN_AMOUNT, Double.parseDouble(amountRecord.getText().toString()));
                 newIntent.putExtra(CreateUpdatePlanActivity.PLAN_PERIOD, periodRecord.getText().toString());
 
-
                 startActivityForResult(newIntent, EDIT_PLAN_REQUEST);
 //                Toast.makeText(this, "UPDATE REQUEST [DetailPlanActivity.java onOptionsItemSelected()], itemId: " + itemId, Toast.LENGTH_SHORT).show();
-
                 return true;
 
             default:
