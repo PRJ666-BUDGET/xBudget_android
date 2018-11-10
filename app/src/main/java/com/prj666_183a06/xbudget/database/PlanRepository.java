@@ -21,8 +21,8 @@ public class PlanRepository {
         AppDatabase database = AppDatabase.getInstance(application);
         planDao = database.planDao();
         planList = planDao.getAllPlans();
-        planIncomeList = planDao.getPlanIncomeList();
-        planSavingList = planDao.getPlanSavingList();
+//        planIncomeList = planDao.getPlanIncomeList();
+//        planSavingList = planDao.getPlanSavingList();
     }
 
     public double getTotalCost(){

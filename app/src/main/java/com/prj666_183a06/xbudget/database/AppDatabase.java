@@ -22,7 +22,7 @@ public abstract class AppDatabase extends RoomDatabase {
     // for Singleton
     public static AppDatabase instance;
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "xbudget";
 
     public abstract PlanDao planDao();

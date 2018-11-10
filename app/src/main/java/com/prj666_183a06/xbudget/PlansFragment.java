@@ -19,11 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.prj666_183a06.xbudget.adapter.PlanAdapter;
 import com.prj666_183a06.xbudget.crud.CreateUpdatePlanActivity;
 import com.prj666_183a06.xbudget.crud.DetailPlanActivity;
@@ -31,13 +28,11 @@ import com.prj666_183a06.xbudget.database.Plans;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
 import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
-public class PlansActivity extends Fragment {
+public class PlansFragment extends Fragment {
 
     private static final String TAG = "PlansFragment";
 
@@ -55,24 +50,24 @@ public class PlansActivity extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         getActivity().setTitle("Plans");
-
-        planRef.addValueEventListener(new ValueEventListener() {
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                totalIncome = 0;
-                for (DataSnapshot planData : dataSnapshot.getChildren()) {
-                    Plans planValue = planData.getValue(Plans.class);
-                    if(planValue.getPlan_type().equals("income")){
-                        totalIncome += planValue.getPlan_amount();
-//                        break;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println("The read failed!!!");
-            }
-        });
+//
+//        planRef.addValueEventListener(new ValueEventListener() {
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                totalIncome = 0;
+//                for (DataSnapshot planData : dataSnapshot.getChildren()) {
+//                    Plans planValue = planData.getValue(Plans.class);
+//                    if(planValue.getPlan_type().equals("income")){
+//                        totalIncome += planValue.getPlan_amount();
+////                        break;
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                System.out.println("The read failed!!!");
+//            }
+//        });
     }
 
     @Nullable
@@ -180,15 +175,15 @@ public class PlansActivity extends Fragment {
             Log.d(TAG, "onActivityResult: planId: " + id);
 
             if (id == -1) {
-                Toast.makeText(getActivity(), "BAD REQUEST [PlansActivity.java onActivityResult()], PlanId: " + id, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "BAD REQUEST [PlansFragment.java onActivityResult()], PlanId: " + id, Toast.LENGTH_SHORT).show();
                 return;
             }
 
             PlanEntity plan = new PlanEntity(type ,title, amount, period);
 
-//            plan.setPlanId(id);
-//            planViewModel.delete(plan);
-//
+            plan.setPlanId(id);
+            planViewModel.delete(plan);
+
 //            String tempId = planRef.push().getKey();
 //            double tempAmount = 0;
 //            tempAmount = amount * -1;
@@ -196,24 +191,9 @@ public class PlansActivity extends Fragment {
 //            planRef.child(tempId).setValue(plans);
         }
         else{
-//            Toast.makeText(getActivity(), "BACK TO LIST VIEW FROM DETAIL VIEW [PlansActivity.java onActivityResult()]", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), "BACK TO LIST VIEW FROM DETAIL VIEW [PlansFragment.java onActivityResult()]", Toast.LENGTH_SHORT).show();
         }
     }
-
-//        /**
-//         * DEMO DATA
-//         */
-//
-//        ArrayList<Object> planItems = new ArrayList<>();
-//        planItems.add(new String("Budget"));
-//        planItems.add(new PlanItem("budget", "Starbucks", "1000", "bi-weekly"));
-//        planItems.add(new PlanItem("budget", "Tutor", "400", "bi-weekly"));
-//
-//        planItems.add(new String("Saving"));
-//        planItems.add(new PlanItem("saving", "Coffee", "5", "daily"));
-//        planItems.add(new PlanItem("saving", "Lunch", "10", "daily"));
-//        planItems.add(new PlanItem("saving", "Cigarette", "15", "weekly"));
-//
 
     /**
      *  DELETE ALL PLANS FOR DEMO ONLY

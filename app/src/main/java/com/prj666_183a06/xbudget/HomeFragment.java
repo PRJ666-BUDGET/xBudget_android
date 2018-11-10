@@ -1,6 +1,5 @@
 package com.prj666_183a06.xbudget;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -15,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -29,26 +27,22 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
-import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseViewModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.prj666_183a06.xbudget.database.Expenses;
 import com.prj666_183a06.xbudget.database.Plans;
 import com.prj666_183a06.xbudget.receiptocr.CameraActivity;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
-import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class HomeActivity extends Fragment {
+public class HomeFragment extends Fragment {
 
     private LineChart mLine;
     private HorizontalBarChart mBar;
@@ -160,7 +154,7 @@ public class HomeActivity extends Fragment {
         mImgIncome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fragment = new PlansActivity();
+                fragment = new PlansFragment();
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.content_frame, fragment);
                 ft.addToBackStack(null);
@@ -182,7 +176,7 @@ public class HomeActivity extends Fragment {
         mImgBal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fragment = new ReportActivity();
+                fragment = new ReportFragment();
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.content_frame, fragment);
                 ft.addToBackStack(null);
