@@ -3,52 +3,27 @@ package com.prj666_183a06.xbudget.database;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
-import android.util.Log;
+import android.widget.TextView;
 
+import com.prj666_183a06.xbudget.HomeFragment;
+import com.prj666_183a06.xbudget.R;
 import com.prj666_183a06.xbudget.database.dao.PlanDao;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class PlanRepository {
 
     private PlanDao planDao;
     private LiveData<List<PlanEntity>> planList;
-    private LiveData<List<PlanEntity>> planIncomeList;
-    private LiveData<List<PlanEntity>> planSavingList;
+//    private LiveData<List<PlanEntity>> planIncomeList;
+//    private LiveData<List<PlanEntity>> planSavingList;
 
     public PlanRepository(Application application) {
         AppDatabase database = AppDatabase.getInstance(application);
         planDao = database.planDao();
         planList = planDao.getAllPlans();
-//        planIncomeList = planDao.getPlanIncomeList();
-//        planSavingList = planDao.getPlanSavingList();
-    }
-
-    public double getTotalCost(){
-        getTotalAsyncTask arr = new getTotalAsyncTask(planDao);
-        arr.execute();
-        return arr.ret();
-    }
-
-    private static class getTotalAsyncTask extends AsyncTask<PlanEntity, Void, Void>{
-        private PlanDao planDao_total;
-        private static double ret;
-        private getTotalAsyncTask(PlanDao planDao_total){
-            this.planDao_total = planDao_total;
-        }
-
-        @Override
-        protected Void doInBackground(PlanEntity...plans){
-            this.ret = planDao_total.getPlanIncomeTotalDaily() + planDao_total.getPlanIncomeTotalWeekly()
-                       + planDao_total.getPlanIncomeTotalBiweekly() + planDao_total.getPlanIncomeTotalMonthly();
-            Log.e("ret in background", ""+ret);
-            return null;
-        }
-        public double ret(){
-            Log.e("ret in function", ""+ret);
-            return ret;
-        }
     }
 
     public void getPlanById(PlanEntity plan) {
@@ -75,9 +50,9 @@ public class PlanRepository {
         return planList;
     }
 
-    public LiveData<List<PlanEntity>> getPlanIncomeList() { return planIncomeList; }
+    public void getPlanIncomeTotalFromHomeFragment(HomeFragment context) { new GetPlanIncomeTotalAsyncTaskFromHomeFragment(context, planDao).execute(); }
 
-    public LiveData<List<PlanEntity>> getPlanSavingList() { return planSavingList; }
+//    public LiveData<List<PlanEntity>> getPlanSavingList() { return planSavingList; }
 
     // TODO: 2018-10-16 planDao.getPlanById(position)
     private static class GetPlanAsyncTask extends  AsyncTask<PlanEntity, Void, Void> {
@@ -149,6 +124,34 @@ public class PlanRepository {
         protected Void doInBackground(Void... voids) {
             planDao.deleteAllPlan();
             return null;
+        }
+    }
+
+    private static class GetPlanIncomeTotalAsyncTaskFromHomeFragment extends AsyncTask<Void, Void, Double> {
+
+        private WeakReference<HomeFragment> activityReference;
+        private PlanDao planDao;
+
+        private GetPlanIncomeTotalAsyncTaskFromHomeFragment(HomeFragment context, PlanDao planDao) {
+            activityReference = new WeakReference<>(context);
+            this.planDao = planDao;
+        }
+
+        @Override
+        protected Double doInBackground(Void... voids) {
+            Double result = planDao.getPlanIncomeTotalDaily()
+                            + planDao.getPlanIncomeTotalWeekly()
+                            + planDao.getPlanIncomeTotalBiweekly()
+                            + planDao.getPlanIncomeTotalMonthly();
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Double aDouble) {
+            HomeFragment homeActivity = activityReference.get();
+
+            TextView mtvIncome = homeActivity.getActivity().findViewById(R.id.tvIncome);
+            mtvIncome.setText("$" + String.format("%.2f", aDouble));
         }
     }
 }

@@ -21,7 +21,7 @@ public class PlanViewModel extends AndroidViewModel {
         planList = repository.getPlanList();
     }
 
-    public double getTotal() { return repository.getTotalCost(); }
+//    public double getTotal() { return repository.getTotalCost(); }
 
     public void getPlanById(PlanEntity plan) { repository.getPlanById(plan); }
 

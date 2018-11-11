@@ -33,6 +33,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.prj666_183a06.xbudget.database.Expenses;
+import com.prj666_183a06.xbudget.database.PlanRepository;
 import com.prj666_183a06.xbudget.database.Plans;
 import com.prj666_183a06.xbudget.receiptocr.CameraActivity;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
@@ -76,6 +77,9 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.activity_home, container, false);
+
+        PlanRepository planRepo = new PlanRepository(getActivity().getApplication());
+        planRepo.getPlanIncomeTotalFromHomeFragment(this);
 
         // Set Currency
         locale = Locale.CANADA;
