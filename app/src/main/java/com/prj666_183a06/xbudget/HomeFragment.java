@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseRepository;
 import com.prj666_183a06.xbudget.database.Expenses;
 import com.prj666_183a06.xbudget.database.PlanRepository;
 import com.prj666_183a06.xbudget.database.Plans;
@@ -51,7 +52,6 @@ public class HomeFragment extends Fragment {
 
     private double mIncome, mSpent, mBalance, mRate, mAccSpent;
     List<String> str_label;
-    private List<Float> arr_plan;
     private List<Float> arr_spent = new ArrayList<Float>();
 
     Fragment fragment;
@@ -80,6 +80,9 @@ public class HomeFragment extends Fragment {
 
         PlanRepository planRepo = new PlanRepository(getActivity().getApplication());
         planRepo.getPlanIncomeTotalFromHomeFragment(this);
+
+        ExpenseRepository expRepo = new ExpenseRepository(getActivity().getApplication());
+        expRepo.getExpenseTotalFromHomeFragment(this);
 
         // Set Currency
         locale = Locale.CANADA;

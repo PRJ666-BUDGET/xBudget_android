@@ -31,4 +31,7 @@ public interface ExpenseDao {
     @Query("SELECT SUM(expense_cost) FROM expense_table")
     double getTotalCost();
 
+    @Query("SELECT SUM(expense_cost) FROM expense_table")
+    double getExpenseTotal();
+
 }

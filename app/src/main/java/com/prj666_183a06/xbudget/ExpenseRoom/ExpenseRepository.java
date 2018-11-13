@@ -4,7 +4,13 @@ import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.TextView;
 
+import com.prj666_183a06.xbudget.HomeFragment;
+import com.prj666_183a06.xbudget.R;
+import com.prj666_183a06.xbudget.database.PlanRepository;
+
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class ExpenseRepository /*implements AsyncResult*/ {
@@ -44,6 +50,8 @@ public class ExpenseRepository /*implements AsyncResult*/ {
         arr.execute();
         return arr.ret();
     }
+
+    public void getExpenseTotalFromHomeFragment(HomeFragment context) { new ExpenseRepository.GetExpenseTotalFromHomeFragment(context, expenseDao).execute(); }
 
     private static class getTotalAsyncTask extends AsyncTask<Expense, Void, Void>{
         private ExpenseDao expenseDao;
@@ -116,6 +124,32 @@ public class ExpenseRepository /*implements AsyncResult*/ {
         protected Void doInBackground(Void...voids){
             expenseDao.deleteAllExpense();
             return null;
+        }
+    }
+
+
+    private static class GetExpenseTotalFromHomeFragment extends AsyncTask<Void, Void, Double> {
+
+        private WeakReference<HomeFragment> activityReference;
+        private ExpenseDao expenseDao;
+
+        private GetExpenseTotalFromHomeFragment(HomeFragment context, ExpenseDao expenseDao) {
+            activityReference = new WeakReference<>(context);
+            this.expenseDao = expenseDao;
+        }
+
+        @Override
+        protected Double doInBackground(Void... voids) {
+            Double result = expenseDao.getExpenseTotal();
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Double aDouble) {
+            HomeFragment homeActivity = activityReference.get();
+
+            TextView mtvSpent = homeActivity.getActivity().findViewById(R.id.tvSpent);
+            mtvSpent.setText("$" + String.format("%.2f", aDouble));
         }
     }
 
