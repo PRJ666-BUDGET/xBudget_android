@@ -43,9 +43,13 @@
             android:id="@+id/preview_box"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingLeft="75dp"
-            android:paddingRight="75dp"
-            android:src="@drawable/preview_rectangle" />
+            android:foregroundGravity="center"
+            android:scaleX="0.6"
+            android:src="@drawable/preview_rectangle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <com.prj666_183a06.xbudget.camera.GraphicOverlay
             android:id="@+id/graphicOverlay"
