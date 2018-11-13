@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.LineChart;
@@ -50,13 +51,17 @@ public class HomeFragment extends Fragment {
     private HorizontalBarChart mBar;
     private Typeface tf;
 
-    private double mIncome, mSpent, mBalance, mRate, mAccSpent;
+    private double mIncome, mSpent, mBalance, mAccSpent;
     List<String> str_label;
     private List<Float> arr_spent = new ArrayList<Float>();
+    ArrayList<BarEntry> entries = new ArrayList<BarEntry>();
 
     Fragment fragment;
     Locale locale;
     NumberFormat fmt;
+
+    TextView mtvIncome, mtvSpent, mtvBalance;
+    String currencyIncome, currencySpent, currencyBal;
 
     private DatabaseReference planRef = FirebaseDatabase.getInstance().getReference("plans");
     private DatabaseReference expenseRef = FirebaseDatabase.getInstance().getReference("expenses");
@@ -65,12 +70,6 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getActivity().setTitle("xBudget");
-
-        // Write a message to the database - test
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference myRef = database.getReference("message");
-//        myRef.setValue("Hello, World!");
-
     }
 
     @Nullable
@@ -120,13 +119,6 @@ public class HomeFragment extends Fragment {
             }
         });
 
-//        mIncome = ((MainActivity) getActivity()).getgIncome();
-
-        // Get Data
-//        mSpent = 1260.00;
-        mBalance = mIncome - mSpent;
-        mRate = mSpent / mIncome;
-
         // Text View & Image View
         getTextView(v);
         getImageView(v);
@@ -144,8 +136,11 @@ public class HomeFragment extends Fragment {
         });
 
         // Get Bar & Line Chart
-        getBarChart(v);
-        getLineChart(v);
+//        getBarChart(v);
+        mBar = v.findViewById(R.id.barChart1);
+        mLine = v.findViewById(R.id.lineChart1);
+        getBarChart();
+        getLineChart();
 
         return v;
     }
@@ -193,20 +188,9 @@ public class HomeFragment extends Fragment {
     }
 
     private void getTextView(View v) {
-        TextView mtvIncome, mtvSpent, mtvBalance;
-        String currencyIncome, currencySpent, currencyBal;
-
         mtvIncome = (TextView) v.findViewById(R.id.tvIncome);
-        currencyIncome = fmt.format(this.mIncome);
-        mtvIncome.setText(currencyIncome);
-
         mtvSpent = (TextView) v.findViewById(R.id.tvSpent);
-        currencySpent = fmt.format(this.mSpent);
-        mtvSpent.setText(currencySpent);
-
         mtvBalance = (TextView) v.findViewById(R.id.tvBalance);
-        currencyBal = fmt.format(this.mBalance);
-        mtvBalance.setText(currencyBal);
     }
 
     private void getStringLabels(){
@@ -236,13 +220,6 @@ public class HomeFragment extends Fragment {
         str_label.add("30");
     }
 
-//    protected void getPlanData(){
-//
-//        arr_plan = new ArrayList<Float>();
-//
-//        arr_plan.add(2000f);
-//    }
-
     protected void getSpentData(){
         expenseRef.addValueEventListener(new ValueEventListener() {
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -270,8 +247,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void getBarChart(View v) {
-        mBar = v.findViewById(R.id.barChart1);
+    private void getBarChart() {
         mBar.getDescription().setEnabled(false);
 
         mBar.setData(generateBarData());
@@ -300,8 +276,7 @@ public class HomeFragment extends Fragment {
         mBar.invalidate();
     }
 
-    private void getLineChart(View v) {
-        mLine = v.findViewById(R.id.lineChart1);
+    private void getLineChart() {
         mLine.getDescription().setEnabled(false);
 
         Legend lgdLine = mLine.getLegend();
@@ -311,8 +286,6 @@ public class HomeFragment extends Fragment {
     }
 
     protected BarData generateBarData() {
-        ArrayList<BarEntry> entries = new ArrayList<BarEntry>();
-
         float v_expenses = (float) (mSpent/mIncome * 100);
         float v_balance = 100 - v_expenses;
 
@@ -342,8 +315,6 @@ public class HomeFragment extends Fragment {
         LineDataSet expenses_ds;
 
         ArrayList<ILineDataSet> iLineDataSets = new ArrayList<ILineDataSet>();
-
-//        getPlanData();
         getSpentData();
         getStringLabels();
 
@@ -382,5 +353,32 @@ public class HomeFragment extends Fragment {
 
         LineData lineData = new LineData(iLineDataSets);
         return lineData;
+    }
+
+    public void getTotalIncome(Double aDouble) {
+        mIncome = aDouble;
+//        Toast.makeText(getActivity(), Double.toString(mIncome), Toast.LENGTH_SHORT).show();
+        currencyIncome = fmt.format(this.mIncome);
+        mtvIncome.setText(currencyIncome);
+
+        mBalance = mIncome - mSpent;
+        updateBalance(mBalance);
+    }
+
+    public void getTotalExpenses(Double aDouble) {
+        mSpent = aDouble;
+//        Toast.makeText(getActivity(), Double.toString(mSpent), Toast.LENGTH_SHORT).show();
+        currencySpent = fmt.format(this.mSpent);
+        mtvSpent.setText(currencySpent);
+
+        mBalance = mIncome - mSpent;
+        updateBalance(mBalance);
+    }
+
+    public void updateBalance(double balance) {
+        currencyBal = fmt.format(balance);
+        mtvBalance.setText(currencyBal);
+        getBarChart();
+        getLineChart();
     }
 }

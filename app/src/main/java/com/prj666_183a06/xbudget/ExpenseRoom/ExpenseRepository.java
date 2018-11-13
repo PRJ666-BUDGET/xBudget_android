@@ -17,6 +17,7 @@ public class ExpenseRepository /*implements AsyncResult*/ {
 
     private ExpenseDao expenseDao;
     private LiveData<List<Expense>> allExpenses;
+    private static double rExpenses;
 
     public ExpenseRepository(Application application) {
 
@@ -50,6 +51,8 @@ public class ExpenseRepository /*implements AsyncResult*/ {
         arr.execute();
         return arr.ret();
     }
+
+    public double getExpenses() { return rExpenses; }
 
     public void getExpenseTotalFromHomeFragment(HomeFragment context) { new ExpenseRepository.GetExpenseTotalFromHomeFragment(context, expenseDao).execute(); }
 
@@ -140,16 +143,14 @@ public class ExpenseRepository /*implements AsyncResult*/ {
 
         @Override
         protected Double doInBackground(Void... voids) {
-            Double result = expenseDao.getExpenseTotal();
-            return result;
+            rExpenses = expenseDao.getExpenseTotal();
+            return rExpenses;
         }
 
         @Override
         protected void onPostExecute(Double aDouble) {
             HomeFragment homeActivity = activityReference.get();
-
-            TextView mtvSpent = homeActivity.getActivity().findViewById(R.id.tvSpent);
-            mtvSpent.setText("$" + String.format("%.2f", aDouble));
+            homeActivity.getTotalExpenses(aDouble);
         }
     }
 
