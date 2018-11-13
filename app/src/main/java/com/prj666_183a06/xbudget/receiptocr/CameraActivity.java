@@ -514,7 +514,7 @@ public final class CameraActivity extends AppCompatActivity {
 
                         //display ReceiptFormActivity
                         Intent myIntent = new Intent(CameraActivity.this, ReceiptFormActivity.class);
-                        myIntent.putExtra("ELEMENTS", receiptElements); //Optional parameters
+                        //myIntent.putExtra("ELEMENTS", receiptElements); //crashes on load
                         CameraActivity.this.startActivity(myIntent);
 
                     }
