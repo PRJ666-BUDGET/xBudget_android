@@ -59,7 +59,7 @@ public class HomeFragment extends Fragment {
     List<String> str_label;
     private List<Float> arr_spent = new ArrayList<Float>();
     ArrayList<BarEntry> entries = new ArrayList<BarEntry>();
-    public List<Expense> expense_arr = new ArrayList<>();
+    public List<Float> expense_arr = new ArrayList<Float>();
 
     Fragment fragment;
     Locale locale;
@@ -70,6 +70,12 @@ public class HomeFragment extends Fragment {
 
     private DatabaseReference planRef = FirebaseDatabase.getInstance().getReference("plans");
     private DatabaseReference expenseRef = FirebaseDatabase.getInstance().getReference("expenses");
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getSpentData();
+    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -93,37 +99,37 @@ public class HomeFragment extends Fragment {
         locale = Locale.CANADA;
         fmt = NumberFormat.getCurrencyInstance(locale);
 
-        planRef.addValueEventListener(new ValueEventListener() {
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                mIncome = 0;
-                for (DataSnapshot planData : dataSnapshot.getChildren()) {
-                    Plans planValue = planData.getValue(Plans.class);
-                    if(planValue.getPlan_type().equals("income")){
-                        mIncome += planValue.getPlan_amount();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println("The read failed!!!");
-            }
-        });
-
-        expenseRef.addValueEventListener(new ValueEventListener() {
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                mSpent = 0;
-                for (DataSnapshot planData : dataSnapshot.getChildren()) {
-                    Expenses expensesValue = planData.getValue(Expenses.class);
-                    mSpent += expensesValue.getExpenseCost();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println("The read failed!!!");
-            }
-        });
+//        planRef.addValueEventListener(new ValueEventListener() {
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                mIncome = 0;
+//                for (DataSnapshot planData : dataSnapshot.getChildren()) {
+//                    Plans planValue = planData.getValue(Plans.class);
+//                    if(planValue.getPlan_type().equals("income")){
+//                        mIncome += planValue.getPlan_amount();
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                System.out.println("The read failed!!!");
+//            }
+//        });
+//
+//        expenseRef.addValueEventListener(new ValueEventListener() {
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                mSpent = 0;
+//                for (DataSnapshot planData : dataSnapshot.getChildren()) {
+//                    Expenses expensesValue = planData.getValue(Expenses.class);
+//                    mSpent += expensesValue.getExpenseCost();
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                System.out.println("The read failed!!!");
+//            }
+//        });
 
         // Text View & Image View
         getTextView(v);
@@ -274,7 +280,8 @@ public class HomeFragment extends Fragment {
         leftAxis.setAxisMinimum(0f);
         leftAxis.setAxisMaximum(100f);
 
-//        Legend lgdBar = mBar.getLegend();
+        Legend lgdBar = mBar.getLegend();
+        lgdBar.setEnabled(false);
 //        lgdBar.setTypeface(tf);
 //        lgdBar.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
 
@@ -301,6 +308,7 @@ public class HomeFragment extends Fragment {
         ds.setDrawIcons(false);
         ds.setColors(MyColorTemplate.VORDIPLOM_COLORS[4], MyColorTemplate.VORDIPLOM_COLORS[3]);
         ds.setStackLabels(new String[]{"Expenses", "Balance"});
+        ds.setDrawValues(false);
 
         ArrayList<IBarDataSet> iBarDataSets = new ArrayList<IBarDataSet>();
         iBarDataSets.add(ds);
@@ -337,6 +345,13 @@ public class HomeFragment extends Fragment {
             temp++;
         }
 
+//        if (expense_arr.size() > 0) {
+//            for(int i=1; i <= expense_arr.size(); i++){
+//                expenses_arrList.add(new Entry(i, expense_arr.get(temp)));
+//                temp++;
+//            }
+//        }
+
         budget_ds = new LineDataSet(budget_arrList, "My Budget");
         budget_ds.setLineWidth(2f);
         budget_ds.setDrawCircles(false);
@@ -368,13 +383,19 @@ public class HomeFragment extends Fragment {
 //        Toast.makeText(getActivity(), Double.toString(mSpent), Toast.LENGTH_SHORT).show();
         currencySpent = fmt.format(this.mSpent);
         mtvSpent.setText(currencySpent);
+
+        if (aDouble > 0) {
+            expense_arr.add((float)mSpent);
+        } else {
+            expense_arr.clear();
+        }
         updateBalance();
     }
 
     public void updateBalance() {
         mBalance = mIncome - mSpent;
         currencyBal = fmt.format(mBalance);
-//        Toast.makeText(getActivity(), Double.toString(balance), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), Double.toString(mBalance), Toast.LENGTH_SHORT).show();
         mtvBalance.setText(currencyBal);
         getBarChart();
         getLineChart();
