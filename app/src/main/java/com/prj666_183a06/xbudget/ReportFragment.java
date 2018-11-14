@@ -41,10 +41,10 @@ public class ReportFragment extends Fragment {
 
     private Typeface tf;
 
-    List<String> str_label;
+    List<String> str_label = new ArrayList<String>();;
     private final int count_Category = 10;
     private List<Float> arr_plan;
-    private List<Float> arr_actual;
+    private List<Float> arr_actual = new ArrayList<Float>();
 
     private DatabaseReference planRef = FirebaseDatabase.getInstance().getReference("plans");
     private DatabaseReference expenseRef = FirebaseDatabase.getInstance().getReference("expenses");
@@ -52,9 +52,6 @@ public class ReportFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        str_label = new ArrayList<String>();
-        arr_actual = new ArrayList<Float>();
     }
 
     @Override
@@ -95,33 +92,33 @@ public class ReportFragment extends Fragment {
     }
 
     protected void getActualData(){
-//        arr_actual.add(120f);
-//        arr_actual.add(80f);
-//        arr_actual.add(20f);
-//        arr_actual.add(20f);
+        arr_actual.add(120f);
+        arr_actual.add(80f);
+        arr_actual.add(20f);
+        arr_actual.add(20f);
 
-        expenseRef.addValueEventListener(new ValueEventListener() {
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                arr_actual.clear();
-                for (DataSnapshot expData : dataSnapshot.getChildren()) {
-                    Expenses expensesValue = expData.getValue(Expenses.class);
-//                    arr_actual.add((float) mAccSpent);
-                }
-            }
+//        expenseRef.addValueEventListener(new ValueEventListener() {
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                arr_actual.clear();
+//                for (DataSnapshot expData : dataSnapshot.getChildren()) {
+//                    Expenses expensesValue = expData.getValue(Expenses.class);
+////                    arr_actual.add((float) mAccSpent);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                System.out.println("The read failed!!!");
+//            }
+//        });
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println("The read failed!!!");
-            }
-        });
-
-        if (arr_actual.size() == 0) {
-            arr_actual.add(0f);
-            arr_actual.add(220f);
-            arr_actual.add(530f);
-            arr_actual.add(700f);
-            arr_actual.add(1070f);
-        }
+//        if (arr_actual.size() == 0) {
+//            arr_actual.add(0f);
+//            arr_actual.add(220f);
+//            arr_actual.add(530f);
+//            arr_actual.add(700f);
+//            arr_actual.add(1070f);
+//        }
     }
 
     private void getBarChart(View v) {
