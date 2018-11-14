@@ -1,5 +1,6 @@
 package com.prj666_183a06.xbudget;
 
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -8,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +35,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.prj666_183a06.xbudget.ExpenseRoom.Expense;
 import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseRepository;
+import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseViewModel;
 import com.prj666_183a06.xbudget.database.Expenses;
 import com.prj666_183a06.xbudget.database.PlanRepository;
 import com.prj666_183a06.xbudget.database.Plans;
@@ -55,6 +59,7 @@ public class HomeFragment extends Fragment {
     List<String> str_label;
     private List<Float> arr_spent = new ArrayList<Float>();
     ArrayList<BarEntry> entries = new ArrayList<BarEntry>();
+    public List<Expense> expense_arr = new ArrayList<>();
 
     Fragment fragment;
     Locale locale;
@@ -82,6 +87,7 @@ public class HomeFragment extends Fragment {
 
         ExpenseRepository expRepo = new ExpenseRepository(getActivity().getApplication());
         expRepo.getExpenseTotalFromHomeFragment(this);
+//        expRepo.getAccExpenseTotalFromHomeFragment(this);
 
         // Set Currency
         locale = Locale.CANADA;
@@ -136,7 +142,6 @@ public class HomeFragment extends Fragment {
         });
 
         // Get Bar & Line Chart
-//        getBarChart(v);
         mBar = v.findViewById(R.id.barChart1);
         mLine = v.findViewById(R.id.lineChart1);
         getBarChart();
@@ -257,6 +262,7 @@ public class HomeFragment extends Fragment {
         xAxis.setDrawGridLines(false);
         xAxis.setDrawAxisLine(false);
         xAxis.setDrawLabels(false);
+        xAxis.setEnabled(false);
 
         YAxis rightAxis = mBar.getAxisRight();
         rightAxis.setEnabled(false);
@@ -268,9 +274,9 @@ public class HomeFragment extends Fragment {
         leftAxis.setAxisMinimum(0f);
         leftAxis.setAxisMaximum(100f);
 
-        Legend lgdBar = mBar.getLegend();
-        lgdBar.setTypeface(tf);
-        lgdBar.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+//        Legend lgdBar = mBar.getLegend();
+//        lgdBar.setTypeface(tf);
+//        lgdBar.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
 
         mBar.setDrawValueAboveBar(false);
         mBar.invalidate();
@@ -310,11 +316,11 @@ public class HomeFragment extends Fragment {
 
         ArrayList<Entry> budget_arrList = new ArrayList<Entry>();
         ArrayList<Entry> expenses_arrList = new ArrayList<Entry>();
+        ArrayList<ILineDataSet> iLineDataSets = new ArrayList<ILineDataSet>();
 
         LineDataSet budget_ds;
         LineDataSet expenses_ds;
 
-        ArrayList<ILineDataSet> iLineDataSets = new ArrayList<ILineDataSet>();
         getSpentData();
         getStringLabels();
 
@@ -323,12 +329,6 @@ public class HomeFragment extends Fragment {
         }
 
         int temp = 0;
-
-        // Budget Dataset
-//        for(int i=1; i < 31; i+=7){
-//            expenses_arrList.add(new Entry(i, arr_spent.get(temp)));
-//            temp++;
-//        }
 
         expenses_arrList.add(new Entry(0, 0f));
 
@@ -360,9 +360,7 @@ public class HomeFragment extends Fragment {
 //        Toast.makeText(getActivity(), Double.toString(mIncome), Toast.LENGTH_SHORT).show();
         currencyIncome = fmt.format(this.mIncome);
         mtvIncome.setText(currencyIncome);
-
-        mBalance = mIncome - mSpent;
-        updateBalance(mBalance);
+        updateBalance();
     }
 
     public void getTotalExpenses(Double aDouble) {
@@ -370,15 +368,19 @@ public class HomeFragment extends Fragment {
 //        Toast.makeText(getActivity(), Double.toString(mSpent), Toast.LENGTH_SHORT).show();
         currencySpent = fmt.format(this.mSpent);
         mtvSpent.setText(currencySpent);
-
-        mBalance = mIncome - mSpent;
-        updateBalance(mBalance);
+        updateBalance();
     }
 
-    public void updateBalance(double balance) {
-        currencyBal = fmt.format(balance);
+    public void updateBalance() {
+        mBalance = mIncome - mSpent;
+        currencyBal = fmt.format(mBalance);
+//        Toast.makeText(getActivity(), Double.toString(balance), Toast.LENGTH_SHORT).show();
         mtvBalance.setText(currencyBal);
         getBarChart();
         getLineChart();
+    }
+
+    public void getExpensesList(List<Expense> expList){
+
     }
 }

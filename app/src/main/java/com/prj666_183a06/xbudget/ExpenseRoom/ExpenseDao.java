@@ -34,4 +34,11 @@ public interface ExpenseDao {
     @Query("SELECT SUM(expense_cost) FROM expense_table")
     double getExpenseTotal();
 
+    @Query("SELECT * FROM expense_table ORDER BY expense_date DESC")
+    List<Expense> getExpenseList();
+
+//    @Query("SELECT expense_date, sum(expense_cost) FROM expense_table GROUP BY expense_date ORDER BY expense_date")
+    @Query("SELECT * FROM expense_table ORDER BY expense_date")
+    List<Expense> getExpenseGroupList();
+
 }

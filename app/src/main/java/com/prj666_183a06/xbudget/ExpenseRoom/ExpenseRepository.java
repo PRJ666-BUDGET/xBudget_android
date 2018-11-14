@@ -11,13 +11,13 @@ import com.prj666_183a06.xbudget.R;
 import com.prj666_183a06.xbudget.database.PlanRepository;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExpenseRepository /*implements AsyncResult*/ {
 
     private ExpenseDao expenseDao;
     private LiveData<List<Expense>> allExpenses;
-    private static double rExpenses;
 
     public ExpenseRepository(Application application) {
 
@@ -52,9 +52,8 @@ public class ExpenseRepository /*implements AsyncResult*/ {
         return arr.ret();
     }
 
-    public double getExpenses() { return rExpenses; }
-
     public void getExpenseTotalFromHomeFragment(HomeFragment context) { new ExpenseRepository.GetExpenseTotalFromHomeFragment(context, expenseDao).execute(); }
+//    public void getAccExpenseTotalFromHomeFragment(HomeFragment context) { new ExpenseRepository.GetAccExpenseTotalFromHomeFragment(context, expenseDao).execute(); }
 
     private static class getTotalAsyncTask extends AsyncTask<Expense, Void, Void>{
         private ExpenseDao expenseDao;
@@ -143,8 +142,8 @@ public class ExpenseRepository /*implements AsyncResult*/ {
 
         @Override
         protected Double doInBackground(Void... voids) {
-            rExpenses = expenseDao.getExpenseTotal();
-            return rExpenses;
+            Double result = expenseDao.getExpenseTotal();
+            return result;
         }
 
         @Override
@@ -153,6 +152,30 @@ public class ExpenseRepository /*implements AsyncResult*/ {
             homeActivity.getTotalExpenses(aDouble);
         }
     }
+
+//    private static class GetAccExpenseTotalFromHomeFragment extends AsyncTask<Void, Void, Double> {
+//
+//        private WeakReference<HomeFragment> activityReference;
+//        private ExpenseDao expenseDao;
+//        List<Expense> list = new ArrayList<Expense>();
+//
+//        private GetAccExpenseTotalFromHomeFragment(HomeFragment context, ExpenseDao expenseDao) {
+//            activityReference = new WeakReference<>(context);
+//            this.expenseDao = expenseDao;
+//        }
+//
+//        @Override
+//        protected List<Expense> doInBackground(Void... voids) {
+//            List<Expense> result = expenseDao.getExpenseList();
+//            return result;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(List<Expense> expList) {
+//            HomeFragment homeActivity = activityReference.get();
+//            homeActivity.getExpensesList(expList);
+//        }
+//    }
 
     /*private MutableLiveData<List<Expense>> searchResults =
             new MutableLiveData<>();
