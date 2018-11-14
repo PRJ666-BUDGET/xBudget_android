@@ -23,6 +23,12 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.prj666_183a06.xbudget.database.Expenses;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,11 +41,18 @@ public class ReportFragment extends Fragment {
 
     private Typeface tf;
 
-    List<String> str_label;
+    List<String> str_label = new ArrayList<String>();;
     private final int count_Category = 10;
     private List<Float> arr_plan;
-    private List<Float> arr_actual;
+    private List<Float> arr_actual = new ArrayList<Float>();
 
+    private DatabaseReference planRef = FirebaseDatabase.getInstance().getReference("plans");
+    private DatabaseReference expenseRef = FirebaseDatabase.getInstance().getReference("expenses");
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -62,7 +75,6 @@ public class ReportFragment extends Fragment {
     }
 
     private void getStringLabels(){
-        str_label = new ArrayList<String>();
         str_label.add("Grocery");
         str_label.add("TTC");
         str_label.add("School");
@@ -80,12 +92,33 @@ public class ReportFragment extends Fragment {
     }
 
     protected void getActualData(){
-        arr_actual = new ArrayList<Float>();
-
         arr_actual.add(120f);
         arr_actual.add(80f);
         arr_actual.add(20f);
         arr_actual.add(20f);
+
+//        expenseRef.addValueEventListener(new ValueEventListener() {
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                arr_actual.clear();
+//                for (DataSnapshot expData : dataSnapshot.getChildren()) {
+//                    Expenses expensesValue = expData.getValue(Expenses.class);
+////                    arr_actual.add((float) mAccSpent);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                System.out.println("The read failed!!!");
+//            }
+//        });
+
+//        if (arr_actual.size() == 0) {
+//            arr_actual.add(0f);
+//            arr_actual.add(220f);
+//            arr_actual.add(530f);
+//            arr_actual.add(700f);
+//            arr_actual.add(1070f);
+//        }
     }
 
     private void getBarChart(View v) {

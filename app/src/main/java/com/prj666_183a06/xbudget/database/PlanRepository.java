@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.widget.TextView;
 
+import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseDao;
 import com.prj666_183a06.xbudget.HomeFragment;
 import com.prj666_183a06.xbudget.R;
 import com.prj666_183a06.xbudget.database.dao.PlanDao;
@@ -12,6 +13,7 @@ import com.prj666_183a06.xbudget.database.entity.PlanEntity;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class PlanRepository {
 
@@ -150,8 +152,11 @@ public class PlanRepository {
         protected void onPostExecute(Double aDouble) {
             HomeFragment homeActivity = activityReference.get();
 
-            TextView mtvIncome = homeActivity.getActivity().findViewById(R.id.tvIncome);
-            mtvIncome.setText("$" + String.format("%.2f", aDouble));
+//            TextView mtvIncome = homeActivity.getActivity().findViewById(R.id.tvIncome);
+//            mtvIncome.setText("$" + String.format("%.2f", aDouble));
+
+            homeActivity.getTotalIncome(aDouble);
         }
     }
+
 }
