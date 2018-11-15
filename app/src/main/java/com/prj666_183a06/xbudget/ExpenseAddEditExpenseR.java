@@ -1,23 +1,35 @@
 package com.prj666_183a06.xbudget;
 
 import android.app.DatePickerDialog;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class ExpenseAddEditExpenseR extends AppCompatActivity {
 
@@ -37,7 +49,12 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
 
     private EditText editStore, editItem, editCost;
     private TextView editDate;
+    private Spinner plansDrop;
+    private Button buttonAdd, debug;
+    private LinearLayout container;
+    PlanViewModel pvm;
     static DatePickerDialog.OnDateSetListener dateListener;
+    List<String> planTitles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +65,20 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
         editItem = findViewById(R.id.edit_text_item);
         editCost = findViewById(R.id.edit_text_cost);
         editDate = findViewById(R.id.edit_date_view);
+
+        //Populate title
+        pvm = ViewModelProviders.of(this).get(PlanViewModel.class);
+        planTitles = new ArrayList<>();
+        planTitles = pvm.getTitleList();
+        planTitles.add(0, "None");
+
+        Log.e("title", planTitles.toString());
+
+        plansDrop = findViewById(R.id.plans);
+        Spinner sp = findViewById(R.id.spin);
+        ArrayAdapter<String> planAdapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_dropdown_item, planTitles);
+        plansDrop.setAdapter(planAdapter);
 
         editDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +112,6 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
         });
 
         editDate.setText(getDate());
-
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
 
         Intent intent = getIntent();

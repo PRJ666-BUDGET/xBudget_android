@@ -33,6 +33,8 @@
         <activity android:name=".ExpenseAddEditExpenseR" />
         <activity android:name=".receiptocr.CameraActivity" />
         <activity android:name=".test_activity"></activity>
+        <activity android:name=".ExpenseInfo"></activity>
+
 
     </application>
 

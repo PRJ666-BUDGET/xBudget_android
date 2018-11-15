@@ -5,16 +5,21 @@ import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.prj666_183a06.xbudget.database.AppDatabase;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExpenseRepository /*implements AsyncResult*/ {
 
     private ExpenseDao expenseDao;
     private LiveData<List<Expense>> allExpenses;
+    private ArrayList<Expense> data;
 
     public ExpenseRepository(Application application) {
 
-        ExpenseRoomDatabase db = ExpenseRoomDatabase.getInstance(application);
+        //ExpenseRoomDatabase db = ExpenseRoomDatabase.getInstance(application);
+        AppDatabase db = AppDatabase.getInstance(application);
         expenseDao = db.expenseDao();
         allExpenses = expenseDao.getAllExpense();
     }
@@ -43,6 +48,48 @@ public class ExpenseRepository /*implements AsyncResult*/ {
         getTotalAsyncTask arr = new getTotalAsyncTask(expenseDao);
         arr.execute();
         return arr.ret();
+    }
+
+    public List<ExpenseObj> getAll(){
+        getAllAsyncTask li = new getAllAsyncTask(expenseDao);
+        li.execute();
+        return li.getAll();
+    }
+
+    private static class getAllAsyncTask extends AsyncTask<Expense, Void, Void>{
+        ExpenseDao expenseDao;
+        static List<ExpenseObj> temp;
+        List<String>  storel;
+        List<String>  iteml;
+        List<String>  datel;
+        List<Double>  costl;
+
+        private getAllAsyncTask(ExpenseDao expenseDao){
+            this.expenseDao = expenseDao;
+            temp = new ArrayList<>();
+            storel = new ArrayList();
+            iteml = new ArrayList();
+            datel = new ArrayList();
+            costl = new ArrayList();
+        }
+
+        @Override
+        protected Void doInBackground(Expense...expenses){
+            Log.e("doInbackground", "do");
+            this.storel = expenseDao.getStoreAll();
+            this.iteml = expenseDao.getItemAll();
+            this.datel = expenseDao.getDateAll();
+            this.costl = expenseDao.getCostAll();
+
+            for(int i = 0; i < iteml.size(); i++){
+                temp.add(new ExpenseObj(iteml.get(i), storel.get(i), datel.get(i), costl.get(i) ));
+            }
+            return null;
+        }
+
+        List<ExpenseObj> getAll(){
+            return temp;
+        }
     }
 
     private static class getTotalAsyncTask extends AsyncTask<Expense, Void, Void>{
@@ -118,95 +165,4 @@ public class ExpenseRepository /*implements AsyncResult*/ {
             return null;
         }
     }
-
-    /*private MutableLiveData<List<Expense>> searchResults =
-            new MutableLiveData<>();
-
-    private LiveData<List<Expense>> allExpenses;
-    private ExpenseDao expenseDao;
-
-    public ExpenseRepository(Application application) {
-
-        ExpenseRoomDatabase db;
-        db = ExpenseRoomDatabase.getDatabase(application);
-        expenseDao = db.expenseDao();
-        allExpenses = expenseDao.getAllExpenses();
-    }
-
-    public void insertExpense(Expense newexpense) {
-        new queryAsyncTask.insertAsyncTask(expenseDao).execute(newexpense);
-    }
-
-    public void deleteExpense(String name) {
-        new queryAsyncTask.deleteAsyncTask(expenseDao).execute(name);
-    }
-
-    public void findExpense(String name) {
-        queryAsyncTask task = new queryAsyncTask(expenseDao);
-        task.delegate = this;
-        task.execute(name);
-    }
-
-    public LiveData<List<Expense>> getAllExpense() {
-        return allExpenses;
-    }
-
-    public MutableLiveData<List<Expense>> getSearchResults() {
-        return searchResults;
-    }
-    @Override
-    public void asyncFinished(List<Expense> results){
-        searchResults.setValue(results);
-    }
-
-    private static class queryAsyncTask extends
-            AsyncTask<String, Void, List<Expense>> {
-
-        private ExpenseDao asyncTaskDao;
-        private ExpenseRepository delegate = null;
-
-        queryAsyncTask(ExpenseDao dao) {
-            asyncTaskDao = dao;
-        }
-
-        @Override
-        protected List<Expense> doInBackground(final String... params) {
-            return asyncTaskDao.findExpense(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(List<Expense> result) {
-            delegate.asyncFinished(result);
-        }
-
-        private static class insertAsyncTask extends AsyncTask<Expense, Void, Void> {
-
-            private ExpenseDao asyncTaskDao;
-
-            insertAsyncTask(ExpenseDao dao) {
-                asyncTaskDao = dao;
-            }
-
-            @Override
-            protected Void doInBackground(final Expense... params) {
-                asyncTaskDao.insertExpense(params[0]);
-                return null;
-            }
-        }
-
-        private static class deleteAsyncTask extends AsyncTask<String, Void, Void> {
-
-            private ExpenseDao asyncTaskDao;
-
-            deleteAsyncTask(ExpenseDao dao) {
-                asyncTaskDao = dao;
-            }
-
-            @Override
-            protected Void doInBackground(final String... params) {
-                asyncTaskDao.deleteExpense(params[0]);
-                return null;
-            }
-        }
-    }*/
 }

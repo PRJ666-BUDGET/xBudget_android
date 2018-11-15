@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseDao;
+import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseRoomDatabase;
 import com.prj666_183a06.xbudget.database.dao.PlanDao;
 import com.prj666_183a06.xbudget.ExpenseRoom.Expense;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
@@ -46,7 +47,7 @@ public abstract class AppDatabase extends RoomDatabase {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
-            new PopulateDbAsyncTask(instance).execute();
+            new PopulateDbExpenseAsyncTask(instance).execute();
         }
     };
 
@@ -65,6 +66,22 @@ public abstract class AppDatabase extends RoomDatabase {
             planDao.insertPlan(new PlanEntity("income", "tutor", 500, "bi-weekly"));
             planDao.insertPlan(new PlanEntity("saving", "Coffee", 5, "daily"));
 
+            return null;
+        }
+    }
+
+    public static class PopulateDbExpenseAsyncTask extends AsyncTask<Void, Void, Void> {
+        private ExpenseDao expenseDao;
+
+        private PopulateDbExpenseAsyncTask(AppDatabase db){
+            expenseDao = db.expenseDao();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids){
+            expenseDao.insert(new Expense("McDonalds", "12/12/2018", "Coffee", 2.00));
+            expenseDao.insert(new Expense("Best Buy", "12/12/2018", "Computer", 34442.00));
+            expenseDao.insert(new Expense("Walmart", "12/12/2018", "Groceries", 165.32));
             return null;
         }
     }

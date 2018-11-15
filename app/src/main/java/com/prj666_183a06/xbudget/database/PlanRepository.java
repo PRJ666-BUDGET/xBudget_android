@@ -3,10 +3,12 @@ package com.prj666_183a06.xbudget.database;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.prj666_183a06.xbudget.database.dao.PlanDao;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlanRepository {
@@ -42,6 +44,37 @@ public class PlanRepository {
 
     public LiveData<List<PlanEntity>> getPlanList() {
         return planList;
+    }
+
+    //Getting list title
+    public List<String> getTitleList(){
+        GetTitleListAsyncTask at = new GetTitleListAsyncTask(planDao);
+        List<String> temp = new ArrayList<>();
+        at.execute();
+        temp = at.getTitleList();
+        return temp;
+    }
+
+    private static class GetTitleListAsyncTask extends  AsyncTask<PlanEntity, Void, Void> {
+        private PlanDao planDao;
+        List<String> list;
+
+        private GetTitleListAsyncTask(PlanDao planDao) {
+            this.planDao = planDao;
+            this.list = new ArrayList();
+        }
+
+        @Override
+        protected Void doInBackground(PlanEntity... plans) {
+            this.list = planDao.titleList();
+            Log.e("background", planDao.titleList().toString());
+            return null;
+        }
+
+        List<String> getTitleList(){
+            Log.e("title get", list.toString());
+            return list;
+        }
     }
 
     // TODO: 2018-10-16 planDao.getPlanById(position)

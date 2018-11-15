@@ -8,7 +8,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-@Database(entities ={Expense.class,}, version = 1, exportSchema = false)
+import com.prj666_183a06.xbudget.database.entity.PlanEntity;
+
+@Database(entities ={Expense.class, PlanEntity.class}, version = 1, exportSchema = false)
 
 public abstract class ExpenseRoomDatabase extends RoomDatabase {
 
@@ -21,7 +23,7 @@ public abstract class ExpenseRoomDatabase extends RoomDatabase {
                 if (instance == null) {
                     instance =
                             Room.databaseBuilder(context.getApplicationContext(),
-                                    ExpenseRoomDatabase.class, "expense_database")
+                                    ExpenseRoomDatabase.class, "xbudget")
                                     .fallbackToDestructiveMigration()
                                     .addCallback(roomCallBack)
                                     .build();
