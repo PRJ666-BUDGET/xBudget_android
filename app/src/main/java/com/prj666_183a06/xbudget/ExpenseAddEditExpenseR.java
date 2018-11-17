@@ -24,6 +24,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseViewModel;
 import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
 import java.util.ArrayList;
@@ -47,7 +48,11 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
     public static final String EXTRA_COST =
             "com.prj666_183a06.xbudget.EXTRA_COST";
 
+    public static final String EXTRA_CATEGORY =
+            "com.prj666_183a06.xbudget.EXTRA_CATEGORY";
+
     private EditText editStore, editItem, editCost;
+    private Spinner editCategory;
     private TextView editDate;
     private Spinner plansDrop;
     private Button buttonAdd, debug;
@@ -68,6 +73,7 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
 
         //Populate title
         pvm = ViewModelProviders.of(this).get(PlanViewModel.class);
+
         planTitles = new ArrayList<>();
         planTitles = pvm.getTitleList();
         planTitles.add(0, "None");
@@ -75,7 +81,6 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
         Log.e("title", planTitles.toString());
 
         plansDrop = findViewById(R.id.plans);
-        Spinner sp = findViewById(R.id.spin);
         ArrayAdapter<String> planAdapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_dropdown_item, planTitles);
         plansDrop.setAdapter(planAdapter);
@@ -143,6 +148,7 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
         String item = editItem.getText().toString();
         String date = editDate.getText().toString();
         String cost = editCost.getText().toString();
+        String category = plansDrop.getSelectedItem().toString();
 
         if(store.trim().isEmpty() || item.trim().isEmpty() || date.trim().isEmpty() || cost.isEmpty()){
             Toast.makeText(this, "Please fill out the form" , Toast.LENGTH_SHORT).show();
@@ -154,6 +160,7 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
         data.putExtra(EXTRA_ITEM, item.trim());
         data.putExtra(EXTRA_DATE, date.trim());
         data.putExtra(EXTRA_COST, Double.parseDouble(cost));
+        data.putExtra(EXTRA_CATEGORY, category);
 
         int id = getIntent().getIntExtra(EXTRA_ID, -1);
         if(id != -1){

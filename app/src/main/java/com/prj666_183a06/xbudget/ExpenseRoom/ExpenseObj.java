@@ -4,13 +4,15 @@ public class ExpenseObj {
     private String item;
     private String store;
     private String date;
+    private String category;
     private double cost;
 
-    public ExpenseObj(String item, String store, String date, double cost){
+    public ExpenseObj(String item, String store, String date, String category, double cost){
         this.item = item;
         this.store = store;
         this.date = date;
         this.cost = cost;
+        this.category = category;
     }
 
     public String getItem() {
@@ -46,6 +48,6 @@ public class ExpenseObj {
     }
 
     public String print(){
-        return item + " " + store + " " + date  + " " + cost + "\n" + "";
+        return item + " " + store + " " + date  + " " + cost + " " + category + "\n";
     }
 }

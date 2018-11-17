@@ -33,7 +33,8 @@ public interface PlanDao {
     @Query("DELETE FROM plan_table")
     void deleteAllPlan();
 
-    @Query("SELECT plan_title FROM plan_table")
+    @Query("SELECT plan_title FROM plan_table WHERE plan_type = 'saving'")
     List<String> titleList();
+
 
 }

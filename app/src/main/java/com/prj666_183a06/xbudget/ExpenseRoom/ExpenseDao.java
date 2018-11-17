@@ -44,4 +44,6 @@ public interface ExpenseDao {
     @Query("SELECT expense_date from expense_table")
     List<String> getDateAll();
 
+    @Query("SELECT expense_category from expense_table")
+    List<String> getCategoryAll();
 }

@@ -63,6 +63,7 @@ public class ExpenseRepository /*implements AsyncResult*/ {
         List<String>  iteml;
         List<String>  datel;
         List<Double>  costl;
+        List<String>  categoryl;
 
         private getAllAsyncTask(ExpenseDao expenseDao){
             this.expenseDao = expenseDao;
@@ -71,6 +72,7 @@ public class ExpenseRepository /*implements AsyncResult*/ {
             iteml = new ArrayList();
             datel = new ArrayList();
             costl = new ArrayList();
+            categoryl = new ArrayList();
         }
 
         @Override
@@ -80,10 +82,12 @@ public class ExpenseRepository /*implements AsyncResult*/ {
             this.iteml = expenseDao.getItemAll();
             this.datel = expenseDao.getDateAll();
             this.costl = expenseDao.getCostAll();
+            this.categoryl = expenseDao.getCategoryAll();
 
             for(int i = 0; i < iteml.size(); i++){
-                temp.add(new ExpenseObj(iteml.get(i), storel.get(i), datel.get(i), costl.get(i) ));
+                temp.add(new ExpenseObj(iteml.get(i), storel.get(i), datel.get(i),categoryl.get(i), costl.get(i)));
             }
+
             return null;
         }
 
