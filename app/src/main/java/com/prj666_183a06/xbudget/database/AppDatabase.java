@@ -63,7 +63,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
             planDao.insertPlan(new PlanEntity("income", "Co-op", 1000, "bi-weekly"));
             planDao.insertPlan(new PlanEntity("income", "tutor", 500, "bi-weekly"));
-            planDao.insertPlan(new PlanEntity("saving", "Coffee", 5, "daily"));
+            planDao.insertPlan(new PlanEntity("category", "Coffee", 5, "daily"));
 
             return null;
         }
