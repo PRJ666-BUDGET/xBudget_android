@@ -217,7 +217,7 @@ public class PlansFragment extends Fragment {
             case R.id.delete_allPlan:
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setMessage("Are you sure?").setPositiveButton("Yes", confirmDeleteDialogClickListener)
+                builder.setMessage("You can't undo this action. Do you want to delete all plans?").setPositiveButton("Yes", confirmDeleteDialogClickListener)
                         .setNegativeButton("No", confirmDeleteDialogClickListener).show();
 
                 return true;
