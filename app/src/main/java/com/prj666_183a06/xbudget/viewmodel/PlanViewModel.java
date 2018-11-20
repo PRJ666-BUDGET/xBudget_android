@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 
 import com.prj666_183a06.xbudget.database.PlanRepository;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
+import com.prj666_183a06.xbudget.pojo.PlanItem;
 
 import java.util.List;
 
@@ -47,5 +48,9 @@ public class PlanViewModel extends AndroidViewModel {
 
     public List<String> getTitleList(){
         return repository.getTitleList();
+    }
+
+    public double getTotalIncome() {
+        return repository.getTotalCost();
     }
 }

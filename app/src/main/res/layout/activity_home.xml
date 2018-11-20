@@ -50,11 +50,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="SPENT"
+                android:text="EXPENSES"
                 android:textAlignment="center"
                 android:textColor="@color/colorAccent"
                 android:textStyle="bold"
-                tools:text="SPENT" />
+                tools:text="EXPENSES" />
         </LinearLayout>
 
         <LinearLayout

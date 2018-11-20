@@ -6,7 +6,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.prj666_183a06.xbudget.ExpenseRoom.Expense;
 import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseDao;
+import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseObj;
+import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseRepository;
 import com.prj666_183a06.xbudget.HomeFragment;
 import com.prj666_183a06.xbudget.R;
 import com.prj666_183a06.xbudget.database.dao.PlanDao;
@@ -66,6 +69,79 @@ public class PlanRepository {
         }
         temp = at.getTitleList();
         return temp;
+    }
+
+    public double getTotalCost() {
+        getTotalAsyncTask arr = new PlanRepository.getTotalAsyncTask(planDao);
+        arr.execute();
+        try{
+            Thread.sleep(200);
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+        return arr.ret();
+    }
+
+//    private static class getAllAsyncTask extends AsyncTask<Expense, Void, Void>{
+//        ExpenseDao expenseDao;
+//        static List<ExpenseObj> temp;
+//        List<String>  storel;
+//        List<String>  iteml;
+//        List<String>  datel;
+//        List<Double>  costl;
+//        List<String>  categoryl;
+//
+//        private getAllAsyncTask(ExpenseDao expenseDao){
+//            this.expenseDao = expenseDao;
+//            temp = new ArrayList<>();
+//            storel = new ArrayList();
+//            iteml = new ArrayList();
+//            datel = new ArrayList();
+//            costl = new ArrayList();
+//            categoryl = new ArrayList();
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Expense...expenses){
+//            Log.e("doInbackground", "do");
+//            this.storel = expenseDao.getStoreAll();
+//            this.iteml = expenseDao.getItemAll();
+//            this.datel = expenseDao.getDateAll();
+//            this.costl = expenseDao.getCostAll();
+//            this.categoryl = expenseDao.getCategoryAll();
+//
+//            for(int i = 0; i < iteml.size(); i++){
+//                temp.add(new ExpenseObj(iteml.get(i), storel.get(i), datel.get(i),categoryl.get(i), costl.get(i)));
+//            }
+//
+//            return null;
+//        }
+//
+//        List<ExpenseObj> getAll(){
+//            return temp;
+//        }
+//    }
+
+    private static class getTotalAsyncTask extends AsyncTask<PlanEntity, Void, Void>{
+        private PlanDao planDao;
+        private static double ret;
+        private getTotalAsyncTask(PlanDao planDao){
+            this.planDao = planDao;
+        }
+
+        @Override
+        protected Void doInBackground(PlanEntity...plans){
+            this.ret = planDao.getPlanIncomeTotalDaily()
+                        + planDao.getPlanIncomeTotalWeekly()
+                        + planDao.getPlanIncomeTotalBiweekly()
+                        + planDao.getPlanIncomeTotalMonthly();
+            Log.e("pTotal in background", ""+ret);
+            return null;
+        }
+        public double ret(){
+            Log.e("pTotal in function", ""+ret);
+            return ret;
+        }
     }
 
     private static class GetTitleListAsyncTask extends  AsyncTask<PlanEntity, Void, Void> {
@@ -192,7 +268,7 @@ public class PlanRepository {
 //            TextView mtvIncome = homeActivity.getActivity().findViewById(R.id.tvIncome);
 //            mtvIncome.setText("$" + String.format("%.2f", aDouble));
 
-            homeActivity.getTotalIncome(aDouble);
+//            homeActivity.getTotalIncome(aDouble);
         }
     }
 
