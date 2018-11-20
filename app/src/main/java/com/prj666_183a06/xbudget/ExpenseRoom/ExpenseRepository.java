@@ -111,8 +111,7 @@ public class ExpenseRepository /*implements AsyncResult*/ {
             return temp;
         }
     }
-        return arr.ret();
-    }
+
 
     public void getExpenseTotalFromHomeFragment(HomeFragment context) { new ExpenseRepository.GetExpenseTotalFromHomeFragment(context, expenseDao).execute(); }
 //    public void getAccExpenseTotalFromHomeFragment(HomeFragment context) { new ExpenseRepository.GetAccExpenseTotalFromHomeFragment(context, expenseDao).execute(); }
