@@ -23,6 +23,14 @@ public class ExpenseObj {
         this.item = item;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     public String getStore() {
         return store;
     }

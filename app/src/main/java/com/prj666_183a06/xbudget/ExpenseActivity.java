@@ -81,6 +81,7 @@ public class ExpenseActivity extends Fragment{
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
                 expenseViewModel.delete(adapter.getExpenseAt(viewHolder.getAdapterPosition()));
                 Toast.makeText(getContext(), "Expense deleted", Toast.LENGTH_SHORT).show();;
             }
