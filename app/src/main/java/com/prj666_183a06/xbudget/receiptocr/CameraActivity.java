@@ -514,9 +514,9 @@ public final class CameraActivity extends AppCompatActivity {
 
                         //display ReceiptFormActivity
                         Intent myIntent = new Intent(CameraActivity.this, ReceiptFormActivity.class);
-//                        myIntent.putExtra("TotalArr", largestTotalIndex);
-//                        myIntent.putExtra("TotalIndex", possibleTotals);
-                        //myIntent.putExtra("ELEMENTS", receiptElements); //crashes on load
+                        if(largestTotalIndex != -1) {
+                            myIntent.putExtra("EXTRA_COST", possibleTotals.get(largestTotalIndex).getNumValue());
+                        }
                         CameraActivity.this.startActivity(myIntent);
 
                     }
