@@ -47,12 +47,22 @@ public class ExpenseRepository /*implements AsyncResult*/ {
     public double getTotalCost(){
         getTotalAsyncTask arr = new getTotalAsyncTask(expenseDao);
         arr.execute();
+        try{
+            Thread.sleep(500);
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
         return arr.ret();
     }
 
     public List<ExpenseObj> getAll(){
         getAllAsyncTask li = new getAllAsyncTask(expenseDao);
         li.execute();
+        try{
+            Thread.sleep(500);
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
         return li.getAll();
     }
 

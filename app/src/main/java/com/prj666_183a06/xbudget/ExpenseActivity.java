@@ -45,6 +45,9 @@ public class ExpenseActivity extends Fragment{
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ExpenseAddEditExpenseR.class);
                 startActivityForResult(intent, ADD_REQUEST);
+
+//                Intent intent = new Intent(getActivity(), ExpenseInfo.class);
+//                startActivity(intent);
             }
         });
 

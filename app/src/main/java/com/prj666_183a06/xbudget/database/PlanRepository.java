@@ -51,6 +51,11 @@ public class PlanRepository {
         GetTitleListAsyncTask at = new GetTitleListAsyncTask(planDao);
         List<String> temp = new ArrayList<>();
         at.execute();
+        try{
+            Thread.sleep(500);
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
         temp = at.getTitleList();
         return temp;
     }

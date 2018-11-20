@@ -4,6 +4,7 @@ import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 public class ExpenseListInterface {
@@ -47,7 +48,7 @@ public class ExpenseListInterface {
     }
 
     public List<Float> costTotalByCategory(){
-        List<Float> templist= new ArrayList<>();
+        List<Float> tempList= new ArrayList<>();
         float temp = 0;
         if(!titles.isEmpty()) {
             for(String r: titles){
@@ -56,23 +57,24 @@ public class ExpenseListInterface {
                         temp += (float)c.getCost();
                     }
                 }
-                templist.add(temp);
+                tempList.add(temp);
                 temp = 0;
             }
         }
-        return templist;
+        return tempList;
     }
 
-    public List<Float> getCostByDaily(){
-        List<Float> tempList= new ArrayList<>();
+    public HashMap<String, Float> getCostByDaily(){
+        HashMap<String, Float> tempList = new HashMap<>();
 
         Calendar cal = Calendar.getInstance();
 
         int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
+        int month = cal.get(Calendar.MONTH)+1;
         int day = cal.get(Calendar.DAY_OF_MONTH);
 
         float temp;
+
 
         for(int i = 0; i < 30; i++){
             temp = 0;
@@ -82,7 +84,8 @@ public class ExpenseListInterface {
                 }
             }
 
-            tempList.add(temp);
+            tempList.put(month + "/" + day + "/" + year, temp);
+            System.out.println(month + "/" + day + "/" + year + ": " + temp);
             if(day != 1){
                 day--;
             }else{
@@ -95,7 +98,6 @@ public class ExpenseListInterface {
                     day = 31;
                 }
             }
-            System.out.println(month + "/" + day + "/" + year);
         }
         return tempList;
     }

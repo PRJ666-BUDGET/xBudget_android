@@ -15,14 +15,15 @@ import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseListInterface;
 import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ExpenseInfo extends AppCompatActivity {
     Button b1, b2, b3, b4;
     LinearLayout container;
     TextView info;
-    ExpenseViewModel example;
-    PlanViewModel vm;
+    ExpenseViewModel evm;
+    PlanViewModel pvm;
     List<String> titles;
 
     static ExpenseListInterface obj;
@@ -35,15 +36,14 @@ public class ExpenseInfo extends AppCompatActivity {
 
         info = findViewById(R.id.texthere);
 
-        example = ViewModelProviders.of(this).get(ExpenseViewModel.class);
-        vm = ViewModelProviders.of(this).get(PlanViewModel.class);
+        evm = ViewModelProviders.of(this).get(ExpenseViewModel.class);
+        pvm = ViewModelProviders.of(this).get(PlanViewModel.class);
+
 
         titles = new ArrayList();
-        titles = vm.getTitleList();
+        titles = pvm.getTitleList();
 
-        obj = new ExpenseListInterface(example);
-
-
+        obj = new ExpenseListInterface(evm, pvm);
 
         b1 = findViewById(R.id.b1);
         b1.setOnClickListener(new View.OnClickListener() {
@@ -57,7 +57,15 @@ public class ExpenseInfo extends AppCompatActivity {
         b2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                info.append(obj.costTotal() + "\n");
+                List<Float> templist = new ArrayList<>();
+                templist = obj.costTotalByCategory();
+
+                System.out.println(templist);
+
+                for(int i = 0; i < templist.size(); i++){
+                    info.append(titles.get(i) + ": " + templist.get(i) + "\n");
+                    System.out.println(titles.get(i) + ": " + templist.get(i));
+                }
             }
         });
 
@@ -65,7 +73,9 @@ public class ExpenseInfo extends AppCompatActivity {
         b3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                info.append(titles.toString() + "\n");
+                HashMap<String, Float> listTemp = new HashMap<>();
+                listTemp = obj.getCostByDaily();
+                info.append(""+listTemp);
             }
         });
 
