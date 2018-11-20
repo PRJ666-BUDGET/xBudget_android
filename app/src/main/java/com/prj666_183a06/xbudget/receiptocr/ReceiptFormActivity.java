@@ -29,6 +29,7 @@ import com.prj666_183a06.xbudget.database.Expenses;
 import java.util.Calendar;
 import java.util.Date;
 
+//TODO: This activity should receive an array of possible totals along with the best guess EXTRA_COST
 
 public class ReceiptFormActivity extends AppCompatActivity {
 
