@@ -80,8 +80,6 @@ public final class CameraActivity extends AppCompatActivity {
     private TextRecognizer textRecognizer;
 
     private ImageView image;
-    private TextView textOut;
-    private TextView receiptSum;
 
     private Bitmap bitmap;
     /**
@@ -95,16 +93,6 @@ public final class CameraActivity extends AppCompatActivity {
         preview = (CameraSourcePreview) findViewById(R.id.preview);
         graphicOverlay = (GraphicOverlay<CameraOverlay>) findViewById(R.id.graphicOverlay);
         image = (ImageView) findViewById(R.id.CameraImageView);
-        textOut = (TextView) findViewById(R.id.ReceiptTextDisplay);
-        receiptSum = (TextView) findViewById(R.id.ReceiptSum);
-
-//        //display alignment box
-//        Paint rectPaint = new Paint();//TODO: Get better variable names
-//        rectPaint.setColor(Color.RED);
-////        rectPaint.setStyle(Paint.Style.STROKE);
-////        rectPaint.setStrokeWidth(4.0f);
-//        Canvas canvas =  new Canvas();
-//        canvas.drawRect(50, 500, 500, 500, rectPaint);
 
         // Set good defaults for capturing text.
         boolean autoFocus = true;
@@ -357,13 +345,7 @@ public final class CameraActivity extends AppCompatActivity {
      */
     private boolean onTap(float rawX, float rawY) {
 
-        cameraSource.takePicture(new CameraSource.ShutterCallback() {
-                     @Override
-                     public void onShutter() {
-                         textOut.setText("Loading Please Wait Message"); //TODO: replace please wait message with something more permanent
-                         textOut.setVisibility(View.VISIBLE);
-                     }
-                 },
+        cameraSource.takePicture(null,
                 new CameraSource.PictureCallback() {
                     @Override
                     public void onPictureTaken(byte[] data) {
@@ -458,8 +440,6 @@ public final class CameraActivity extends AppCompatActivity {
 
                         }
 
-                        textOut.setText(layout);
-
                         //TODO: Predict total, look for "Total" "Takeout Total" remove colo
                         //TODO: Convert comma to period
                         //TODO Arange rows and columns
@@ -510,13 +490,11 @@ public final class CameraActivity extends AppCompatActivity {
                         } else {
                             summary = "Total not found";
                         }
-                        receiptSum.setText(summary);
-
                         //display ReceiptFormActivity
                         Intent myIntent = new Intent(CameraActivity.this, ReceiptFormActivity.class);
-                        myIntent.putExtra("TotalArr", largestTotalIndex);
-                        myIntent.putExtra("TotalIndex", possibleTotals);
-                        //myIntent.putExtra("ELEMENTS", receiptElements); //crashes on load
+                        if(largestTotalIndex != -1) {
+                            myIntent.putExtra("EXTRA_COST", possibleTotals.get(largestTotalIndex).getNumValue());
+                        }
                         CameraActivity.this.startActivity(myIntent);
 
                     }
