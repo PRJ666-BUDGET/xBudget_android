@@ -1,27 +1,38 @@
 package com.prj666_183a06.xbudget;
 
 import android.app.DatePickerDialog;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseViewModel;
+import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
+import java.util.ArrayList;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.prj666_183a06.xbudget.database.Expenses;
-
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class ExpenseAddEditExpenseR extends AppCompatActivity {
 
@@ -39,9 +50,19 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
     public static final String EXTRA_COST =
             "com.prj666_183a06.xbudget.EXTRA_COST";
 
+    public static final String EXTRA_CATEGORY =
+            "com.prj666_183a06.xbudget.EXTRA_CATEGORY";
+
     private EditText editStore, editItem, editCost;
+    private Spinner editCategory;
     private TextView editDate;
+    private Spinner plansDrop;
+    private Button buttonAdd, debug;
+    private LinearLayout container;
+    PlanViewModel pvm;
     static DatePickerDialog.OnDateSetListener dateListener;
+    List<String> planTitles;
+
     private DatabaseReference expenseRef = FirebaseDatabase.getInstance().getReference("expenses");
     private double tempAmount;
 
@@ -54,6 +75,20 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
         editItem = findViewById(R.id.edit_text_item);
         editCost = findViewById(R.id.edit_text_cost);
         editDate = findViewById(R.id.edit_date_view);
+
+        //Populate title
+        pvm = ViewModelProviders.of(this).get(PlanViewModel.class);
+
+        planTitles = new ArrayList<>();
+        planTitles = pvm.getTitleList();
+        planTitles.add(0, "None");
+
+        Log.e("title", planTitles.toString());
+
+        plansDrop = findViewById(R.id.plans);
+        ArrayAdapter<String> planAdapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_dropdown_item, planTitles);
+        plansDrop.setAdapter(planAdapter);
 
         editDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +122,6 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
         });
 
         editDate.setText(getDate());
-
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
 
         Intent intent = getIntent();
@@ -120,6 +154,7 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
         String item = editItem.getText().toString();
         String date = editDate.getText().toString();
         String cost = editCost.getText().toString();
+        String category = plansDrop.getSelectedItem().toString();
 
         if(store.trim().isEmpty() || item.trim().isEmpty() || date.trim().isEmpty() || cost.isEmpty()){
             Toast.makeText(this, "Please fill out the form" , Toast.LENGTH_SHORT).show();
@@ -131,6 +166,7 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
         data.putExtra(EXTRA_ITEM, item.trim());
         data.putExtra(EXTRA_DATE, date.trim());
         data.putExtra(EXTRA_COST, Double.parseDouble(cost));
+        data.putExtra(EXTRA_CATEGORY, category);
 
         int id = getIntent().getIntExtra(EXTRA_ID, -1);
         if(id != -1){

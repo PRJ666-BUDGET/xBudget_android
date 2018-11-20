@@ -22,13 +22,15 @@ public class Expense{
     @ColumnInfo(name = "expense_cost")
     private double expenseCost;
 
-
     @ColumnInfo(name = "expense_date")
     private String expenseDate;
 
-    public Expense(String expenseStore, String expenseDate, String expenseItem, double expenseCost) {
+    @ColumnInfo(name = "expense_category")
+    private String expenseCategory;
+
+    public Expense(String expenseStore, String expenseDate, String expenseItem, String expenseCategory, double expenseCost) {
         this.expenseStore = expenseStore;
-        //this.expenseCategory = expenseCategory;
+        this.expenseCategory = expenseCategory;
         this.expenseItem = expenseItem;
         this.expenseDate = expenseDate;
         this.expenseCost = expenseCost;
@@ -37,6 +39,14 @@ public class Expense{
     @NonNull
     public int getId() {
         return id;
+    }
+
+    public String getExpenseCategory() {
+        return expenseCategory;
+    }
+
+    public void setExpenseCategory(String expenseCategory) {
+        this.expenseCategory = expenseCategory;
     }
 
     public void setId(@NonNull int id) {

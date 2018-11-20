@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.prj666_183a06.xbudget.R;
@@ -36,7 +37,9 @@ public class ExpenseAdapter extends ListAdapter<Expense, ExpenseAdapter.ExpenseH
                     oldItem.getExpenseStore().equals(newItem.getExpenseStore()) &&
                             oldItem.getExpenseItem().equals(newItem.getExpenseItem()) &&
                             oldItem.getExpenseCost() == newItem.getExpenseCost() &&
-                            oldItem.getExpenseDate().equals(newItem.getExpenseDate());
+                            oldItem.getExpenseDate().equals(newItem.getExpenseDate()) &&
+                            oldItem.getExpenseCategory().equals(newItem.getExpenseCategory()
+                            );
         }
     };
 
@@ -55,11 +58,11 @@ public class ExpenseAdapter extends ListAdapter<Expense, ExpenseAdapter.ExpenseH
 
         holder.textViewStore.setText(currentExpense.getExpenseStore());
         holder.textViewItem.setText(currentExpense.getExpenseItem());
-
         //Format to Canadian currency format
         NumberFormat format = NumberFormat.getCurrencyInstance(Locale.CANADA);
         String currency = format.format(currentExpense.getExpenseCost());
         holder.textViewCost.setText(currency);
+        holder.textViewCategory.setText(currentExpense.getExpenseCategory());
         holder.textViewDate.setText(currentExpense.getExpenseDate());
     }
 
@@ -82,6 +85,7 @@ public class ExpenseAdapter extends ListAdapter<Expense, ExpenseAdapter.ExpenseH
         private TextView textViewItem;
         private TextView textViewCost;
         private TextView textViewDate;
+        private TextView textViewCategory;
 
         public ExpenseHolder(View itemView) {
             super(itemView);
@@ -89,6 +93,7 @@ public class ExpenseAdapter extends ListAdapter<Expense, ExpenseAdapter.ExpenseH
             textViewItem = itemView.findViewById(R.id.text_view_item);
             textViewCost = itemView.findViewById(R.id.text_view_cost);
             textViewDate = itemView.findViewById(R.id.text_view_date);
+            textViewCategory = itemView.findViewById(R.id.text_view_category);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

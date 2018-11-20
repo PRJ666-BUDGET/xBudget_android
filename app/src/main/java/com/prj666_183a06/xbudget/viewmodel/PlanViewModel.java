@@ -44,4 +44,8 @@ public class PlanViewModel extends AndroidViewModel {
     public LiveData<List<PlanEntity>> getPlanList() {
         return planList;
     }
+
+    public List<String> getTitleList(){
+        return repository.getTitleList();
+    }
 }

@@ -7,26 +7,6 @@
     android:padding="16dp"
     tools:context=".ExpenseAddEditExpenseR">
 
-    <EditText
-        android:id="@+id/edit_text_store"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Store"
-        android:inputType="text" />
-
-    <EditText
-        android:id="@+id/edit_text_item"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Item"
-        android:inputType="text" />
-
-    <EditText
-        android:id="@+id/edit_text_cost"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Cost"
-        android:inputType="numberDecimal" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -51,6 +31,51 @@
             android:inputType="text"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium.Inverse"
             android:textColor="#000000" />
-    </RelativeLayout>
 
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/edit_text_store"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Store"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/edit_text_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:hint="Item"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/edit_text_cost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:hint="Total"
+            android:inputType="numberDecimal" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/cattag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Category"/>
+
+            <Spinner
+                android:id="@+id/plans"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/cattag"/>
+        </RelativeLayout>
+
+    </LinearLayout>
 </LinearLayout>

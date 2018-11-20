@@ -46,6 +46,9 @@ public class ExpenseActivity extends Fragment{
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ExpenseAddEditExpenseR.class);
                 startActivityForResult(intent, ADD_REQUEST);
+
+//                Intent intent = new Intent(getActivity(), ExpenseInfo.class);
+//                startActivity(intent);
             }
         });
 
@@ -82,6 +85,7 @@ public class ExpenseActivity extends Fragment{
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
                 expenseViewModel.delete(adapter.getExpenseAt(viewHolder.getAdapterPosition()));
                 Toast.makeText(getContext(), "Expense deleted", Toast.LENGTH_SHORT).show();;
             }
@@ -118,8 +122,9 @@ public class ExpenseActivity extends Fragment{
             String item = data.getStringExtra(ExpenseAddEditExpenseR.EXTRA_ITEM);
             String date = data.getStringExtra(ExpenseAddEditExpenseR.EXTRA_DATE);
             double cost = data.getDoubleExtra(ExpenseAddEditExpenseR.EXTRA_COST, 0.0);
+            String category = data.getStringExtra((ExpenseAddEditExpenseR.EXTRA_CATEGORY));
 
-            Expense expense = new Expense(store, date, item, cost);
+            Expense expense = new Expense(store, date, item, category,cost);
             expenseViewModel.insert(expense);
 
             Toast.makeText(getActivity(), "Expense saved", Toast.LENGTH_SHORT);
@@ -135,8 +140,9 @@ public class ExpenseActivity extends Fragment{
             String item = data.getStringExtra(ExpenseAddEditExpenseR.EXTRA_ITEM);
             String date = data.getStringExtra(ExpenseAddEditExpenseR.EXTRA_DATE);
             double cost = data.getDoubleExtra(ExpenseAddEditExpenseR.EXTRA_COST, 0.0);
+            String category = data.getStringExtra((ExpenseAddEditExpenseR.EXTRA_CATEGORY));
 
-            Expense expense = new Expense(store, date, item, cost);
+            Expense expense = new Expense(store, date, item, category, cost);
             expense.setId(id);
             expenseViewModel.update(expense);
             Toast.makeText(getContext(), "Expense updated", Toast.LENGTH_SHORT).show();

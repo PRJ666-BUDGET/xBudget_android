@@ -3,6 +3,7 @@ package com.prj666_183a06.xbudget.database;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseDao;
@@ -11,6 +12,7 @@ import com.prj666_183a06.xbudget.R;
 import com.prj666_183a06.xbudget.database.dao.PlanDao;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
 
+import java.util.ArrayList;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -52,6 +54,41 @@ public class PlanRepository {
         return planList;
     }
 
+    //Getting list title
+    public List<String> getTitleList(){
+        GetTitleListAsyncTask at = new GetTitleListAsyncTask(planDao);
+        List<String> temp = new ArrayList<>();
+        at.execute();
+        try{
+            Thread.sleep(500);
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+        temp = at.getTitleList();
+        return temp;
+    }
+
+    private static class GetTitleListAsyncTask extends  AsyncTask<PlanEntity, Void, Void> {
+        private PlanDao planDao;
+        List<String> list;
+
+        private GetTitleListAsyncTask(PlanDao planDao) {
+            this.planDao = planDao;
+            this.list = new ArrayList();
+        }
+
+        @Override
+        protected Void doInBackground(PlanEntity... plans) {
+            this.list = planDao.titleList();
+            Log.e("background", planDao.titleList().toString());
+            return null;
+        }
+
+        List<String> getTitleList(){
+            Log.e("title get", list.toString());
+            return list;
+        }
+    }
     public void getPlanIncomeTotalFromHomeFragment(HomeFragment context) { new GetPlanIncomeTotalAsyncTaskFromHomeFragment(context, planDao).execute(); }
 
 //    public LiveData<List<PlanEntity>> getPlanSavingList() { return planSavingList; }
