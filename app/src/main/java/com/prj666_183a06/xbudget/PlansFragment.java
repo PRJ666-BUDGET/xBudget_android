@@ -1,7 +1,9 @@
 package com.prj666_183a06.xbudget;
 
+import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -213,17 +215,35 @@ public class PlansFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.delete_allPlan:
-                planViewModel.deleteAllPlans();
-                Toast.makeText(getActivity(), "All Plans are deleted", Toast.LENGTH_SHORT).show();
 
-                String id = planRef.push().getKey();
-                totalIncome *= -1;
-                Plans plans = new Plans("income", "deleteAll", totalIncome, "all");
-                planRef.child(id).setValue(plans);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setMessage("You can't undo this action. Do you want to delete all plans?").setPositiveButton("Yes", confirmDeleteDialogClickListener)
+                        .setNegativeButton("No", confirmDeleteDialogClickListener).show();
 
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    DialogInterface.OnClickListener confirmDeleteDialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch(which) {
+                case DialogInterface.BUTTON_POSITIVE:
+
+                    planViewModel.deleteAllPlans();
+                    Toast.makeText(getActivity(), "All Plans are deleted", Toast.LENGTH_SHORT).show();
+
+                    String id = planRef.push().getKey();
+                    totalIncome *= -1;
+                    Plans plans = new Plans("income", "deleteAll", totalIncome, "all");
+                    planRef.child(id).setValue(plans);
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE:
+                    break;
+            }
+        }
+    };
+
 }
