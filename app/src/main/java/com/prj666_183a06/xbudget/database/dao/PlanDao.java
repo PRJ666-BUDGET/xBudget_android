@@ -33,7 +33,7 @@ public interface PlanDao {
     @Query("DELETE FROM plan_table")
     void deleteAllPlan();
 
-    @Query("SELECT plan_title FROM plan_table WHERE plan_type = 'saving'")
+    @Query("SELECT plan_title FROM plan_table WHERE plan_type = 'category'")
     List<String> titleList();
 
     @Query("SELECT SUM(plan_amount)*365/12 FROM plan_table WHERE plan_type='income' AND plan_period='daily'")
