@@ -14,6 +14,8 @@ import com.prj666_183a06.xbudget.HomeFragment;
 import com.prj666_183a06.xbudget.R;
 import com.prj666_183a06.xbudget.database.dao.PlanDao;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
+import com.prj666_183a06.xbudget.model.PlanObj;
+import com.prj666_183a06.xbudget.pojo.PlanItem;
 
 import java.util.ArrayList;
 import java.lang.ref.WeakReference;
@@ -26,6 +28,7 @@ public class PlanRepository {
     private LiveData<List<PlanEntity>> planList;
 //    private LiveData<List<PlanEntity>> planIncomeList;
 //    private LiveData<List<PlanEntity>> planSavingList;
+    static List<PlanItem> temp;
 
     public PlanRepository(Application application) {
         AppDatabase database = AppDatabase.getInstance(application);
@@ -82,46 +85,63 @@ public class PlanRepository {
         return arr.ret();
     }
 
-//    private static class getAllAsyncTask extends AsyncTask<Expense, Void, Void>{
-//        ExpenseDao expenseDao;
-//        static List<ExpenseObj> temp;
-//        List<String>  storel;
-//        List<String>  iteml;
-//        List<String>  datel;
-//        List<Double>  costl;
-//        List<String>  categoryl;
-//
-//        private getAllAsyncTask(ExpenseDao expenseDao){
-//            this.expenseDao = expenseDao;
-//            temp = new ArrayList<>();
-//            storel = new ArrayList();
-//            iteml = new ArrayList();
-//            datel = new ArrayList();
-//            costl = new ArrayList();
-//            categoryl = new ArrayList();
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Expense...expenses){
-//            Log.e("doInbackground", "do");
-//            this.storel = expenseDao.getStoreAll();
-//            this.iteml = expenseDao.getItemAll();
-//            this.datel = expenseDao.getDateAll();
-//            this.costl = expenseDao.getCostAll();
-//            this.categoryl = expenseDao.getCategoryAll();
-//
-//            for(int i = 0; i < iteml.size(); i++){
-//                temp.add(new ExpenseObj(iteml.get(i), storel.get(i), datel.get(i),categoryl.get(i), costl.get(i)));
-//            }
-//
-//            return null;
-//        }
-//
-//        List<ExpenseObj> getAll(){
-//            return temp;
-//        }
-//    }
+    // Added by Irene to get all
+    public List<PlanObj> getAll() {
+        getAllAsyncTask li = new getAllAsyncTask(planDao);
+        li.execute();
+        try{
+            Thread.sleep(100);
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+        return li.getAll();
+    }
 
+    // Added by Irene
+    private static class getAllAsyncTask extends AsyncTask<PlanEntity, Void, Void>{
+        PlanDao planDao;
+        static List<PlanObj> temp;
+        List<String>  type;
+        List<String>  title;
+        List<Double>  amount;
+        List<String>  period;
+
+        private getAllAsyncTask(PlanDao planDao){
+            this.planDao = planDao;
+            temp = new ArrayList<>();
+            type = new ArrayList();
+            title = new ArrayList();
+            amount = new ArrayList();
+            period = new ArrayList();
+        }
+
+        //String type, String title, Double amount, String period
+        @Override
+        protected Void doInBackground(PlanEntity ...plans){
+            Log.e("doInbackground", "do");
+            this.type = planDao.getTypeAll();
+            this.title = planDao.getTitleAll();
+            this.amount = planDao.getAllCategoryTotal();
+            this.period = planDao.getPeriodAll();
+
+            for(int i = 0; i < title.size(); i++){
+                temp.add(new PlanObj(type.get(i), title.get(i), amount.get(i), period.get(i)));
+                Log.e("PlanObj", "doInbackground" + temp.get(i).getType() + temp.get(i).getAmount());
+            }
+
+            Log.e("PlanObj", "doInbackground" + temp.toString());
+
+            return null;
+        }
+
+
+        List<PlanObj> getAll(){
+            Log.e("temp", "getAll" + temp.toString());
+            return temp;
+        }
+    }
+
+    // Added by Irene to get totals
     private static class getTotalAsyncTask extends AsyncTask<PlanEntity, Void, Void>{
         private PlanDao planDao;
         private static double ret;

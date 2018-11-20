@@ -37,6 +37,9 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.FileUtils;
 import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseObj;
 import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseViewModel;
+import com.prj666_183a06.xbudget.model.PlanObj;
+import com.prj666_183a06.xbudget.pojo.PlanItem;
+import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -68,22 +71,13 @@ public class ReportFragment extends Fragment {
     ExpenseViewModel expenseViewModel;
     List<ExpenseObj> expenseObjs;
 
+    PlanViewModel planViewModel;
+    List<PlanObj> planObjs;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Initialize - database
-        expenseViewModel = ViewModelProviders.of(this).get(ExpenseViewModel.class);
-        expenseObjs = new ArrayList();
-        expenseObjs = expenseViewModel.getAll();
-        Log.e("expenseObjs", "in onCreate Report" + expenseObjs);
-
-        // Chart
-        hashMap_expenses = new HashMap<>();
-        treeMap_expenses = new TreeMap<String, Float>(hashMap_expenses);
-
-        hashMap_plan = new HashMap<>();
-        treeMap_plan = new TreeMap<String, Float>(hashMap_expenses);
+        getCurrData();
     }
 
     @Override
@@ -115,6 +109,26 @@ public class ReportFragment extends Fragment {
         getActualData();
         getPieChart();
         getBarChart();
+    }
+
+    public void getCurrData() {
+        // Initialize - database
+        expenseViewModel = ViewModelProviders.of(this).get(ExpenseViewModel.class);
+        expenseObjs = new ArrayList();
+        expenseObjs = expenseViewModel.getAll();
+        Log.e("expenseObjs", "in onCreate Report" + expenseObjs);
+
+        planViewModel = ViewModelProviders.of(this).get(PlanViewModel.class);
+        planObjs = new ArrayList();
+        planObjs = planViewModel.getAll();
+        Log.e("planObjs", "in onCreate Report" + planObjs);
+
+        // Chart
+        hashMap_expenses = new HashMap<>();
+        treeMap_expenses = new TreeMap<String, Float>(hashMap_expenses);
+
+        hashMap_plan = new HashMap<>();
+        treeMap_plan = new TreeMap<String, Float>(hashMap_expenses);
     }
 
     protected void getPlanData(){
