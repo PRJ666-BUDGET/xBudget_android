@@ -48,14 +48,10 @@ public class ExpenseViewModel extends AndroidViewModel {
     }
 
     public List<ExpenseObj> getAll(){
-        Log.e("Viewmodel activate", "activated");
         return repository.getAll();
     }
-
+  
     public double getTotal(){
         return repository.getTotalCost();
     }
-
-
-
 }

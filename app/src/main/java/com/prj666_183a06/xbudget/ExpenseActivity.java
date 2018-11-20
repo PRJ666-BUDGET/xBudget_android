@@ -22,6 +22,7 @@ import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseAdapter;
 import com.prj666_183a06.xbudget.ExpenseRoom.Expense;
 import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
@@ -168,4 +169,5 @@ public class ExpenseActivity extends Fragment{
                 return super.onOptionsItemSelected(item);
         }
     }
+
 }

@@ -23,7 +23,7 @@ public abstract class AppDatabase extends RoomDatabase {
     // for Singleton
     public static AppDatabase instance;
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "xbudget";
 
     public abstract PlanDao planDao();
@@ -64,7 +64,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
             planDao.insertPlan(new PlanEntity("income", "Co-op", 1000, "bi-weekly"));
             planDao.insertPlan(new PlanEntity("income", "tutor", 500, "bi-weekly"));
-            planDao.insertPlan(new PlanEntity("saving", "Coffee", 5, "daily"));
+            planDao.insertPlan(new PlanEntity("category", "Coffee", 5, "daily"));
 
             return null;
         }

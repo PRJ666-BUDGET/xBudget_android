@@ -1,7 +1,9 @@
 package com.prj666_183a06.xbudget;
 
+import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,9 +21,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.prj666_183a06.xbudget.adapter.PlanAdapter;
 import com.prj666_183a06.xbudget.crud.CreateUpdatePlanActivity;
 import com.prj666_183a06.xbudget.crud.DetailPlanActivity;
+import com.prj666_183a06.xbudget.database.Plans;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
 import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
@@ -29,7 +34,7 @@ import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
-public class PlansActivity extends Fragment {
+public class PlansFragment extends Fragment {
 
     private static final String TAG = "PlansFragment";
 
@@ -39,11 +44,32 @@ public class PlansActivity extends Fragment {
 
     private PlanViewModel planViewModel;
 
+    private DatabaseReference planRef = FirebaseDatabase.getInstance().getReference("plans");
+    double totalIncome;
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         getActivity().setTitle("Plans");
+//
+//        planRef.addValueEventListener(new ValueEventListener() {
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                totalIncome = 0;
+//                for (DataSnapshot planData : dataSnapshot.getChildren()) {
+//                    Plans planValue = planData.getValue(Plans.class);
+//                    if(planValue.getPlan_type().equals("income")){
+//                        totalIncome += planValue.getPlan_amount();
+////                        break;
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                System.out.println("The read failed!!!");
+//            }
+//        });
     }
 
     @Nullable
@@ -114,6 +140,7 @@ public class PlansActivity extends Fragment {
                 intent.putExtra(DetailPlanActivity.PLAN_AMOUNT, plan.getPlanAmount());
                 intent.putExtra(DetailPlanActivity.PLAN_PERIOD, plan.getPlanPeriod());
                 Log.d(TAG, "onItemClick: PLAN_ID:" + plan.getPlanId() + "------------------------------------");
+
                 startActivityForResult(intent, DELETE_PLAN_REQUEST);
             }
         });
@@ -150,7 +177,7 @@ public class PlansActivity extends Fragment {
             Log.d(TAG, "onActivityResult: planId: " + id);
 
             if (id == -1) {
-                Toast.makeText(getActivity(), "BAD REQUEST [PlansActivity.java onActivityResult()], PlanId: " + id, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "BAD REQUEST [PlansFragment.java onActivityResult()], PlanId: " + id, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -158,26 +185,17 @@ public class PlansActivity extends Fragment {
 
             plan.setPlanId(id);
             planViewModel.delete(plan);
+
+//            String tempId = planRef.push().getKey();
+//            double tempAmount = 0;
+//            tempAmount = amount * -1;
+//            Plans plans = new Plans(type, title, tempAmount, period);
+//            planRef.child(tempId).setValue(plans);
         }
         else{
-//            Toast.makeText(getActivity(), "BACK TO LIST VIEW FROM DETAIL VIEW [PlansActivity.java onActivityResult()]", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), "BACK TO LIST VIEW FROM DETAIL VIEW [PlansFragment.java onActivityResult()]", Toast.LENGTH_SHORT).show();
         }
     }
-
-//        /**
-//         * DEMO DATA
-//         */
-//
-//        ArrayList<Object> planItems = new ArrayList<>();
-//        planItems.add(new String("Budget"));
-//        planItems.add(new PlanItem("budget", "Starbucks", "1000", "bi-weekly"));
-//        planItems.add(new PlanItem("budget", "Tutor", "400", "bi-weekly"));
-//
-//        planItems.add(new String("Saving"));
-//        planItems.add(new PlanItem("saving", "Coffee", "5", "daily"));
-//        planItems.add(new PlanItem("saving", "Lunch", "10", "daily"));
-//        planItems.add(new PlanItem("saving", "Cigarette", "15", "weekly"));
-//
 
     /**
      *  DELETE ALL PLANS FOR DEMO ONLY
@@ -197,11 +215,35 @@ public class PlansActivity extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.delete_allPlan:
-                planViewModel.deleteAllPlans();
-                Toast.makeText(getActivity(), "All Plans are deleted", Toast.LENGTH_SHORT).show();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setMessage("You can't undo this action. Do you want to delete all plans?").setPositiveButton("Yes", confirmDeleteDialogClickListener)
+                        .setNegativeButton("No", confirmDeleteDialogClickListener).show();
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    DialogInterface.OnClickListener confirmDeleteDialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch(which) {
+                case DialogInterface.BUTTON_POSITIVE:
+
+                    planViewModel.deleteAllPlans();
+                    Toast.makeText(getActivity(), "All Plans are deleted", Toast.LENGTH_SHORT).show();
+
+                    String id = planRef.push().getKey();
+                    totalIncome *= -1;
+                    Plans plans = new Plans("income", "deleteAll", totalIncome, "all");
+                    planRef.child(id).setValue(plans);
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE:
+                    break;
+            }
+        }
+    };
+
 }
