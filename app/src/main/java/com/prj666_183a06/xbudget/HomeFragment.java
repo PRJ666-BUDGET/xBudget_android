@@ -241,13 +241,12 @@ public class HomeFragment extends Fragment {
         ExpenseListInterface obj = new ExpenseListInterface(expenseViewModel, pvm);
 
         hashMap_exp = obj.getCostByDaily();
-
-
-        treeMap_expenses = new TreeMap<String, Float>(hashMap_exp);
+        Log.e("hash compare in home: ", String.valueOf(hashMap_exp));
+//        treeMap_expenses = new TreeMap<String, Float>(hashMap_exp);
 
         // Sort by date using tree
         treeMap_expenses = new TreeMap<String, Float>(hashMap_exp);
-        Log.e("compare in home: ", String.valueOf(treeMap_expenses));
+        Log.e("tree compare in home: ", String.valueOf(treeMap_expenses));
 
         arr_expenses = new ArrayList<Float>();
         float value = 0;
