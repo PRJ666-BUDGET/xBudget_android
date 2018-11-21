@@ -60,15 +60,15 @@ public interface PlanDao {
     @Query("SELECT plan_amount FROM plan_table WHERE plan_type='category'")
     List<Double> getAllCategoryTotal();
 
-    @Query("SELECT SUM(plan_amount)*365/12 FROM plan_table WHERE plan_type='category' AND plan_period='daily'")
-    double getCategoryTotalDaily();
+    @Query("SELECT plan_amount*365/12 FROM plan_table WHERE plan_type='category' AND plan_period='daily'")
+    List<Double> getCategoryTotalDaily();
 
-    @Query("SELECT SUM(plan_amount)*52/12 FROM plan_table WHERE plan_type='category' AND plan_period='weekly'")
-    double getCategoryTotalWeekly();
+    @Query("SELECT plan_amount*52/12 FROM plan_table WHERE plan_type='category' AND plan_period='weekly'")
+    List<Double> getCategoryTotalWeekly();
 
-    @Query("SELECT SUM(plan_amount)*26/12 FROM plan_table WHERE plan_type='category' AND plan_period='bi-weekly'")
-    double getCategoryTotalBiweekly();
+    @Query("SELECT plan_amount*26/12 FROM plan_table WHERE plan_type='category' AND plan_period='bi-weekly'")
+    List<Double> getCategoryTotalBiweekly();
 
-    @Query("SELECT SUM(plan_amount) FROM plan_table WHERE plan_type='category' AND plan_period='monthly'")
-    double getCategoryTotalMonthly();
+    @Query("SELECT plan_amount FROM plan_table WHERE plan_type='category' AND plan_period='monthly'")
+    List<Double> getCategoryTotalMonthly();
 }

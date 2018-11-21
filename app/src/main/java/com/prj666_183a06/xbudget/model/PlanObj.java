@@ -3,10 +3,10 @@ package com.prj666_183a06.xbudget.model;
 public class PlanObj {
     private String type;
     private String title;
-    private Double amount;
+    private double amount;
     private String period;
 
-    public PlanObj(String type, String title, Double amount, String period) {
+    public PlanObj(String type, String title, double amount, String period) {
         this.type = type;
         this.title = title;
         this.amount = amount;
@@ -29,7 +29,7 @@ public class PlanObj {
         this.title = title;
     }
 
-    public Double getAmount() {
+    public double getAmount() {
         return amount;
     }
 

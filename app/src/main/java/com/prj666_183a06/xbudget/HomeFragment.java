@@ -357,7 +357,7 @@ public class HomeFragment extends Fragment {
         getStringLabels();
 
         // Budget Dataset
-        for(int i=1; i < 31; i+=5){
+        for(int i=1; i <= arr_expenses.size(); i++){
             arrList_budget.add(new Entry(i, arr_plan.get(0)));
         }
 
@@ -371,6 +371,7 @@ public class HomeFragment extends Fragment {
         budget_ds = new LineDataSet(arrList_budget, "My Budget");
         budget_ds.setLineWidth(2f);
         budget_ds.setDrawCircles(false);
+//        budget_ds.setDrawValues(false);
         budget_ds.setColor(MyColorTemplate.VORDIPLOM_COLORS[0]);
 
         iLineDataSets.add(budget_ds);
@@ -378,6 +379,7 @@ public class HomeFragment extends Fragment {
         expenses_ds = new LineDataSet(arrList_expenses, "My Expenses");
         expenses_ds.setLineWidth(2f);
         expenses_ds.setDrawCircles(false);
+//        expenses_ds.setDrawValues(false);
         expenses_ds.setColor(MyColorTemplate.VORDIPLOM_COLORS[4]);
 
         iLineDataSets.add(expenses_ds);

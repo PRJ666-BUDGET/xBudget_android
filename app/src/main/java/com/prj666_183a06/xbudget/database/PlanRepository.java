@@ -122,11 +122,15 @@ public class PlanRepository {
             this.type = planDao.getTypeAll();
             this.title = planDao.getTitleAll();
             this.amount = planDao.getAllCategoryTotal();
+//            this.amount = planDao.getCategoryTotalDaily()
+//                            + planDao.getCategoryTotalWeekly()
+//                            + planDao.getCategoryTotalBiweekly()
+//                            + planDao.getCategoryTotalMonthly();
             this.period = planDao.getPeriodAll();
 
             for(int i = 0; i < title.size(); i++){
                 temp.add(new PlanObj(type.get(i), title.get(i), amount.get(i), period.get(i)));
-                Log.e("PlanObj", "doInbackground" + temp.get(i).getType() + temp.get(i).getAmount());
+                Log.e("PlanObj", "doInbackground" + temp.get(i).getTitle() + ", " + temp.get(i).getPeriod() + ", " + temp.get(i).getAmount());
             }
 
             Log.e("PlanObj", "doInbackground" + temp.toString());
