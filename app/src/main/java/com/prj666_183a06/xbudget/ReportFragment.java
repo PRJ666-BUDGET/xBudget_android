@@ -198,9 +198,16 @@ public class ReportFragment extends Fragment {
         arr_plan = new ArrayList<Float>(hashMap_plan.values());
         Log.e("hash in getPlan: ", String.valueOf(hashMap_plan));
 
-        if (str_label_Pie.size() == 0){
-            arr_plan.add(100f);
-//            str_label_Pie.add("Sample Data");
+
+        int temp_size = arr_plan.size();
+        if (str_label_Pie.size() != temp_size){
+            for(int i = 0; i < str_label_Pie.size()-temp_size; i++){
+                arr_plan.add(0f);
+            }
+        } else {
+            if (str_label_Pie.size() == 0 ) {
+                arr_plan.add(100f);
+            }
         }
     }
 
