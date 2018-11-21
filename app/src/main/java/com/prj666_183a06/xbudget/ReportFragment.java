@@ -140,7 +140,7 @@ public class ReportFragment extends Fragment {
         // Group using hash
         for(PlanObj r: planObjs) {
             float temp = 0;
-            if (!hashMap_plan.containsKey(r.getTitle())){
+            if (str_label_Pie.contains(r.getTitle())){
                 Log.e("temp in swithch: ", r.getPeriod());
                 switch (r.getPeriod()){
                     case "daily":
@@ -158,27 +158,49 @@ public class ReportFragment extends Fragment {
                 }
                 hashMap_plan.put(r.getTitle(), temp);
             } else {
-                hashMap_plan.put(r.getTitle(), hashMap_plan.get(r.getTitle()) + temp);
+                hashMap_plan.put(r.getTitle(), 0f);
             }
+//            if (!hashMap_plan.containsKey(r.getTitle())){
+//                Log.e("temp in swithch: ", r.getPeriod());
+//                switch (r.getPeriod()){
+//                    case "daily":
+//                        temp = (float) r.getAmount()*365/12;
+//                        break;
+//                    case "weekly":
+//                        temp = (float) r.getAmount()*52/12;
+//                        break;
+//                    case "bi-weekly":
+//                        temp = (float) r.getAmount()*26/12;
+//                        break;
+//                    case "monthly":
+//                        temp = (float) r.getAmount();
+//                        break;
+//                }
+//                hashMap_plan.put(r.getTitle(), temp);
+//            } else {
+//                hashMap_plan.put(r.getTitle(), hashMap_plan.get(r.getTitle()) + temp);
+//            }
             Log.e("temp in Plan: ", String.valueOf(temp));
             Log.e("hashmap in Plan: ", String.valueOf(hashMap_plan));
         }
 
         // Sort using treemap & Return by total desc
-        Comparator<String> comparator = new ValueComparator<String, Float>(hashMap_plan);
-        treeMap_plan = new TreeMap<String, Float>(comparator);
-        treeMap_plan.putAll(hashMap_plan);
-        Log.e("comparator in Plan: ", String.valueOf(treeMap_plan));
-
-        // Set to arrayList from treemap
-        arr_plan = new ArrayList<Float>(treeMap_plan.values());
-        str_label_Bar = new ArrayList<String>(treeMap_plan.keySet());
-        Log.e("total in getPlan: ", String.valueOf(arr_plan));
-        Log.e("label in getPlan: ", String.valueOf(str_label_Bar));
+//        Comparator<String> comparator = new ValueComparator<String, Float>(hashMap_plan);
+//        treeMap_plan = new TreeMap<String, Float>(comparator);
+//        treeMap_plan.putAll(hashMap_plan);
+//        Log.e("comparator in Plan: ", String.valueOf(treeMap_plan));
+//
+//        // Set to arrayList from treemap
+//        arr_plan = new ArrayList<Float>(treeMap_plan.values());
+//        str_label_Bar = new ArrayList<String>(treeMap_plan.keySet());
+//        Log.e("total in getPlan: ", String.valueOf(arr_plan));
+////        Log.e("label in getPlan: ", String.valueOf(str_label_Bar));
+        arr_plan = new ArrayList<Float>(hashMap_plan.values());
+        Log.e("hash in getPlan: ", String.valueOf(hashMap_plan));
 
         if (str_label_Pie.size() == 0){
             arr_plan.add(100f);
-            str_label_Pie.add("Sample Data");
+//            str_label_Pie.add("Sample Data");
         }
     }
 
