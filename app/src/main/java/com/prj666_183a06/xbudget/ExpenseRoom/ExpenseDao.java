@@ -56,4 +56,5 @@ public interface ExpenseDao {
     @Query("SELECT * FROM expense_table ORDER BY expense_date")
     List<Expense> getExpenseGroupList();
 
+
 }
