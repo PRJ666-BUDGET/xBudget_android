@@ -47,7 +47,7 @@
     </com.prj666_183a06.xbudget.camera.CameraSourcePreview>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/cameraActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
