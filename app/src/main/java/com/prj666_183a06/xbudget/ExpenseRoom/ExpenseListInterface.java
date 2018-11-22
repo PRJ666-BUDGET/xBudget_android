@@ -84,7 +84,12 @@ public class ExpenseListInterface {
                 }
             }
 
-            tempList.put(month + "/" + day + "/" + year, temp);
+            if (day < 10){
+                tempList.put(month + "/0" + day + "/" + year, temp);
+            } else {
+                tempList.put(month + "/" + day + "/" + year, temp);
+            }
+//            tempList.put(month + "/" + day + "/" + year, temp);
             System.out.println(month + "/" + day + "/" + year + ": " + temp);
             if(day != 1){
                 day--;
@@ -99,6 +104,7 @@ public class ExpenseListInterface {
                 }
             }
         }
+        System.out.println("tempList" + tempList);
         return tempList;
     }
 }
