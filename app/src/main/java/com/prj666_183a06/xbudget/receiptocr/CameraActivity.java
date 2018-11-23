@@ -371,41 +371,6 @@ public final class CameraActivity extends AppCompatActivity {
 
                         SparseArray<TextBlock> items = textRecognizer.detect(frame);
 
-                        Snackbar.make(graphicOverlay, "Text Displayed",
-                                Snackbar.LENGTH_LONG)
-                                .show();
-
-                        //Parse Objects to text with layout
-                        List<String> output = new ArrayList<String>();
-                        List<Integer> xAxis = new ArrayList<Integer>();
-                        List<Integer> yAxis = new ArrayList<Integer>();
-                        for (int i = 0; i < items.size(); ++i) {
-                            TextBlock item = items.valueAt(i);
-                            //pull lines out of block
-                            List<Line> lines = (List<Line>) item.getComponents();
-                            for (int j = 0; j < lines.size(); ++j) {
-                                Line line = lines.get(j);
-                                if (line != null && line.getValue() != null) {
-                                    output.add(line.getValue());
-                                    xAxis.add(line.getBoundingBox().left / 50);
-                                    yAxis.add(line.getBoundingBox().top / 50);
-                                }
-                            }
-                        }
-
-                        //bubble sort the list=
-                        for (int i = 0; i < output.size(); i++)
-
-                            // Last i elements are already in place
-                            for (int j = 0; j < output.size() - i - 1; j++)
-                                if (yAxis.get(j) > yAxis.get(j + 1)) {
-                                    Collections.swap(yAxis, j, j + 1);
-                                    Collections.swap(xAxis, j, j + 1);
-                                    Collections.swap(output, j, j + 1);
-                                }
-
-
-
                         //make lines into elements
                         ArrayList<ReceiptElement> receiptElements = new ArrayList<>();
                         for (int i = 0; i < items.size(); ++i) {
@@ -439,12 +404,6 @@ public final class CameraActivity extends AppCompatActivity {
                             layout +=  System.lineSeparator();
 
                         }
-
-                        //TODO: Predict total, look for "Total" "Takeout Total" remove colo
-                        //TODO: Convert comma to period
-                        //TODO Arange rows and columns
-
-                        String summary = "";
 
                         //get all elements that are detected as 'total'
                         ArrayList<ReceiptElement> possibleTotals = new ArrayList<>();
@@ -485,11 +444,6 @@ public final class CameraActivity extends AppCompatActivity {
                             }
                         }
 
-                        if(largestTotalIndex != -1) {
-                            summary = "Total is:" + possibleTotals.get(largestTotalIndex).getValue();
-                        } else {
-                            summary = "Total not found";
-                        }
                         //display ReceiptFormActivity
                         Intent myIntent = new Intent(CameraActivity.this, ReceiptFormActivity.class);
                         if(largestTotalIndex != -1) {
