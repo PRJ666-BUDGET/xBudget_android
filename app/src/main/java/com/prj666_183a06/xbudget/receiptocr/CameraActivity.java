@@ -394,24 +394,13 @@ public final class CameraActivity extends AppCompatActivity {
                             }
                         }
 
-                        String layout = new String();
-                        for (int i = 0; i < receiptElements.size(); i++) {
-                            layout += receiptElements.get(i).getValue();
-
-                            if(receiptElements.get(i).inNumber()) layout += " DETECTED NUMBER";
-                            if(receiptElements.get(i).isTotal()) layout += " DETECTED TOTAL";
-
-                            layout +=  System.lineSeparator();
-
-                        }
-
                         //get all elements that are detected as 'total'
                         ArrayList<ReceiptElement> possibleTotals = new ArrayList<>();
                         for (int i = 0; i < receiptElements.size(); i++){
                             if(receiptElements.get(i).isTotal()){
                                 //find what number is associated
                                 int closestIndex = -1;
-                                float closestValue = 99999;
+                                double closestValue = 99999;
                                 int secondClosestIndex = -1;
                                 for(int j = 0; j < receiptElements.size(); j++){
                                     if(receiptElements.get(j).inNumber()){
@@ -441,6 +430,13 @@ public final class CameraActivity extends AppCompatActivity {
                                 if (possibleTotals.get(i).getNumValue() > possibleTotals.get(largestTotalIndex).getNumValue()) {
                                     largestTotalIndex = i;
                                 }
+                            }
+                        }
+
+                        ArrayList<Double> possibleValues = new ArrayList<>();
+                        for (int i = 0; i < receiptElements.size(); i++){
+                            if (receiptElements.get(i).inNumber()) {
+                                possibleValues.add(receiptElements.get(i).getNumValue());
                             }
                         }
 

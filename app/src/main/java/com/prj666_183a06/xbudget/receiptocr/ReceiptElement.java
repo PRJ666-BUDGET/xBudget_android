@@ -25,11 +25,11 @@ public class ReceiptElement {
 
     private String value;
 
-    public Float getNumValue() {
+    public Double getNumValue() {
         return numValue;
     }
 
-    private Float numValue = null;
+    private Double numValue = null;
     private Boolean isNumber;
     private String numberChar = "[\\doli]"; //TODO 9 can be interpreted as g
     private String decimalChar = "[\\,\\.]";
@@ -41,7 +41,7 @@ public class ReceiptElement {
         isNumber = parseNumber();
         if(isNumber){
             value.replaceAll(",","."); //make decimal
-            numValue = Float.parseFloat(value.replaceAll("[^\\d.]+|\\.(?!\\d)", ""));
+            numValue = Double.parseDouble(value.replaceAll("[^\\d.]+|\\.(?!\\d)", ""));
         }
     }
 
