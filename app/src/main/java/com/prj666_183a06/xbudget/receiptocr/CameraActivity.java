@@ -444,6 +444,7 @@ public final class CameraActivity extends AppCompatActivity {
                         Intent myIntent = new Intent(CameraActivity.this, ReceiptFormActivity.class);
                         if(largestTotalIndex != -1) {
                             myIntent.putExtra("EXTRA_COST", possibleTotals.get(largestTotalIndex).getNumValue());
+                            myIntent.putExtra("EXTRA_COST_ARR", possibleValues);
                         }
                         CameraActivity.this.startActivity(myIntent);
 
