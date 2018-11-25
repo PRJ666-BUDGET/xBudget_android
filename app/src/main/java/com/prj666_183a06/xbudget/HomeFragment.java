@@ -155,6 +155,7 @@ public class HomeFragment extends Fragment {
 
         // Chart
         hashMap_exp = new HashMap<>();
+        str_label = new ArrayList<String>();
     }
 
     @Override
@@ -220,15 +221,15 @@ public class HomeFragment extends Fragment {
     }
 
     private void getStringLabels(){
-        str_label = new ArrayList<String>();
-        for(ExpenseObj r: expenseObjs) {
-            str_label.add(r.getDate().substring(0,5));
-        }
-
-        Log.e("getStringLabels: ", str_label.toString());
-        if (str_label.size() == 0){
-            str_label.add("5");
-        }
+//        str_label = new ArrayList<String>();
+//        for(ExpenseObj r: expenseObjs) {
+//            str_label.add(r.getDate().substring(0,5));
+//        }
+//
+//        Log.e("getStringLabels: ", str_label.toString());
+//        if (str_label.size() == 0){
+//            str_label.add("5");
+//        }
     }
 
     protected void getPlanData(){
@@ -239,10 +240,10 @@ public class HomeFragment extends Fragment {
     protected void getExpensesData(){
         PlanViewModel pvm = ViewModelProviders.of(this).get(PlanViewModel.class);
         ExpenseListInterface obj = new ExpenseListInterface(expenseViewModel, pvm);
+//        str_label = new ArrayList<String>();
 
         hashMap_exp = obj.getCostByDaily();
         Log.e("hash compare in home: ", String.valueOf(hashMap_exp));
-//        treeMap_expenses = new TreeMap<String, Float>(hashMap_exp);
 
         // Sort by date using tree
         treeMap_expenses = new TreeMap<String, Float>(hashMap_exp);
@@ -254,18 +255,16 @@ public class HomeFragment extends Fragment {
             String key = entry.getKey().substring(0,5);
             value += entry.getValue();
             arr_expenses.add(value);
-//            str_label.add(key);
+            str_label.add(key);
         }
 
-//        Log.e("data in key: ", String.valueOf(str_label));
+        Log.e("data in key: ", String.valueOf(str_label));
 
-//        arr_expenses = new ArrayList<Float>(treeMap_expenses.values());
         Log.e("data in arr_expenses: ", String.valueOf(arr_expenses));
         Log.e("data in hashMap_exp: ", hashMap_exp.toString());
 
         if (arr_expenses.size() == 0){
             arr_expenses.add(0f);
-//            str_label.add("5");
         }
     }
 
@@ -370,7 +369,7 @@ public class HomeFragment extends Fragment {
         budget_ds = new LineDataSet(arrList_budget, "My Budget");
         budget_ds.setLineWidth(2f);
         budget_ds.setDrawCircles(false);
-//        budget_ds.setDrawValues(false);
+        budget_ds.setDrawValues(false);     // NOT Display value of the line
         budget_ds.setColor(MyColorTemplate.VORDIPLOM_COLORS[0]);
 
         iLineDataSets.add(budget_ds);
@@ -378,7 +377,7 @@ public class HomeFragment extends Fragment {
         expenses_ds = new LineDataSet(arrList_expenses, "My Expenses");
         expenses_ds.setLineWidth(2f);
         expenses_ds.setDrawCircles(false);
-//        expenses_ds.setDrawValues(false);
+        expenses_ds.setDrawValues(false);   // NOT Display value of the line
         expenses_ds.setColor(MyColorTemplate.VORDIPLOM_COLORS[4]);
 
         iLineDataSets.add(expenses_ds);
