@@ -22,6 +22,7 @@ import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -110,9 +111,13 @@ public final class CameraActivity extends AppCompatActivity {
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-        Snackbar.make(graphicOverlay, "Tap to capture receipt",
-                Snackbar.LENGTH_LONG)
-                .show();
+        FloatingActionButton fab = findViewById(R.id.cameraActionButton);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cameraAction();
+            }
+        });
 
     }
 
@@ -336,15 +341,9 @@ public final class CameraActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * onTap is called to turn the image to a coherent text.
-     *
-     * @param rawX - the raw position of the tap
-     * @param rawY - the raw position of the tap.
-     * @return true if the tap was on a TextBlock
-     */
-    private boolean onTap(float rawX, float rawY) {
 
+
+    private boolean cameraAction(){
         cameraSource.takePicture(null,
                 new CameraSource.PictureCallback() {
                     @Override
@@ -507,7 +506,8 @@ public final class CameraActivity extends AppCompatActivity {
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            return onTap(e.getRawX(), e.getRawY()) || super.onSingleTapConfirmed(e);
+//            return onTap(e.getRawX(), e.getRawY()) || super.onSingleTapConfirmed(e);
+            return false;
         }
     }
 
@@ -562,7 +562,6 @@ public final class CameraActivity extends AppCompatActivity {
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
             if (cameraSource != null) {
-                //TODO: Zoom functionality
                 //cameraSource.doZoom(detector.getScaleFactor());
             }
         }
