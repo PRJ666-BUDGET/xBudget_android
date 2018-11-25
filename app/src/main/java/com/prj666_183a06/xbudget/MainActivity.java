@@ -1,12 +1,15 @@
 package com.prj666_183a06.xbudget;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -21,6 +24,11 @@ import com.prj666_183a06.xbudget.database.Plans;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final String BACK_STACK_ROOT_TAG = "root_fragment";
+    FragmentManager fragmentManager = null;
+    Fragment fragment = null;
+    NavigationView navigationView;
 
     private DatabaseReference planRef = FirebaseDatabase.getInstance().getReference("plans");
     public static double gIncome;
@@ -53,12 +61,41 @@ public class MainActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 //        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragment = new HomeFragment();
+        fragmentTransaction.replace(R.id.content_frame, fragment).commit();
 
-        displaySelectedScreen(R.id.nav_home);
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_home);
+
+        this.getSupportFragmentManager().addOnBackStackChangedListener(
+                new FragmentManager.OnBackStackChangedListener() {
+                    @Override
+                    public void onBackStackChanged() {
+                        Fragment current = getCurrentFragment();
+                        if (current instanceof HomeFragment) {
+                            navigationView.setCheckedItem(R.id.nav_home);
+                        }
+                        else if (current instanceof  PlansFragment) {
+                            navigationView.setCheckedItem(R.id.nav_budget);
+                        }
+                        else if (current instanceof  ExpenseActivity) {
+                            navigationView.setCheckedItem(R.id.nav_expense);
+                        }
+                        else if (current instanceof  ReportFragment) {
+                            navigationView.setCheckedItem(R.id.nav_report);
+                        }
+                        else if (current instanceof  SettingsFragment) {
+                            navigationView.setCheckedItem(R.id.nav_settings);
+                        }
+                    }
+                }
+        );
     }
 
     double getgIncome() {
@@ -71,15 +108,56 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+
+            Fragment current = getCurrentFragment();
+
+            if (current instanceof HomeFragment) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Do you want to close application?").setPositiveButton("Yes", confirmCloseDialogClickListener)
+                        .setNegativeButton("No", confirmCloseDialogClickListener).show();
+            }
+            else if (checkNavigationMenuItem() != 0) {
+                navigationView.setCheckedItem(R.id.nav_home);
+                fragment = new HomeFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+            }
+            else {
+                super.onBackPressed();
+            }
         }
+    }
+
+    DialogInterface.OnClickListener confirmCloseDialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch(which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    finishAndRemoveTask();
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE:
+                    break;
+            }
+        }
+    };
+
+    public Fragment getCurrentFragment() {
+        return this.getSupportFragmentManager().findFragmentById(R.id.content_frame);
+    }
+
+    private int checkNavigationMenuItem() {
+        Menu menu = navigationView.getMenu();
+        for (int i = 0; i < menu.size(); i++) {
+            if (menu.getItem(i).isChecked())
+                return i;
+        }
+        return -1;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         // REMOVE Settings
-        // getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -99,7 +177,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void displaySelectedScreen(int id) {
-        Fragment fragment = null;
+//        Fragment fragment = null;
 
         switch (id) {
             case R.id.nav_home:
@@ -120,13 +198,21 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (fragment != null) {
+//            FragmentManager fragmentManager = getSupportFragmentManager();
+//            fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//
+//            fragmentManager.beginTransaction()
+//                    .replace(R.id.content_frame, fragment)
+//                    .addToBackStack(BACK_STACK_ROOT_TAG)
+//                    .commit();
+
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.content_frame, fragment);
             ft.addToBackStack(null);
             ft.commit();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
 
