@@ -67,29 +67,35 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Store"
-            android:inputType="text" />
+            android:inputType="text"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"/>
 
         <EditText
             android:id="@+id/edit_text_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.4"
             android:hint="Item"
-            android:inputType="text" />
+            android:inputType="text"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"/>
 
         <EditText
             android:id="@+id/edit_text_cost"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Total"
-            android:inputType="numberDecimal" />
+            android:inputType="numberDecimal"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"/>
 
         <EditText
             android:id="@+id/edit_text_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Description"
-            android:inputType="numberDecimal" />
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"/>
     </LinearLayout>
 
     <RelativeLayout

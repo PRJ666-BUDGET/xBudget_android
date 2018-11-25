@@ -123,8 +123,9 @@ public class ExpenseActivity extends Fragment{
             String date = data.getStringExtra(ExpenseAddEditExpenseR.EXTRA_DATE);
             double cost = data.getDoubleExtra(ExpenseAddEditExpenseR.EXTRA_COST, 0.0);
             String category = data.getStringExtra((ExpenseAddEditExpenseR.EXTRA_CATEGORY));
+            String description = data.getStringExtra((ExpenseAddEditExpenseR.EXTRA_DESCRIPTION));
 
-            Expense expense = new Expense(store, date, item, category,cost);
+            Expense expense = new Expense(store, date, item, category,cost, description);
             expenseViewModel.insert(expense);
 
             Toast.makeText(getActivity(), "Expense saved", Toast.LENGTH_SHORT);
@@ -141,8 +142,9 @@ public class ExpenseActivity extends Fragment{
             String date = data.getStringExtra(ExpenseAddEditExpenseR.EXTRA_DATE);
             double cost = data.getDoubleExtra(ExpenseAddEditExpenseR.EXTRA_COST, 0.0);
             String category = data.getStringExtra((ExpenseAddEditExpenseR.EXTRA_CATEGORY));
+            String description = data.getStringExtra((ExpenseAddEditExpenseR.EXTRA_DESCRIPTION));
 
-            Expense expense = new Expense(store, date, item, category, cost);
+            Expense expense = new Expense(store, date, item, category, cost, description);
             expense.setId(id);
             expenseViewModel.update(expense);
             Toast.makeText(getContext(), "Expense updated", Toast.LENGTH_SHORT).show();

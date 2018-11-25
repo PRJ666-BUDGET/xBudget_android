@@ -44,6 +44,9 @@ public interface ExpenseDao {
     @Query("SELECT expense_date from expense_table")
     List<String> getDateAll();
 
+    @Query("SELECT expense_description from expense_table")
+    List<String> getDescriptionAll();
+
     @Query("SELECT expense_category from expense_table")
     List<String> getCategoryAll();
     @Query("SELECT SUM(expense_cost) FROM expense_table")

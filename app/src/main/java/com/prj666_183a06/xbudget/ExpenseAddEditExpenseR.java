@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -53,7 +54,12 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
     public static final String EXTRA_CATEGORY =
             "com.prj666_183a06.xbudget.EXTRA_CATEGORY";
 
-    private EditText editStore, editItem, editCost;
+    public static final String EXTRA_DESCRIPTION =
+            "com.prj666_183a06.xbudget.EXTRA_CATEGORY";
+
+
+
+    private EditText editStore, editItem, editCost, editDescription;
     private Spinner editCategory;
     private TextView editDate;
     private Spinner plansDrop;
@@ -75,6 +81,7 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
         editItem = findViewById(R.id.edit_text_item);
         editCost = findViewById(R.id.edit_text_cost);
         editDate = findViewById(R.id.edit_date_view);
+        editDescription = findViewById(R.id.edit_text_description);
 
         //Populate title
         pvm = ViewModelProviders.of(this).get(PlanViewModel.class);
@@ -131,10 +138,19 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
             editItem.setText(intent.getStringExtra(EXTRA_ITEM));
             editCost.setText(""+intent.getDoubleExtra(EXTRA_COST, 0.0));
             editDate.setText(intent.getStringExtra(EXTRA_DATE));
+            editDescription.setText(intent.getStringExtra(EXTRA_DESCRIPTION));
             tempAmount = intent.getDoubleExtra(EXTRA_COST, 0.0);
         }else{
             setTitle("Create Expense");
         }
+
+        FloatingActionButton buttonSave = findViewById(R.id.button_save);
+        buttonSave.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                saveExpense();
+            }
+        });
 
     }
 
@@ -155,6 +171,7 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
         String date = editDate.getText().toString();
         String cost = editCost.getText().toString();
         String category = plansDrop.getSelectedItem().toString();
+        String description = editDescription.getText().toString();
 
         if(store.trim().isEmpty() || item.trim().isEmpty() || date.trim().isEmpty() || cost.isEmpty()){
             Toast.makeText(this, "Please fill out the form" , Toast.LENGTH_SHORT).show();
@@ -167,6 +184,7 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
         data.putExtra(EXTRA_DATE, date.trim());
         data.putExtra(EXTRA_COST, Double.parseDouble(cost));
         data.putExtra(EXTRA_CATEGORY, category);
+        data.putExtra(EXTRA_DESCRIPTION, description.trim());
 
         int id = getIntent().getIntExtra(EXTRA_ID, -1);
         if(id != -1){
@@ -186,7 +204,9 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
         finish();
     }
 
-    @Override
+    /*@Override
+
+    top right corner
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.add_expense_menu, menu);
@@ -203,5 +223,5 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
+    }*/
 }
