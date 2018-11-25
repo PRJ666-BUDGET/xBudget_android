@@ -90,9 +90,6 @@ public class MainActivity extends AppCompatActivity
                         else if (current instanceof  ReportFragment) {
                             navigationView.setCheckedItem(R.id.nav_report);
                         }
-                        else if (current instanceof  SettingsFragment) {
-                            navigationView.setCheckedItem(R.id.nav_settings);
-                        }
                     }
                 }
         );
@@ -191,9 +188,6 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_report:
                 fragment = new ReportFragment();
-                break;
-            case R.id.nav_settings:
-                fragment = new SettingsFragment();
                 break;
         }
 
