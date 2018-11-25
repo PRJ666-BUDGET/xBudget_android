@@ -61,11 +61,8 @@ public class ReportFragment extends Fragment {
     List<String> str_label_Pie, str_label_Bar;
     private List<Float> arr_plan, arr_actual, arr_actual_Bar;
 
-    HashMap<String, Float> hashMap_expenses, hashMap_expenses_Bar;
-    Map<String, Float> treeMap_expenses, treeMap_expenses_Bar;
-
-    HashMap<String, Float> hashMap_plan;
-    Map<String, Float> treeMap_plan;
+    HashMap<String, Float> hashMap_expenses, hashMap_expenses_Bar, hashMap_plan;
+    Map<String, Float> treeMap_expenses, treeMap_expenses_Bar, treeMap_plan;
 
     // Database instances
     ExpenseViewModel expenseViewModel;
@@ -105,7 +102,7 @@ public class ReportFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        getPlanData();
+        getDataForBar();
         getActualData();
         getPieChart();
         getBarChart();
@@ -134,17 +131,37 @@ public class ReportFragment extends Fragment {
         treeMap_plan = new TreeMap<String, Float>(hashMap_expenses);
     }
 
-    protected void getPlanData(){
+    protected void getDataForBar(){
         hashMap_plan = new HashMap<>();
         str_label_Bar = new ArrayList<String>();
         List<String> str_label_Bar_temp = new ArrayList<String>();
+
+        double total_expenses = expenseViewModel.getTotal();
+        double total_income = planViewModel.getTotalIncome();
+        double balance = total_income - total_expenses;
 
         // Get common categories
         str_label_Bar_temp.add("None");
         for(PlanObj r: planObjs) {
             str_label_Bar_temp.add(r.getTitle());
+            float temp = 0;
+            switch (r.getPeriod()){
+                case "daily":
+                    temp = (float) r.getAmount()*365/12;
+                    break;
+                case "weekly":
+                    temp = (float) r.getAmount()*52/12;
+                    break;
+                case "bi-weekly":
+                    temp = (float) r.getAmount()*26/12;
+                    break;
+                case "monthly":
+                    temp = (float) r.getAmount();
+                    break;
+            }
+            balance -= temp;
         }
-        Log.d("str_label_Bar_temp: ", String.valueOf(str_label_Bar_temp));
+        Log.d("balance: ", String.valueOf(balance));
 
         hashMap_expenses_Bar = new HashMap<>();
 
@@ -167,8 +184,7 @@ public class ReportFragment extends Fragment {
         // Change to array for chart
         arr_actual_Bar = new ArrayList<Float>(treeMap_expenses_bar.values());
 
-
-        hashMap_plan.put("None", 0f);
+        hashMap_plan.put("None", (float) balance);
         for(PlanObj r: planObjs) {
             if (treeMap_expenses_bar.containsKey(r.getTitle())){
                 float temp = 0;
@@ -276,7 +292,7 @@ public class ReportFragment extends Fragment {
         ArrayList<BarEntry> entries_actual = new ArrayList<BarEntry>();
 
         // Get data to chart
-        getPlanData();
+        getDataForBar();
         getActualData();
 
         Log.d("data in Bar: ", Integer.toString(arr_actual_Bar.size()));
