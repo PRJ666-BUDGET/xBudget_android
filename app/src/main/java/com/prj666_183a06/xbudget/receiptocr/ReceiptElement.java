@@ -45,8 +45,9 @@ public class ReceiptElement {
             value = value.replaceAll("g","9"); //g -> 9
             value = value.replaceAll("o","0"); //o -> 0
             value = value.replaceAll("\\s",""); //remove spaces
+            value = value.replaceAll(".*[^\\d.]", ""); //remove non numeric characters left of first char
 
-            numValue = Double.parseDouble(value.replaceAll("[^\\d.]+|\\.(?!\\d)", ""));
+            numValue = Double.parseDouble(value);
         }
     }
 
@@ -56,11 +57,11 @@ public class ReceiptElement {
             //multiple decimals
             return false;
         }
-        if(Pattern.compile(decimalChar + numberChar + numberChar + "Z").matcher(value).find()) {
+        if(Pattern.compile(decimalChar + numberChar + numberChar + "$").matcher(value).find()) {
             //Almost Guarantee number
             return true;
         }
-        if(Pattern.compile(decimalChar + numberChar + numberChar).matcher(value).find()) {
+        if(Pattern.compile(".*" + decimalChar + numberChar + numberChar + '$').matcher(value).find()) {
             //Almost Guarantee number
             return true;
         }
