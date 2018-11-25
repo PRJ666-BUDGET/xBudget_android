@@ -334,12 +334,11 @@ public final class CameraActivity extends AppCompatActivity {
         cameraSource.takePicture(null,
                 new CameraSource.PictureCallback() {
                     public void onPictureTaken(byte[] data) {
-                        cameraSource.stop();
                         Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 
                         //scale image
                         Matrix matrix = new Matrix();
-                        matrix.postScale((float) 0.8, (float) 0.8);
+                        matrix.postScale((float) 0.5, (float) 0.5);
                         bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
 
                         //read elemenst as is.
@@ -486,7 +485,6 @@ public final class CameraActivity extends AppCompatActivity {
                                 Log.d("CameraLog:", "Not found");
                             }
 
-
                             for (int i = 0; i < possibleValues.size(); i++) {
                                 Log.d("CameraLog:", Double.toString(possibleValues.get(i)));
                             }
@@ -494,11 +492,22 @@ public final class CameraActivity extends AppCompatActivity {
                                 Log.d("CameraLog:", "No values");
                             }
 
-                            //display ReceiptFormActivity
+                            //Sanitize values and sent to form
                             Intent myIntent = new Intent(CameraActivity.this, ReceiptFormActivity.class);
-                            if (largestTotalIndex != -1) {
-                                myIntent.putExtra("EXTRA_COST", possibleTotals.get(largestTotalIndex).getNumValue());
+                            //remove unusualy large values
+                            //backwards due to index changes on remove7
+                            for(int i = possibleValues.size() -1; i >= 0; i--){
+                                if(possibleValues.get(i) > 999){
+                                    possibleValues.remove(i);
+                                }
+                            }
+                            if(possibleValues.size() > 0){
                                 myIntent.putExtra("EXTRA_COST_ARR", possibleValues);
+                            }
+                            if(largestTotalIndex != -1){
+                                myIntent.putExtra("EXTRA_COST", possibleTotals.get(largestTotalIndex).getNumValue());
+                            } else {
+                                myIntent.putExtra("EXTRA_COST", Collections.max(possibleValues));
                             }
                             CameraActivity.this.startActivity(myIntent);
                         }

@@ -37,14 +37,14 @@ public class ReceiptFormActivity extends AppCompatActivity {
     private TextView editDate;
     static DatePickerDialog.OnDateSetListener dateListener;
     private DatabaseReference expenseRef = FirebaseDatabase.getInstance().getReference("expenses");
-    private float total;
+    private double total;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense);
 
-        total = getIntent().getFloatExtra("EXTRA_COST", 0);
+        total = getIntent().getDoubleExtra("EXTRA_COST", 0);
 
         editStore = findViewById(R.id.edit_text_store);
         editItem = findViewById(R.id.edit_text_item);
@@ -88,7 +88,7 @@ public class ReceiptFormActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         setTitle("Confirm Receipt");
-        editCost.setText(Float.toString(total));
+        editCost.setText(Double.toString(total));
 
     }
 
