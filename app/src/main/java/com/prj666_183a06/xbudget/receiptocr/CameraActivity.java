@@ -111,7 +111,7 @@ public final class CameraActivity extends AppCompatActivity {
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
         Snackbar.make(graphicOverlay, "Tap to capture receipt",
-                Snackbar.LENGTH_LONG)
+                Snackbar.LENGTH_SHORT)
                 .show();
 
     }
@@ -148,20 +148,6 @@ public final class CameraActivity extends AppCompatActivity {
                 .setAction(R.string.ok, listener)
                 .show();
 
-    }
-
-    protected void onDraw(Canvas canvas) {
-        int canvasW = graphicOverlay.getWidth();
-        int canvasH = graphicOverlay.getHeight();
-        Point centerOfCanvas = new Point(canvasW / 2, canvasH / 2);
-        int rectW = 100;
-        int rectH = 100;
-        int left = centerOfCanvas.x - (rectW / 2);
-        int top = centerOfCanvas.y - (rectH / 2);
-        int right = centerOfCanvas.x + (rectW / 2);
-        int bottom = centerOfCanvas.y + (rectH / 2);
-        Rect rect = new Rect(left, top, right, bottom);
-        canvas.drawRect(rect, new Paint());
     }
 
     @Override
@@ -347,11 +333,8 @@ public final class CameraActivity extends AppCompatActivity {
 
         cameraSource.takePicture(null,
                 new CameraSource.PictureCallback() {
-                    @Override
                     public void onPictureTaken(byte[] data) {
-
                         cameraSource.stop();
-
                         Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 
                         //scale image
@@ -359,12 +342,69 @@ public final class CameraActivity extends AppCompatActivity {
                         matrix.postScale((float) 0.8, (float) 0.8);
                         bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
 
+                        //read elemenst as is.
+                        //if no values found, rotate and try agian
+                        //If none found again, say try again
+
+                        //parse without rotation.
+                        Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+                        SparseArray<TextBlock> items = textRecognizer.detect(frame);
+                        //make lines into elements
+                        boolean foundVal = false;
+                        ArrayList<ReceiptElement> receiptElements = new ArrayList<>();
+                        for (int i = 0; i < items.size(); ++i) {
+                            TextBlock item = items.valueAt(i);
+                            List<Line> lines = (List<Line>) item.getComponents();
+                            for (int j = 0; j < lines.size(); ++j) {
+                                Line line = lines.get(j);
+                                if (line != null && line.getValue() != null) {
+                                    receiptElements.add(new ReceiptElement(line));
+                                    if (new ReceiptElement(line).inNumber()) {
+                                        foundVal = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!foundVal) {
+                            Log.d("CameraLog:", "Rotating");
+                            matrix = new Matrix();
+                            matrix.postRotate(90);
+                            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+
+                            frame = new Frame.Builder().setBitmap(bitmap).build();
+                            items = textRecognizer.detect(frame);
+                            //make lines into elements
+                            receiptElements = new ArrayList<>();
+                            for (int i = 0; i < items.size(); ++i) {
+                                TextBlock item = items.valueAt(i);
+                                List<Line> lines = (List<Line>) item.getComponents();
+                                for (int j = 0; j < lines.size(); ++j) {
+                                    Line line = lines.get(j);
+                                    if (line != null && line.getValue() != null) {
+                                        receiptElements.add(new ReceiptElement(line));
+                                        if (new ReceiptElement(line).inNumber()) {
+                                            foundVal = true;
+                                        }
+                                    }
+                                }
+                            }
+                            if (!foundVal) {
+                                //if failed to read.
+                                Log.d("CameraLog:", "Failed capture");
+                                Snackbar.make(graphicOverlay, "Failed To read, Please try again",
+                                        Snackbar.LENGTH_LONG)
+                                        .show();
+                                return;
+                            }
+                        /*
                         //rotate to portrait (Samsung Fix)
                         if (bitmap.getWidth() > bitmap.getHeight()) {
                             matrix = new Matrix();
                             matrix.postRotate(90);
                             bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
                         }
+
 
                         //Parse Text
                         Frame frame = new Frame.Builder().setBitmap(bitmap).build();
@@ -383,87 +423,86 @@ public final class CameraActivity extends AppCompatActivity {
                                 }
                             }
                         }
-
-                        //bubble sort elements
-                        for (int i = 0; i < receiptElements.size(); i++) {
-                            // Last i elements are already in place
-                            for (int j = 0; j < receiptElements.size() - i - 1; j++) {
-                                if (receiptElements.get(j).getLine().getBoundingBox().top > receiptElements.get(j + 1).getLine().getBoundingBox().top) {
-                                    Collections.swap(receiptElements, j, j + 1);
-                                }
-                            }
-                        }
-
-                        //get all elements that are detected as 'total'
-                        ArrayList<ReceiptElement> possibleTotals = new ArrayList<>();
-                        for (int i = 0; i < receiptElements.size(); i++){
-                            if(receiptElements.get(i).isTotal()){
-                                //find what number is associated
-                                int closestIndex = -1;
-                                double closestValue = 99999;
-                                int secondClosestIndex = -1;
-                                for(int j = 0; j < receiptElements.size(); j++){
-                                    if(receiptElements.get(j).inNumber()){
-                                        if(     Math.abs(receiptElements.get(j).getLine().getBoundingBox().top) -
-                                                Math.abs(receiptElements.get(i).getLine().getBoundingBox().top)
-                                                < Math.abs(closestValue)){
-                                            secondClosestIndex = closestIndex;
-                                            closestValue = receiptElements.get(j).getNumValue();
-                                            closestIndex = j;
-                                        }
+*/
+                            //bubble sort elements
+                            for (int i = 0; i < receiptElements.size(); i++) {
+                                // Last i elements are already in place
+                                for (int j = 0; j < receiptElements.size() - i - 1; j++) {
+                                    if (receiptElements.get(j).getLine().getBoundingBox().top > receiptElements.get(j + 1).getLine().getBoundingBox().top) {
+                                        Collections.swap(receiptElements, j, j + 1);
                                     }
                                 }
-                                if(closestIndex != -1) {
-                                    possibleTotals.add(receiptElements.get(closestIndex));
-                                }
-                                if(secondClosestIndex != -1) {
-                                    possibleTotals.add(receiptElements.get(secondClosestIndex));
+                            }
+
+                            //get all elements that are detected as 'total'
+                            ArrayList<ReceiptElement> possibleTotals = new ArrayList<>();
+                            for (int i = 0; i < receiptElements.size(); i++) {
+                                if (receiptElements.get(i).isTotal()) {
+                                    //find what number is associated
+                                    int closestIndex = -1;
+                                    double closestValue = 99999;
+                                    int secondClosestIndex = -1;
+                                    for (int j = 0; j < receiptElements.size(); j++) {
+                                        if (receiptElements.get(j).inNumber()) {
+                                            if (Math.abs(receiptElements.get(j).getLine().getBoundingBox().top) -
+                                                    Math.abs(receiptElements.get(i).getLine().getBoundingBox().top)
+                                                    < Math.abs(closestValue)) {
+                                                secondClosestIndex = closestIndex;
+                                                closestValue = receiptElements.get(j).getNumValue();
+                                                closestIndex = j;
+                                            }
+                                        }
+                                    }
+                                    if (closestIndex != -1) {
+                                        possibleTotals.add(receiptElements.get(closestIndex));
+                                    }
+                                    if (secondClosestIndex != -1) {
+                                        possibleTotals.add(receiptElements.get(secondClosestIndex));
+                                    }
                                 }
                             }
-                        }
 
-                        //get largest of possible total
-                        int largestTotalIndex = -1;
-                        if(possibleTotals.size() > 0) {
-                            largestTotalIndex = 0;
-                            for (int i = 0; i < possibleTotals.size(); i++) {
-                                if (possibleTotals.get(i).getNumValue() > possibleTotals.get(largestTotalIndex).getNumValue()) {
-                                    largestTotalIndex = i;
+                            //get largest of possible total
+                            int largestTotalIndex = -1;
+                            if (possibleTotals.size() > 0) {
+                                largestTotalIndex = 0;
+                                for (int i = 0; i < possibleTotals.size(); i++) {
+                                    if (possibleTotals.get(i).getNumValue() > possibleTotals.get(largestTotalIndex).getNumValue()) {
+                                        largestTotalIndex = i;
+                                    }
                                 }
                             }
-                        }
 
-                        ArrayList<Double> possibleValues = new ArrayList<>();
-                        for (int i = 0; i < receiptElements.size(); i++){
-                            if (receiptElements.get(i).inNumber()) {
-                                possibleValues.add(receiptElements.get(i).getNumValue());
+                            ArrayList<Double> possibleValues = new ArrayList<>();
+                            for (int i = 0; i < receiptElements.size(); i++) {
+                                if (receiptElements.get(i).inNumber()) {
+                                    possibleValues.add(receiptElements.get(i).getNumValue());
+                                }
                             }
-                        }
 
-                        if(largestTotalIndex != -1) {
-                            Log.d("Total:", possibleTotals.get(largestTotalIndex).getValue());
-                        } else {
-                            Log.d("Total:", "Not found");
-                        }
+                            if (largestTotalIndex != -1) {
+                                Log.d("CameraLog:", possibleTotals.get(largestTotalIndex).getValue());
+                            } else {
+                                Log.d("CameraLog:", "Not found");
+                            }
 
 
-                        for(int i = 0; i < possibleValues.size(); i++){
-                            Log.d("Values:", Double.toString(possibleValues.get(i)));
-                        }
-                        if(possibleValues.size() == 0){
-                            Log.d("Values:", "No values");
-                        }
+                            for (int i = 0; i < possibleValues.size(); i++) {
+                                Log.d("CameraLog:", Double.toString(possibleValues.get(i)));
+                            }
+                            if (possibleValues.size() == 0) {
+                                Log.d("CameraLog:", "No values");
+                            }
 
-                        //display ReceiptFormActivity
-                        Intent myIntent = new Intent(CameraActivity.this, ReceiptFormActivity.class);
-                        if(largestTotalIndex != -1) {
-                            myIntent.putExtra("EXTRA_COST", possibleTotals.get(largestTotalIndex).getNumValue());
-                            myIntent.putExtra("EXTRA_COST_ARR", possibleValues);
+                            //display ReceiptFormActivity
+                            Intent myIntent = new Intent(CameraActivity.this, ReceiptFormActivity.class);
+                            if (largestTotalIndex != -1) {
+                                myIntent.putExtra("EXTRA_COST", possibleTotals.get(largestTotalIndex).getNumValue());
+                                myIntent.putExtra("EXTRA_COST_ARR", possibleValues);
+                            }
+                            CameraActivity.this.startActivity(myIntent);
                         }
-                        CameraActivity.this.startActivity(myIntent);
-
                     }
-
                 });
         return false;
     }
