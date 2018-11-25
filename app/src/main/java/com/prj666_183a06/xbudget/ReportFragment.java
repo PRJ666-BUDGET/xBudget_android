@@ -210,10 +210,10 @@ public class ReportFragment extends Fragment {
 
         // Group using hash
         for(ExpenseObj r: expenseObjs) {
-            if (!hashMap_expenses.containsKey(r.getCategory())){
-                hashMap_expenses.put(r.getCategory(), (float) r.getCost());
+            if (!hashMap_expenses.containsKey(r.getItem())){
+                hashMap_expenses.put(r.getItem(), (float) r.getCost());
             } else {
-                hashMap_expenses.put(r.getCategory(), hashMap_expenses.get(r.getCategory()) + (float) r.getCost());
+                hashMap_expenses.put(r.getItem(), hashMap_expenses.get(r.getItem()) + (float) r.getCost());
             }
         }
 
