@@ -134,16 +134,12 @@ public class ReportFragment extends Fragment {
     protected void getDataForBar(){
         hashMap_plan = new HashMap<>();
         str_label_Bar = new ArrayList<String>();
-        List<String> str_label_Bar_temp = new ArrayList<String>();
 
         double total_expenses = expenseViewModel.getTotal();
         double total_income = planViewModel.getTotalIncome();
         double balance = total_income - total_expenses;
 
-        // Get common categories
-        str_label_Bar_temp.add("None");
         for(PlanObj r: planObjs) {
-            str_label_Bar_temp.add(r.getTitle());
             float temp = 0;
             switch (r.getPeriod()){
                 case "daily":
@@ -160,14 +156,26 @@ public class ReportFragment extends Fragment {
                     break;
             }
             balance -= temp;
+            if (hashMap_plan.containsKey(r.getTitle())){
+                hashMap_plan.put(r.getTitle(), hashMap_plan.get(r.getTitle()) + temp);
+            } else {
+                hashMap_plan.put(r.getTitle(), temp);
+            }
         }
-        Log.d("balance: ", String.valueOf(balance));
 
+        // Get the balance
+        hashMap_plan.put("None", (float) balance);
+        Map<String, Float> treeMap_plan = new TreeMap<>(hashMap_plan);
+        Log.d("treeMap_plan: ", String.valueOf(treeMap_plan));
+
+        // Change to array for chart
+        arr_plan = new ArrayList<Float>(treeMap_plan.values());
+        str_label_Bar = new ArrayList<String>(treeMap_plan.keySet());
         hashMap_expenses_Bar = new HashMap<>();
 
         // Group using hash
         for(ExpenseObj r: expenseObjs) {
-            if (str_label_Bar_temp.contains(r.getCategory())){
+            if (str_label_Bar.contains(r.getCategory())){
                 if (!hashMap_expenses_Bar.containsKey(r.getCategory())){
                     hashMap_expenses_Bar.put(r.getCategory(), (float) r.getCost());
                 } else {
@@ -176,49 +184,17 @@ public class ReportFragment extends Fragment {
             }
         }
 
-        Log.d("hashMap_expenses_Bar: ", String.valueOf(hashMap_expenses_Bar));
+        for(String s: str_label_Bar) {
+            if (!hashMap_expenses_Bar.containsKey(s)) {
+                hashMap_expenses_Bar.put(s, (float) 0f);
+            }
+        }
 
         Map<String, Float> treeMap_expenses_bar = new TreeMap<>(hashMap_expenses_Bar);
         Log.d("treeMap_expenses_bar: ", String.valueOf(treeMap_expenses_bar));
 
         // Change to array for chart
         arr_actual_Bar = new ArrayList<Float>(treeMap_expenses_bar.values());
-
-        hashMap_plan.put("None", (float) balance);
-        for(PlanObj r: planObjs) {
-            if (treeMap_expenses_bar.containsKey(r.getTitle())){
-                float temp = 0;
-                switch (r.getPeriod()){
-                    case "daily":
-                        temp = (float) r.getAmount()*365/12;
-                        break;
-                    case "weekly":
-                        temp = (float) r.getAmount()*52/12;
-                        break;
-                    case "bi-weekly":
-                        temp = (float) r.getAmount()*26/12;
-                        break;
-                    case "monthly":
-                        temp = (float) r.getAmount();
-                        break;
-                }
-                Log.d("getTitle in reportV: ", r.getPeriod());
-                Log.d("getPeriod in reportV: ", r.getPeriod());
-                if (hashMap_plan.containsKey(r.getTitle())){
-                    hashMap_plan.put(r.getTitle(), hashMap_plan.get(r.getTitle()) + temp);
-                } else {
-                    hashMap_plan.put(r.getTitle(), temp);
-                }
-            }
-        }
-
-        Log.d("hashMap_plan: ", String.valueOf(hashMap_plan));
-        Map<String, Float> treeMap_plan = new TreeMap<>(hashMap_plan);
-        Log.d("treeMap_plan: ", String.valueOf(treeMap_plan));
-
-        // Change to array for chart
-        arr_plan = new ArrayList<Float>(treeMap_plan.values());
-        str_label_Bar = new ArrayList<String>(treeMap_plan.keySet());
     }
 
     protected void getActualData(){
