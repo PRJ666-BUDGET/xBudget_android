@@ -141,7 +141,7 @@ public class ReportFragment extends Fragment {
         for(PlanObj r: planObjs) {
             float temp = 0;
             if (str_label_Pie.contains(r.getTitle())){
-                Log.e("temp in swithch: ", r.getPeriod());
+                Log.e("temp in switch: ", r.getPeriod());
                 switch (r.getPeriod()){
                     case "daily":
                         temp = (float) r.getAmount()*365/12;
@@ -160,26 +160,6 @@ public class ReportFragment extends Fragment {
             } else {
                 hashMap_plan.put(r.getTitle(), 0f);
             }
-//            if (!hashMap_plan.containsKey(r.getTitle())){
-//                Log.e("temp in swithch: ", r.getPeriod());
-//                switch (r.getPeriod()){
-//                    case "daily":
-//                        temp = (float) r.getAmount()*365/12;
-//                        break;
-//                    case "weekly":
-//                        temp = (float) r.getAmount()*52/12;
-//                        break;
-//                    case "bi-weekly":
-//                        temp = (float) r.getAmount()*26/12;
-//                        break;
-//                    case "monthly":
-//                        temp = (float) r.getAmount();
-//                        break;
-//                }
-//                hashMap_plan.put(r.getTitle(), temp);
-//            } else {
-//                hashMap_plan.put(r.getTitle(), hashMap_plan.get(r.getTitle()) + temp);
-//            }
             Log.e("temp in Plan: ", String.valueOf(temp));
             Log.e("hashmap in Plan: ", String.valueOf(hashMap_plan));
         }

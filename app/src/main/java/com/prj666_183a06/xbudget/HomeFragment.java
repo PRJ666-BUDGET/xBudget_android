@@ -220,18 +220,6 @@ public class HomeFragment extends Fragment {
         mtvBalance.setText(currencyBal);
     }
 
-    private void getStringLabels(){
-//        str_label = new ArrayList<String>();
-//        for(ExpenseObj r: expenseObjs) {
-//            str_label.add(r.getDate().substring(0,5));
-//        }
-//
-//        Log.e("getStringLabels: ", str_label.toString());
-//        if (str_label.size() == 0){
-//            str_label.add("5");
-//        }
-    }
-
     protected void getPlanData(){
         arr_plan = new ArrayList<Float>();
         arr_plan.add((float) total_income);
@@ -240,7 +228,6 @@ public class HomeFragment extends Fragment {
     protected void getExpensesData(){
         PlanViewModel pvm = ViewModelProviders.of(this).get(PlanViewModel.class);
         ExpenseListInterface obj = new ExpenseListInterface(expenseViewModel, pvm);
-//        str_label = new ArrayList<String>();
 
         hashMap_exp = obj.getCostByDaily();
         Log.e("hash compare in home: ", String.valueOf(hashMap_exp));
@@ -308,15 +295,20 @@ public class HomeFragment extends Fragment {
 
         // Apply data to chart
         mLine.setData(generateLineData());
+//        mLine.setVisibleXRange(10, 30);
         Log.e("set in getLineChart: ", "set");
 
         // Set Axis
         XAxis xAxis = mLine.getXAxis();
         Log.e("set in getLineChart: ", xAxis.toString());
-//        xAxis.setEnabled(false);
         xAxis.setValueFormatter(new IndexAxisValueFormatter(str_label));
-        xAxis.setPosition(XAxis.XAxisPosition.TOP);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         Log.e("XAxis in getLineChart: ", str_label.toString());
+//        xAxis.setAvoidFirstLastClipping(true);
+
+        YAxis yAxisRight = mLine.getAxisRight();
+        yAxisRight.setEnabled(false);
+
     }
 
     protected BarData generateBarData() {
@@ -352,7 +344,6 @@ public class HomeFragment extends Fragment {
 
         getPlanData();
         getExpensesData();
-        getStringLabels();
 
         // Budget Dataset
         for(int i=1; i <= arr_expenses.size(); i++){
