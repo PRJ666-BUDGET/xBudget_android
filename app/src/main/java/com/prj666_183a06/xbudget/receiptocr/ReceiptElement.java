@@ -31,7 +31,7 @@ public class ReceiptElement {
 
     private Double numValue = null;
     private Boolean isNumber;
-    private String numberChar = "[\\doli]"; //TODO 9 can be interpreted as g
+    private String numberChar = "[\\dolig]"; //TODO 9 can be interpreted as g
     private String decimalChar = "[\\,\\.]";
     List<String> possibleAssociation;
 
@@ -40,7 +40,12 @@ public class ReceiptElement {
         value = line.getValue().toLowerCase();
         isNumber = parseNumber();
         if(isNumber){
-            value.replaceAll(",","."); //make decimal
+            value = value.replaceAll(",","."); //make decimal
+            value = value.replaceAll("[li]","1"); //li -> 1
+            value = value.replaceAll("g","9"); //g -> 9
+            value = value.replaceAll("o","0"); //o -> 0
+            value = value.replaceAll("\\s",""); //remove spaces
+
             numValue = Double.parseDouble(value.replaceAll("[^\\d.]+|\\.(?!\\d)", ""));
         }
     }
