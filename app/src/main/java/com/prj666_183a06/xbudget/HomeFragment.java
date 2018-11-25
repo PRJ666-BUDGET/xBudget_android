@@ -323,6 +323,7 @@ public class HomeFragment extends Fragment {
         ds.setDrawIcons(false);
         ds.setColors(MyColorTemplate.VORDIPLOM_COLORS[4], MyColorTemplate.VORDIPLOM_COLORS[3]);
         ds.setStackLabels(new String[]{"Expenses", "Balance"});
+        ds.setValueTextSize(10f);
 
         ArrayList<IBarDataSet> iBarDataSets = new ArrayList<IBarDataSet>();
         iBarDataSets.add(ds);
