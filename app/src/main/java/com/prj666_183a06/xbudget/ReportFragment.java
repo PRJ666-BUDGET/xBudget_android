@@ -61,11 +61,8 @@ public class ReportFragment extends Fragment {
     List<String> str_label_Pie, str_label_Bar;
     private List<Float> arr_plan, arr_actual, arr_actual_Bar;
 
-    HashMap<String, Float> hashMap_expenses, hashMap_expenses_Bar;
-    Map<String, Float> treeMap_expenses, treeMap_expenses_Bar;
-
-    HashMap<String, Float> hashMap_plan;
-    Map<String, Float> treeMap_plan;
+    HashMap<String, Float> hashMap_expenses, hashMap_expenses_Bar, hashMap_plan;
+    Map<String, Float> treeMap_expenses, treeMap_expenses_Bar, treeMap_plan;
 
     // Database instances
     ExpenseViewModel expenseViewModel;
@@ -105,7 +102,7 @@ public class ReportFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        getPlanData();
+        getDataForBar();
         getActualData();
         getPieChart();
         getBarChart();
@@ -116,12 +113,12 @@ public class ReportFragment extends Fragment {
         expenseViewModel = ViewModelProviders.of(this).get(ExpenseViewModel.class);
         expenseObjs = new ArrayList();
         expenseObjs = expenseViewModel.getAll();
-        Log.e("expenseObjs", "in onCreate Report" + expenseObjs);
+        Log.d("expenseObjs", "in onCreate Report" + expenseObjs);
 
         planViewModel = ViewModelProviders.of(this).get(PlanViewModel.class);
         planObjs = new ArrayList();
         planObjs = planViewModel.getAll();
-        Log.e("planObjs", "in onCreate Report" + planObjs);
+        Log.d("planObjs", "in onCreate Report" + planObjs);
 
         // Chart
         hashMap_expenses = new HashMap<>();
@@ -134,87 +131,70 @@ public class ReportFragment extends Fragment {
         treeMap_plan = new TreeMap<String, Float>(hashMap_expenses);
     }
 
-    protected void getPlanData(){
+    protected void getDataForBar(){
         hashMap_plan = new HashMap<>();
+        str_label_Bar = new ArrayList<String>();
 
-        // Group using hash
+        double total_expenses = expenseViewModel.getTotal();
+        double total_income = planViewModel.getTotalIncome();
+        double balance = total_income - total_expenses;
+
         for(PlanObj r: planObjs) {
             float temp = 0;
-            if (str_label_Pie.contains(r.getTitle())){
-                Log.e("temp in swithch: ", r.getPeriod());
-                switch (r.getPeriod()){
-                    case "daily":
-                        temp = (float) r.getAmount()*365/12;
-                        break;
-                    case "weekly":
-                        temp = (float) r.getAmount()*52/12;
-                        break;
-                    case "bi-weekly":
-                        temp = (float) r.getAmount()*26/12;
-                        break;
-                    case "monthly":
-                        temp = (float) r.getAmount();
-                        break;
-                }
-                hashMap_plan.put(r.getTitle(), temp);
+            switch (r.getPeriod()){
+                case "daily":
+                    temp = (float) r.getAmount()*365/12;
+                    break;
+                case "weekly":
+                    temp = (float) r.getAmount()*52/12;
+                    break;
+                case "bi-weekly":
+                    temp = (float) r.getAmount()*26/12;
+                    break;
+                case "monthly":
+                    temp = (float) r.getAmount();
+                    break;
+            }
+            balance -= temp;
+            if (hashMap_plan.containsKey(r.getTitle())){
+                hashMap_plan.put(r.getTitle(), hashMap_plan.get(r.getTitle()) + temp);
             } else {
-                hashMap_plan.put(r.getTitle(), 0f);
-            }
-//            if (!hashMap_plan.containsKey(r.getTitle())){
-//                Log.e("temp in swithch: ", r.getPeriod());
-//                switch (r.getPeriod()){
-//                    case "daily":
-//                        temp = (float) r.getAmount()*365/12;
-//                        break;
-//                    case "weekly":
-//                        temp = (float) r.getAmount()*52/12;
-//                        break;
-//                    case "bi-weekly":
-//                        temp = (float) r.getAmount()*26/12;
-//                        break;
-//                    case "monthly":
-//                        temp = (float) r.getAmount();
-//                        break;
-//                }
-//                hashMap_plan.put(r.getTitle(), temp);
-//            } else {
-//                hashMap_plan.put(r.getTitle(), hashMap_plan.get(r.getTitle()) + temp);
-//            }
-            Log.e("temp in Plan: ", String.valueOf(temp));
-            Log.e("hashmap in Plan: ", String.valueOf(hashMap_plan));
-        }
-
-        // Sort using treemap & Return by total desc
-//        Comparator<String> comparator = new ValueComparator<String, Float>(hashMap_plan);
-//        treeMap_plan = new TreeMap<String, Float>(comparator);
-//        treeMap_plan.putAll(hashMap_plan);
-//        Log.e("comparator in Plan: ", String.valueOf(treeMap_plan));
-//
-//        // Set to arrayList from treemap
-//        arr_plan = new ArrayList<Float>(treeMap_plan.values());
-//        str_label_Bar = new ArrayList<String>(treeMap_plan.keySet());
-//        Log.e("total in getPlan: ", String.valueOf(arr_plan));
-////        Log.e("label in getPlan: ", String.valueOf(str_label_Bar));
-        arr_plan = new ArrayList<Float>(hashMap_plan.values());
-        Log.e("hash in getPlan: ", String.valueOf(hashMap_plan));
-
-
-        int temp_size = arr_plan.size();
-        if (str_label_Pie.size() != temp_size){
-            for(int i = 0; i < str_label_Pie.size()-temp_size; i++){
-                arr_plan.add(0f);
-            }
-        } else {
-            if (str_label_Pie.size() == 0 ) {
-                arr_plan.add(100f);
+                hashMap_plan.put(r.getTitle(), temp);
             }
         }
-    }
 
-    public void getLabelsBar(){
-        str_label_Pie.removeAll(str_label_Bar);
-        str_label_Bar.addAll(str_label_Pie);
-        Log.e("label in getPlan2: ", String.valueOf(str_label_Bar));
+        // Get the balance
+        hashMap_plan.put("None", (float) balance);
+        Map<String, Float> treeMap_plan = new TreeMap<>(hashMap_plan);
+        Log.d("treeMap_plan: ", String.valueOf(treeMap_plan));
+
+        // Change to array for chart
+        arr_plan = new ArrayList<Float>(treeMap_plan.values());
+        str_label_Bar = new ArrayList<String>(treeMap_plan.keySet());
+        hashMap_expenses_Bar = new HashMap<>();
+
+        // Group using hash
+        for(ExpenseObj r: expenseObjs) {
+            if (str_label_Bar.contains(r.getCategory())){
+                if (!hashMap_expenses_Bar.containsKey(r.getCategory())){
+                    hashMap_expenses_Bar.put(r.getCategory(), (float) r.getCost());
+                } else {
+                    hashMap_expenses_Bar.put(r.getCategory(), hashMap_expenses_Bar.get(r.getCategory()) + (float) r.getCost());
+                }
+            }
+        }
+
+        for(String s: str_label_Bar) {
+            if (!hashMap_expenses_Bar.containsKey(s)) {
+                hashMap_expenses_Bar.put(s, (float) 0f);
+            }
+        }
+
+        Map<String, Float> treeMap_expenses_bar = new TreeMap<>(hashMap_expenses_Bar);
+        Log.d("treeMap_expenses_bar: ", String.valueOf(treeMap_expenses_bar));
+
+        // Change to array for chart
+        arr_actual_Bar = new ArrayList<Float>(treeMap_expenses_bar.values());
     }
 
     protected void getActualData(){
@@ -222,26 +202,26 @@ public class ReportFragment extends Fragment {
 
         // Group using hash
         for(ExpenseObj r: expenseObjs) {
-            if (!hashMap_expenses.containsKey(r.getCategory())){
-                hashMap_expenses.put(r.getCategory(), (float) r.getCost());
+            if (!hashMap_expenses.containsKey(r.getItem())){
+                hashMap_expenses.put(r.getItem(), (float) r.getCost());
             } else {
-                hashMap_expenses.put(r.getCategory(), hashMap_expenses.get(r.getCategory()) + (float) r.getCost());
+                hashMap_expenses.put(r.getItem(), hashMap_expenses.get(r.getItem()) + (float) r.getCost());
             }
         }
 
-        Log.e("hash in Actual: ", String.valueOf(hashMap_expenses));
+        Log.d("hash in Actual: ", String.valueOf(hashMap_expenses));
 
         // Sort using treemap & Return by total desc
         Comparator<String> comparator = new ValueComparator<String, Float>(hashMap_expenses);
         treeMap_expenses = new TreeMap<String, Float>(comparator);
         treeMap_expenses.putAll(hashMap_expenses);
-        Log.e("comparator in Actual: ", String.valueOf(treeMap_expenses));
+        Log.d("comparator in Actual: ", String.valueOf(treeMap_expenses));
 
         // Set to arrayList from treemap
         arr_actual = new ArrayList<Float>(treeMap_expenses.values());
         str_label_Pie = new ArrayList<String>(treeMap_expenses.keySet());
-        Log.e("total in getActual: ", String.valueOf(arr_actual));
-        Log.e("label in getActual: ", String.valueOf(str_label_Pie));
+        Log.d("total in getActual: ", String.valueOf(arr_actual));
+        Log.d("label in getActual: ", String.valueOf(str_label_Pie));
 
         if (arr_actual.size() == 0){
             arr_actual.add(100f);
@@ -256,7 +236,7 @@ public class ReportFragment extends Fragment {
 
         // Set Axis
         XAxis xAxis = mBar.getXAxis();
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(str_label_Pie));
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(str_label_Bar));
 
         mBar.getAxisLeft().setAxisMinimum(0);
         xAxis.setPosition(XAxis.XAxisPosition.TOP);
@@ -272,7 +252,9 @@ public class ReportFragment extends Fragment {
         // Format
         float barSpace = 0.02f;
         float groupSpace = 0.38f;
-        int groupCount = arr_actual.size();
+
+        // Display the num of arr_actual_Bar
+        int groupCount = arr_actual_Bar.size();
 
         mBar.getXAxis().setAxisMinimum(0);
         mBar.getXAxis().setAxisMaximum(0 + mBar.getBarData().getGroupWidth(groupSpace, barSpace) * groupCount);
@@ -286,16 +268,16 @@ public class ReportFragment extends Fragment {
         ArrayList<BarEntry> entries_actual = new ArrayList<BarEntry>();
 
         // Get data to chart
-        getPlanData();
+        getDataForBar();
         getActualData();
 
-        Log.e("data in Bar: ", Integer.toString(arr_actual.size()));
+        Log.d("data in Bar: ", Integer.toString(arr_actual_Bar.size()));
 
-        for(int i=0; i < arr_actual.size(); i++ ){
+        for(int i=0; i < arr_actual_Bar.size(); i++ ){
             entries_plan.add(new BarEntry(i+1, arr_plan.get(i)));
-            entries_actual.add(new BarEntry(i+1, arr_actual.get(i)));
-            Log.e("act loop in bar: ", Float.toString(arr_actual.get(i)));
-            Log.e("plan loop in bar: ", Float.toString(arr_plan.get(i)));
+            entries_actual.add(new BarEntry(i+1, arr_actual_Bar.get(i)));
+            Log.d("act loop in bar: ", Float.toString(arr_actual_Bar.get(i)));
+            Log.d("plan loop in bar: ", Float.toString(arr_plan.get(i)));
         }
 
         // Format Bar
@@ -339,11 +321,11 @@ public class ReportFragment extends Fragment {
         getActualData();
 
         // Apply data to chart
-        Log.e("arr_actual in Pie: ", Integer.toString(arr_actual.size()));
+        Log.d("arr_actual in Pie: ", Integer.toString(arr_actual.size()));
         for(int i = 0; i < arr_actual.size(); i++){
             entries_expenses.add(new PieEntry((float) arr_actual.get(i), str_label_Pie.get(i)));
-            Log.e("loop in Pie: ", Float.toString(arr_actual.get(i)));
-            Log.e("loop in Pie: ", str_label_Pie.get(i));
+            Log.d("loop in Pie: ", Float.toString(arr_actual.get(i)));
+            Log.d("loop in Pie: ", str_label_Pie.get(i));
         }
 
         PieDataSet ds = new PieDataSet(entries_expenses, "");
