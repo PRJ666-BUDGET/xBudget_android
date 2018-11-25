@@ -440,6 +440,20 @@ public final class CameraActivity extends AppCompatActivity {
                             }
                         }
 
+                        if(largestTotalIndex != -1) {
+                            Log.d("Total:", possibleTotals.get(largestTotalIndex).getValue());
+                        } else {
+                            Log.d("Total:", "Not found");
+                        }
+
+
+                        for(int i = 0; i < possibleValues.size(); i++){
+                            Log.d("Values:", Double.toString(possibleValues.get(i)));
+                        }
+                        if(possibleValues.size() == 0){
+                            Log.d("Values:", "No values");
+                        }
+
                         //display ReceiptFormActivity
                         Intent myIntent = new Intent(CameraActivity.this, ReceiptFormActivity.class);
                         if(largestTotalIndex != -1) {
