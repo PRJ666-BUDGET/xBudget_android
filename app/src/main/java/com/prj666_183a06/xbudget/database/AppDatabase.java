@@ -9,10 +9,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseDao;
-import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseRoomDatabase;
-import com.prj666_183a06.xbudget.database.dao.PlanDao;
 import com.prj666_183a06.xbudget.ExpenseRoom.Expense;
+import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseDao;
+import com.prj666_183a06.xbudget.database.dao.PlanDao;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
 
 import static com.prj666_183a06.xbudget.database.AppDatabase.DATABASE_VERSION;
@@ -23,7 +22,7 @@ public abstract class AppDatabase extends RoomDatabase {
     // for Singleton
     public static AppDatabase instance;
 
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "xbudget";
 
     public abstract PlanDao planDao();
