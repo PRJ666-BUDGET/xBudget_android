@@ -18,8 +18,8 @@
     <string name="createForm_planPeriod_label">Period</string>
 
     <string-array name="spinner_planType">
-        <item>income</item>
         <item>category</item>
+        <item>income</item>
     </string-array>
 
     <string-array name="spinner_planPeriod">
