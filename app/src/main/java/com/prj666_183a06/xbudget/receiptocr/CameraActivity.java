@@ -22,6 +22,7 @@ import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -80,8 +81,6 @@ public final class CameraActivity extends AppCompatActivity {
     private TextRecognizer textRecognizer;
 
     private ImageView image;
-    private TextView textOut;
-    private TextView receiptSum;
 
     private Bitmap bitmap;
     /**
@@ -95,16 +94,6 @@ public final class CameraActivity extends AppCompatActivity {
         preview = (CameraSourcePreview) findViewById(R.id.preview);
         graphicOverlay = (GraphicOverlay<CameraOverlay>) findViewById(R.id.graphicOverlay);
         image = (ImageView) findViewById(R.id.CameraImageView);
-        textOut = (TextView) findViewById(R.id.ReceiptTextDisplay);
-        receiptSum = (TextView) findViewById(R.id.ReceiptSum);
-
-//        //display alignment box
-//        Paint rectPaint = new Paint();//TODO: Get better variable names
-//        rectPaint.setColor(Color.RED);
-////        rectPaint.setStyle(Paint.Style.STROKE);
-////        rectPaint.setStrokeWidth(4.0f);
-//        Canvas canvas =  new Canvas();
-//        canvas.drawRect(50, 500, 500, 500, rectPaint);
 
         // Set good defaults for capturing text.
         boolean autoFocus = true;
@@ -123,8 +112,16 @@ public final class CameraActivity extends AppCompatActivity {
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
         Snackbar.make(graphicOverlay, "Tap to capture receipt",
-                Snackbar.LENGTH_LONG)
+                Snackbar.LENGTH_SHORT)
                 .show();
+
+        FloatingActionButton fab = findViewById(R.id.cameraActionButton);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cameraAction();
+            }
+        });
 
     }
 
@@ -160,20 +157,6 @@ public final class CameraActivity extends AppCompatActivity {
                 .setAction(R.string.ok, listener)
                 .show();
 
-    }
-
-    protected void onDraw(Canvas canvas) {
-        int canvasW = graphicOverlay.getWidth();
-        int canvasH = graphicOverlay.getHeight();
-        Point centerOfCanvas = new Point(canvasW / 2, canvasH / 2);
-        int rectW = 100;
-        int rectH = 100;
-        int left = centerOfCanvas.x - (rectW / 2);
-        int top = centerOfCanvas.y - (rectH / 2);
-        int right = centerOfCanvas.x + (rectW / 2);
-        int bottom = centerOfCanvas.y + (rectH / 2);
-        Rect rect = new Rect(left, top, right, bottom);
-        canvas.drawRect(rect, new Paint());
     }
 
     @Override
@@ -348,35 +331,75 @@ public final class CameraActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * onTap is called to turn the image to a coherent text.
-     *
-     * @param rawX - the raw position of the tap
-     * @param rawY - the raw position of the tap.
-     * @return true if the tap was on a TextBlock
-     */
-    private boolean onTap(float rawX, float rawY) {
 
-        cameraSource.takePicture(new CameraSource.ShutterCallback() {
-                     @Override
-                     public void onShutter() {
-                         textOut.setText("Loading Please Wait Message"); //TODO: replace please wait message with something more permanent
-                         textOut.setVisibility(View.VISIBLE);
-                     }
-                 },
+
+    private boolean cameraAction(){
+        cameraSource.takePicture(null,
                 new CameraSource.PictureCallback() {
-                    @Override
                     public void onPictureTaken(byte[] data) {
-
-                        cameraSource.stop();
-
                         Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 
                         //scale image
                         Matrix matrix = new Matrix();
-                        matrix.postScale((float) 0.8, (float) 0.8);
+                        matrix.postScale((float) 0.5, (float) 0.5);
                         bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
 
+                        //read elemenst as is.
+                        //if no values found, rotate and try agian
+                        //If none found again, say try again
+
+                        //parse without rotation.
+                        Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+                        SparseArray<TextBlock> items = textRecognizer.detect(frame);
+                        //make lines into elements
+                        boolean foundVal = false;
+                        ArrayList<ReceiptElement> receiptElements = new ArrayList<>();
+                        for (int i = 0; i < items.size(); ++i) {
+                            TextBlock item = items.valueAt(i);
+                            List<Line> lines = (List<Line>) item.getComponents();
+                            for (int j = 0; j < lines.size(); ++j) {
+                                Line line = lines.get(j);
+                                if (line != null && line.getValue() != null) {
+                                    receiptElements.add(new ReceiptElement(line));
+                                    if (new ReceiptElement(line).inNumber()) {
+                                        foundVal = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!foundVal) {
+                            Log.d("CameraLog:", "Rotating");
+                            matrix = new Matrix();
+                            matrix.postRotate(90);
+                            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+
+                            frame = new Frame.Builder().setBitmap(bitmap).build();
+                            items = textRecognizer.detect(frame);
+                            //make lines into elements
+                            receiptElements = new ArrayList<>();
+                            for (int i = 0; i < items.size(); ++i) {
+                                TextBlock item = items.valueAt(i);
+                                List<Line> lines = (List<Line>) item.getComponents();
+                                for (int j = 0; j < lines.size(); ++j) {
+                                    Line line = lines.get(j);
+                                    if (line != null && line.getValue() != null) {
+                                        receiptElements.add(new ReceiptElement(line));
+                                        if (new ReceiptElement(line).inNumber()) {
+                                            foundVal = true;
+                                        }
+                                    }
+                                }
+                            }
+                            if (!foundVal) {
+                                //if failed to read.
+                                Log.d("CameraLog:", "Failed capture");
+                                Snackbar.make(graphicOverlay, "Failed To read, Please try again",
+                                        Snackbar.LENGTH_LONG)
+                                        .show();
+                                return;
+                            }
+                        /*
                         //rotate to portrait (Samsung Fix)
                         if (bitmap.getWidth() > bitmap.getHeight()) {
                             matrix = new Matrix();
@@ -384,45 +407,11 @@ public final class CameraActivity extends AppCompatActivity {
                             bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
                         }
 
+
                         //Parse Text
                         Frame frame = new Frame.Builder().setBitmap(bitmap).build();
 
                         SparseArray<TextBlock> items = textRecognizer.detect(frame);
-
-                        Snackbar.make(graphicOverlay, "Text Displayed",
-                                Snackbar.LENGTH_LONG)
-                                .show();
-
-                        //Parse Objects to text with layout
-                        List<String> output = new ArrayList<String>();
-                        List<Integer> xAxis = new ArrayList<Integer>();
-                        List<Integer> yAxis = new ArrayList<Integer>();
-                        for (int i = 0; i < items.size(); ++i) {
-                            TextBlock item = items.valueAt(i);
-                            //pull lines out of block
-                            List<Line> lines = (List<Line>) item.getComponents();
-                            for (int j = 0; j < lines.size(); ++j) {
-                                Line line = lines.get(j);
-                                if (line != null && line.getValue() != null) {
-                                    output.add(line.getValue());
-                                    xAxis.add(line.getBoundingBox().left / 50);
-                                    yAxis.add(line.getBoundingBox().top / 50);
-                                }
-                            }
-                        }
-
-                        //bubble sort the list=
-                        for (int i = 0; i < output.size(); i++)
-
-                            // Last i elements are already in place
-                            for (int j = 0; j < output.size() - i - 1; j++)
-                                if (yAxis.get(j) > yAxis.get(j + 1)) {
-                                    Collections.swap(yAxis, j, j + 1);
-                                    Collections.swap(xAxis, j, j + 1);
-                                    Collections.swap(output, j, j + 1);
-                                }
-
-
 
                         //make lines into elements
                         ArrayList<ReceiptElement> receiptElements = new ArrayList<>();
@@ -436,91 +425,96 @@ public final class CameraActivity extends AppCompatActivity {
                                 }
                             }
                         }
-
-                        //bubble sort elements
-                        for (int i = 0; i < receiptElements.size(); i++) {
-                            // Last i elements are already in place
-                            for (int j = 0; j < receiptElements.size() - i - 1; j++) {
-                                if (receiptElements.get(j).getLine().getBoundingBox().top > receiptElements.get(j + 1).getLine().getBoundingBox().top) {
-                                    Collections.swap(receiptElements, j, j + 1);
-                                }
-                            }
-                        }
-
-                        String layout = new String();
-                        for (int i = 0; i < receiptElements.size(); i++) {
-                            layout += receiptElements.get(i).getValue();
-
-                            if(receiptElements.get(i).inNumber()) layout += " DETECTED NUMBER";
-                            if(receiptElements.get(i).isTotal()) layout += " DETECTED TOTAL";
-
-                            layout +=  System.lineSeparator();
-
-                        }
-
-                        textOut.setText(layout);
-
-                        //TODO: Predict total, look for "Total" "Takeout Total" remove colo
-                        //TODO: Convert comma to period
-                        //TODO Arange rows and columns
-
-                        String summary = "";
-
-                        //get all elements that are detected as 'total'
-                        ArrayList<ReceiptElement> possibleTotals = new ArrayList<>();
-                        for (int i = 0; i < receiptElements.size(); i++){
-                            if(receiptElements.get(i).isTotal()){
-                                //find what number is associated
-                                int closestIndex = -1;
-                                float closestValue = 99999;
-                                int secondClosestIndex = -1;
-                                for(int j = 0; j < receiptElements.size(); j++){
-                                    if(receiptElements.get(j).inNumber()){
-                                        if(     Math.abs(receiptElements.get(j).getLine().getBoundingBox().top) -
-                                                Math.abs(receiptElements.get(i).getLine().getBoundingBox().top)
-                                                < Math.abs(closestValue)){
-                                            secondClosestIndex = closestIndex;
-                                            closestValue = receiptElements.get(j).getNumValue();
-                                            closestIndex = j;
-                                        }
+*/
+                            //bubble sort elements
+                            for (int i = 0; i < receiptElements.size(); i++) {
+                                // Last i elements are already in place
+                                for (int j = 0; j < receiptElements.size() - i - 1; j++) {
+                                    if (receiptElements.get(j).getLine().getBoundingBox().top > receiptElements.get(j + 1).getLine().getBoundingBox().top) {
+                                        Collections.swap(receiptElements, j, j + 1);
                                     }
                                 }
-                                if(closestIndex != -1) {
-                                    possibleTotals.add(receiptElements.get(closestIndex));
-                                }
-                                if(secondClosestIndex != -1) {
-                                    possibleTotals.add(receiptElements.get(secondClosestIndex));
+                            }
+
+                            //get all elements that are detected as 'total'
+                            ArrayList<ReceiptElement> possibleTotals = new ArrayList<>();
+                            for (int i = 0; i < receiptElements.size(); i++) {
+                                if (receiptElements.get(i).isTotal()) {
+                                    //find what number is associated
+                                    int closestIndex = -1;
+                                    double closestValue = 99999;
+                                    int secondClosestIndex = -1;
+                                    for (int j = 0; j < receiptElements.size(); j++) {
+                                        if (receiptElements.get(j).inNumber()) {
+                                            if (Math.abs(receiptElements.get(j).getLine().getBoundingBox().top) -
+                                                    Math.abs(receiptElements.get(i).getLine().getBoundingBox().top)
+                                                    < Math.abs(closestValue)) {
+                                                secondClosestIndex = closestIndex;
+                                                closestValue = receiptElements.get(j).getNumValue();
+                                                closestIndex = j;
+                                            }
+                                        }
+                                    }
+                                    if (closestIndex != -1) {
+                                        possibleTotals.add(receiptElements.get(closestIndex));
+                                    }
+                                    if (secondClosestIndex != -1) {
+                                        possibleTotals.add(receiptElements.get(secondClosestIndex));
+                                    }
                                 }
                             }
-                        }
 
-                        //get largest of possible total
-                        int largestTotalIndex = -1;
-                        if(possibleTotals.size() > 0) {
-                            largestTotalIndex = 0;
-                            for (int i = 0; i < possibleTotals.size(); i++) {
-                                if (possibleTotals.get(i).getNumValue() > possibleTotals.get(largestTotalIndex).getNumValue()) {
-                                    largestTotalIndex = i;
+                            //get largest of possible total
+                            int largestTotalIndex = -1;
+                            if (possibleTotals.size() > 0) {
+                                largestTotalIndex = 0;
+                                for (int i = 0; i < possibleTotals.size(); i++) {
+                                    if (possibleTotals.get(i).getNumValue() > possibleTotals.get(largestTotalIndex).getNumValue()) {
+                                        largestTotalIndex = i;
+                                    }
                                 }
                             }
+
+                            ArrayList<Double> possibleValues = new ArrayList<>();
+                            for (int i = 0; i < receiptElements.size(); i++) {
+                                if (receiptElements.get(i).inNumber()) {
+                                    possibleValues.add(receiptElements.get(i).getNumValue());
+                                }
+                            }
+
+                            if (largestTotalIndex != -1) {
+                                Log.d("CameraLog:", possibleTotals.get(largestTotalIndex).getValue());
+                            } else {
+                                Log.d("CameraLog:", "Not found");
+                            }
+
+                            for (int i = 0; i < possibleValues.size(); i++) {
+                                Log.d("CameraLog:", Double.toString(possibleValues.get(i)));
+                            }
+                            if (possibleValues.size() == 0) {
+                                Log.d("CameraLog:", "No values");
+                            }
+
+                            //Sanitize values and sent to form
+                            Intent myIntent = new Intent(CameraActivity.this, ReceiptFormActivity.class);
+                            //remove unusualy large values
+                            //backwards due to index changes on remove7
+                            for(int i = possibleValues.size() -1; i >= 0; i--){
+                                if(possibleValues.get(i) > 999){
+                                    possibleValues.remove(i);
+                                }
+                            }
+                            if(possibleValues.size() > 0){
+                                myIntent.putExtra("EXTRA_COST_ARR", possibleValues);
+                            }
+                            if(largestTotalIndex != -1){
+                                myIntent.putExtra("EXTRA_COST", possibleTotals.get(largestTotalIndex).getNumValue());
+                            } else {
+                                myIntent.putExtra("EXTRA_COST", Collections.max(possibleValues));
+                            }
+                            CameraActivity.this.startActivity(myIntent);
                         }
-
-                        if(largestTotalIndex != -1) {
-                            summary = "Total is:" + possibleTotals.get(largestTotalIndex).getValue();
-                        } else {
-                            summary = "Total not found";
-                        }
-                        receiptSum.setText(summary);
-
-                        //display ReceiptFormActivity
-                        Intent myIntent = new Intent(CameraActivity.this, ReceiptFormActivity.class);
-                        myIntent.putExtra("TotalArr", largestTotalIndex);
-                        myIntent.putExtra("TotalIndex", possibleTotals);
-                        //myIntent.putExtra("ELEMENTS", receiptElements); //crashes on load
-                        CameraActivity.this.startActivity(myIntent);
-
                     }
-
                 });
         return false;
     }
@@ -529,7 +523,8 @@ public final class CameraActivity extends AppCompatActivity {
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            return onTap(e.getRawX(), e.getRawY()) || super.onSingleTapConfirmed(e);
+//            return onTap(e.getRawX(), e.getRawY()) || super.onSingleTapConfirmed(e);
+            return false;
         }
     }
 
@@ -584,7 +579,6 @@ public final class CameraActivity extends AppCompatActivity {
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
             if (cameraSource != null) {
-                //TODO: Zoom functionality
                 //cameraSource.doZoom(detector.getScaleFactor());
             }
         }

@@ -25,13 +25,13 @@ public class ReceiptElement {
 
     private String value;
 
-    public Float getNumValue() {
+    public Double getNumValue() {
         return numValue;
     }
 
-    private Float numValue = null;
+    private Double numValue = null;
     private Boolean isNumber;
-    private String numberChar = "[\\doli]"; //TODO 9 can be interpreted as g
+    private String numberChar = "[\\dolig]"; //TODO 9 can be interpreted as g
     private String decimalChar = "[\\,\\.]";
     List<String> possibleAssociation;
 
@@ -40,8 +40,14 @@ public class ReceiptElement {
         value = line.getValue().toLowerCase();
         isNumber = parseNumber();
         if(isNumber){
-            value.replaceAll(",","."); //make decimal
-            numValue = Float.parseFloat(value.replaceAll("[^\\d.]+|\\.(?!\\d)", ""));
+            value = value.replaceAll(",","."); //make decimal
+            value = value.replaceAll("[li]","1"); //li -> 1
+            value = value.replaceAll("g","9"); //g -> 9
+            value = value.replaceAll("o","0"); //o -> 0
+            value = value.replaceAll("\\s",""); //remove spaces
+            value = value.replaceAll(".*[^\\d.]", ""); //remove non numeric characters left of first char
+
+            numValue = Double.parseDouble(value);
         }
     }
 
@@ -51,11 +57,11 @@ public class ReceiptElement {
             //multiple decimals
             return false;
         }
-        if(Pattern.compile(decimalChar + numberChar + numberChar + "Z").matcher(value).find()) {
+        if(Pattern.compile(decimalChar + numberChar + numberChar + "$").matcher(value).find()) {
             //Almost Guarantee number
             return true;
         }
-        if(Pattern.compile(decimalChar + numberChar + numberChar).matcher(value).find()) {
+        if(Pattern.compile(".*" + decimalChar + numberChar + numberChar + '$').matcher(value).find()) {
             //Almost Guarantee number
             return true;
         }

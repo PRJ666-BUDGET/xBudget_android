@@ -5,8 +5,11 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
+import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseObj;
 import com.prj666_183a06.xbudget.database.PlanRepository;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
+import com.prj666_183a06.xbudget.model.PlanObj;
+import com.prj666_183a06.xbudget.pojo.PlanItem;
 
 import java.util.List;
 
@@ -43,5 +46,17 @@ public class PlanViewModel extends AndroidViewModel {
 
     public LiveData<List<PlanEntity>> getPlanList() {
         return planList;
+    }
+
+    public List<String> getTitleList(){
+        return repository.getTitleList();
+    }
+
+    public double getTotalIncome() {
+        return repository.getTotalCost();
+    }
+
+    public List<PlanObj> getAll() {
+        return repository.getAll();
     }
 }

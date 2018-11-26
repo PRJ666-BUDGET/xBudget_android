@@ -7,6 +7,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Dao
@@ -31,6 +32,20 @@ public interface ExpenseDao {
     @Query("SELECT SUM(expense_cost) FROM expense_table")
     double getTotalCost();
 
+    @Query("SELECT expense_cost from expense_table")
+    List<Double> getCostAll();
+
+    @Query("SELECT expense_item from expense_table")
+    List<String> getItemAll();
+
+    @Query("SELECT expense_store from expense_table")
+    List<String> getStoreAll();
+
+    @Query("SELECT expense_date from expense_table")
+    List<String> getDateAll();
+
+    @Query("SELECT expense_category from expense_table")
+    List<String> getCategoryAll();
     @Query("SELECT SUM(expense_cost) FROM expense_table")
     double getExpenseTotal();
 
@@ -40,5 +55,6 @@ public interface ExpenseDao {
 //    @Query("SELECT expense_date, sum(expense_cost) FROM expense_table GROUP BY expense_date ORDER BY expense_date")
     @Query("SELECT * FROM expense_table ORDER BY expense_date")
     List<Expense> getExpenseGroupList();
+
 
 }
