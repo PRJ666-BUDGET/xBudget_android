@@ -1,52 +1,25 @@
 package com.prj666_183a06.xbudget;
 
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.prj666_183a06.xbudget.ExpenseRoom.Expense;
-import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseViewModel;
-import com.prj666_183a06.xbudget.database.Expenses;
-
-import java.util.Calendar;
 
 import static com.prj666_183a06.xbudget.ExpenseAddEditExpenseR.EXTRA_ITEM;
 
 public class ExpenseDetail extends AppCompatActivity {
 
     TextView itemTV, storeTV, costTV, categoryTV, dateTV, descriptionTV, titleTV;
-    String item, store, cateegory, date, description;
+    String item, store, category, date, description;
     int id;
     Double cost;
     Button edit, exit;
-
-
-    public static final String EXTRA_ID =
-            "com.prj666_183a06.xbudget.EXTRA_ID";
-    public static final String EXTRA_STORE =
-            "com.prj666_183a06.xbudget.EXTRA_STORE";
-
-    public static final String EXTRA_ITEM =
-            "com.prj666_183a06.xbudget.EXTRA_ITEM";
-
-    public static final String EXTRA_DATE =
-            "com.prj666_183a06.xbudget.EXTRA_DATE";
-
-    public static final String EXTRA_COST =
-            "com.prj666_183a06.xbudget.EXTRA_COST";
-
-    public static final String EXTRA_CATEGORY =
-            "com.prj666_183a06.xbudget.EXTRA_CATEGORY";
-
-    public static final String EXTRA_DESCRIPTION =
-            "com.prj666_183a06.xbudget.EXTRA_CATEGORY";
+    Expense obj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +28,8 @@ public class ExpenseDetail extends AppCompatActivity {
 
         final Intent intent = getIntent();
         setTitle("Detail");
+
+        obj = (Expense) intent.getSerializableExtra("expense");
 
         itemTV = findViewById(R.id.item);
         storeTV = findViewById(R.id.store);
@@ -65,23 +40,32 @@ public class ExpenseDetail extends AppCompatActivity {
 
         titleTV = findViewById(R.id.title);
 
-        id = intent.getIntExtra(EXTRA_ID, 0);
-        item = intent.getStringExtra(EXTRA_ITEM);
-        store = intent.getStringExtra(EXTRA_STORE);
-        cost = intent.getDoubleExtra(EXTRA_COST, 0.0);
-        cateegory = intent.getStringExtra(EXTRA_CATEGORY);
-        date = intent.getStringExtra(EXTRA_DATE);
-        description = intent.getStringExtra(EXTRA_DESCRIPTION);
+        /*
+        id = intent.getIntExtra(ExpenseAddEditExpenseR.EXTRA_ID, 0);
+        item = intent.getStringExtra(ExpenseAddEditExpenseR.EXTRA_ITEM);
+        store = intent.getStringExtra(ExpenseAddEditExpenseR.EXTRA_STORE);
+        cost = intent.getDoubleExtra(ExpenseAddEditExpenseR.EXTRA_COST, 0.0);
+        category = intent.getStringExtra(ExpenseAddEditExpenseR.EXTRA_CATEGORY);
+        date = intent.getStringExtra(ExpenseAddEditExpenseR.EXTRA_DATE);
+        description = intent.getStringExtra(ExpenseAddEditExpenseR.EXTRA_DESCRIPTION);
+        */
 
+        id = obj.getId();
+        item = obj.getExpenseItem();
+        store = obj.getExpenseStore();
+        cost = obj.getExpenseCost();
+        category = obj.getExpenseCategory();
+        date = obj.getExpenseDate();
+        description = obj.getExpenseDescription();
 
         itemTV.setText(item);
         storeTV.setText(store);
         costTV.setText(cost+"");
-        categoryTV.setText(cateegory);
+        categoryTV.setText(category);
         dateTV.setText(date);
         descriptionTV.setText(description);
 
-        titleTV.setText(intent.getStringExtra(EXTRA_ITEM));
+        titleTV.setText(obj.getExpenseItem());
 
         edit = findViewById(R.id.edit);
         exit = findViewById(R.id.exit);
@@ -91,13 +75,16 @@ public class ExpenseDetail extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent editIntent = new Intent(getApplicationContext(), ExpenseAddEditExpenseR.class);
-                editIntent.putExtra(EXTRA_ID, id);
-                editIntent.putExtra(EXTRA_STORE, store);
-                editIntent.putExtra(EXTRA_ITEM, item);
-                editIntent.putExtra(EXTRA_CATEGORY, cateegory);
-                editIntent.putExtra(EXTRA_DATE, date);
-                editIntent.putExtra(EXTRA_COST, cost);
-                editIntent.putExtra(EXTRA_DESCRIPTION, description);
+                /*editIntent.putExtra(ExpenseAddEditExpenseR.EXTRA_ID, id);
+                editIntent.putExtra(ExpenseAddEditExpenseR.EXTRA_STORE, store);
+                editIntent.putExtra(ExpenseAddEditExpenseR.EXTRA_ITEM, item);
+                editIntent.putExtra(ExpenseAddEditExpenseR.EXTRA_CATEGORY, category);
+                editIntent.putExtra(ExpenseAddEditExpenseR.EXTRA_DATE, date);
+                editIntent.putExtra(ExpenseAddEditExpenseR.EXTRA_COST, cost);
+                editIntent.putExtra(ExpenseAddEditExpenseR.EXTRA_DESCRIPTION, description);*/
+
+                editIntent.putExtra("expense", obj);
+                editIntent.putExtra("type", "edit");
                 startActivityForResult(editIntent, 2);
             }
         });
@@ -105,6 +92,8 @@ public class ExpenseDetail extends AppCompatActivity {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent empty = new Intent();
+                setResult(RESULT_CANCELED);
                 finish();
             }
         });
@@ -114,26 +103,39 @@ public class ExpenseDetail extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.e("return from edit", "true");
         if(requestCode == 2 && resultCode == RESULT_OK){
-            Intent intent = getIntent();
-            int id = intent.getIntExtra(EXTRA_ID, 0);
-            String storeR = data.getStringExtra(EXTRA_STORE);
-            String itemR = data.getStringExtra(EXTRA_ITEM);
-            String dateR = data.getStringExtra(EXTRA_DATE);
-            double costR = data.getDoubleExtra(EXTRA_COST, 0.0);
-            String categoryR = data.getStringExtra(EXTRA_CATEGORY);
-            String descriptionR = data.getStringExtra(EXTRA_DESCRIPTION);
+            /*
+            int id = intent.getIntExtra(ExpenseAddEditExpenseR.EXTRA_ID, 0);
+            String storeR = data.getStringExtra(ExpenseAddEditExpenseR.EXTRA_STORE);
+            String itemR = data.getStringExtra(ExpenseAddEditExpenseR.EXTRA_ITEM);
+            String dateR = data.getStringExtra(ExpenseAddEditExpenseR.EXTRA_DATE);
+            double costR = data.getDoubleExtra(ExpenseAddEditExpenseR.EXTRA_COST, 0.0);
+            String categoryR = data.getStringExtra(ExpenseAddEditExpenseR.EXTRA_CATEGORY);
+            String descriptionR = data.getStringExtra(ExpenseAddEditExpenseR.EXTRA_DESCRIPTION);
 
-            Log.e("intent stuff", data.getStringExtra(EXTRA_STORE));
 
             Intent ret = new Intent();
-            ret.putExtra(EXTRA_STORE, storeR.trim());
-            ret.putExtra(EXTRA_ITEM, itemR.trim());
-            ret.putExtra(EXTRA_DATE, dateR.trim());
-            ret.putExtra(EXTRA_COST, costR);
-            ret.putExtra(EXTRA_CATEGORY, categoryR);
-            ret.putExtra(EXTRA_DESCRIPTION, descriptionR.trim());
-            ret.putExtra(EXTRA_ID, id);
+            ret.putExtra(ExpenseAddEditExpenseR.EXTRA_STORE, storeR.trim());
+            ret.putExtra(ExpenseAddEditExpenseR.EXTRA_ITEM, itemR.trim());
+            ret.putExtra(ExpenseAddEditExpenseR.EXTRA_DATE, dateR.trim());
+            ret.putExtra(ExpenseAddEditExpenseR.EXTRA_COST, costR);
+            ret.putExtra(ExpenseAddEditExpenseR.EXTRA_CATEGORY, categoryR);
+            ret.putExtra(ExpenseAddEditExpenseR.EXTRA_DESCRIPTION, descriptionR.trim());
+            ret.putExtra(ExpenseAddEditExpenseR.EXTRA_ID, id);
+            */
 
+            Intent ret = new Intent();
+            Expense obj = (Expense) data.getSerializableExtra("expense");
+            String temp =
+                    obj.getId() + "\n" +
+                    obj.getExpenseStore() + "\n" + obj.getExpenseItem() + "\n" +
+                    obj.getExpenseDate() + "\n" +
+                    obj.getExpenseCost() + "\n" +
+                    obj.getExpenseCategory() + "\n" +
+                    obj.getExpenseDescription() + "\n";
+
+            Log.e("expense obj in detail", temp);
+
+            ret.putExtra("expense", obj);
             setResult(RESULT_OK, ret);
             finish();
         }

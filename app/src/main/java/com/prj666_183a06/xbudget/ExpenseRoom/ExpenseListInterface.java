@@ -40,7 +40,7 @@ public class ExpenseListInterface {
     public String print() {
         String ret = "";
         for (ExpenseObj r : listE) {
-            ret = ret + r.getItem() + " " + r.getStore() + " " + r.getDate() + " " + r.getCost() + "\n";
+            ret = ret + r.getItem() + " " + r.getStore() + " " + r.getDate() + " " + r.getCost() + " " + r.getCategory()+ " " + r.getDescription() + "\n";
         }
         return ret;
     }

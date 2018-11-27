@@ -1,40 +1,31 @@
 package com.prj666_183a06.xbudget;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseViewModel;
+import com.prj666_183a06.xbudget.ExpenseRoom.Expense;
 import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
+
 import java.util.ArrayList;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.prj666_183a06.xbudget.database.Expenses;
+
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
@@ -60,14 +51,15 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
             "com.prj666_183a06.xbudget.EXTRA_CATEGORY";
 
 
-
     private EditText editStore, editItem, editCost, editDescription;
     private TextView editDate;
-    private Spinner plansDrop;
+    private Spinner editCategory;
+    String type;
+    int id;
     Button exit;
     PlanViewModel pvm;
-    static DatePickerDialog.OnDateSetListener dateListener;
     List<String> planTitles;
+    Expense temp;
 
     private DatabaseReference expenseRef = FirebaseDatabase.getInstance().getReference("expenses");
     private double tempAmount;
@@ -77,11 +69,18 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense);
 
-        editStore = findViewById(R.id.edit_text_store);
+        Intent intent = getIntent();
+
+        if(intent.getStringExtra("type").equals("edit")) {
+            type = "edit";
+        }else{ type = "add";}
+
+            editStore = findViewById(R.id.edit_text_store);
         editItem = findViewById(R.id.edit_text_item);
         editCost = findViewById(R.id.edit_text_cost);
         editDate = findViewById(R.id.edit_date_view);
         editDescription = findViewById(R.id.edit_text_description);
+        editCategory = findViewById(R.id.plans);
 
         //Populate title
         pvm = ViewModelProviders.of(this).get(PlanViewModel.class);
@@ -92,10 +91,9 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
 
         Log.e("title", planTitles.toString());
 
-        plansDrop = findViewById(R.id.plans);
         ArrayAdapter<String> planAdapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_dropdown_item, planTitles);
-        plansDrop.setAdapter(planAdapter);
+        editCategory.setAdapter(planAdapter);
 
         editDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,50 +103,33 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
             }
         });
 
-        /*editDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Calendar cal = Calendar.getInstance();
-
-                int year = cal.get(Calendar.YEAR);
-                int month = cal.get(Calendar.MONTH);
-                int day = cal.get(Calendar.DAY_OF_MONTH);
-
-                DatePickerDialog dialogue = new DatePickerDialog(
-                        ExpenseAddEditExpenseR.this,
-                        android.R.style.Theme_Holo_Light_Dialog_MinWidth,
-                        dateListener, year, month, day);
-
-                dialogue.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialogue.show();
-
-                Log.e("testing", "date listener");
-                dateListener = new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                        month = month + 1;
-                        Log.d("DATE TEST", "onDateSet: date:" + year + "/" + month + "/" + day);
-
-                        String date = month + "/" + day + "/" + year;
-                        editDate.setText(date);
-                    }
-                };
-            }
-        });*/
-
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
 
-        final Intent intent = getIntent();
-        if(intent.hasExtra(EXTRA_ID)){
+        if (type.equals("edit")) {
             setTitle("Edit Expense");
+
+            temp = (Expense) intent.getSerializableExtra("expense");
+
+            /*id = intent.getIntExtra(EXTRA_ID, -1);
             editStore.setText(intent.getStringExtra(EXTRA_STORE));
             editItem.setText(intent.getStringExtra(EXTRA_ITEM));
-            editCost.setText(""+intent.getDoubleExtra(EXTRA_COST, 0.0));
+            editCost.setText("" + intent.getDoubleExtra(EXTRA_COST, 0.0));
             editDate.setText(intent.getStringExtra(EXTRA_DATE));
             editDescription.setText(intent.getStringExtra(EXTRA_DESCRIPTION));
             tempAmount = intent.getDoubleExtra(EXTRA_COST, 0.0);
-        }else{
+            */
+
+            id = temp.getId();
+            editStore.setText(temp.getExpenseStore());
+            editItem.setText(temp.getExpenseItem());
+            editCost.setText("" + temp.getExpenseCost());
+            editDate.setText(temp.getExpenseDate());
+            editDescription.setText(temp.getExpenseDescription());
+            tempAmount = temp.getExpenseCost();
+
+        } else {
             setTitle("Create Expense");
+            id = -1;
         }
 
         exit = findViewById(R.id.exit);
@@ -160,10 +141,10 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
         });
 
         FloatingActionButton buttonSave = findViewById(R.id.button_save);
-        buttonSave.setOnClickListener(new View.OnClickListener(){
+        buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveExpense(1, intent);
+                saveExpense();
             }
         });
 
@@ -172,10 +153,10 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        editDate.setText(month+1 + "/" + dayOfMonth  + "/" +  year);
+        editDate.setText(month + 1 + "/" + dayOfMonth + "/" + year);
     }
 
-    private String getDate(){
+    private String getDate() {
         Calendar cal = Calendar.getInstance();
 
         int year = cal.get(Calendar.YEAR);
@@ -185,54 +166,62 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
         return month + "/" + day + "/" + year;
     }
 
-    private void saveExpense(int i, Intent org){
+    private void saveExpense() {
 
         String store, item, date, cost, category, description;
+        Expense obj;
+        Intent ret = new Intent();
 
-        if(i == 1){
-            store = editStore.getText().toString();
-            item = editItem.getText().toString();
-            date = editDate.getText().toString();
-            cost = editCost.getText().toString();
-            category = plansDrop.getSelectedItem().toString();
-            description = editDescription.getText().toString();
-        }else{
-            store = org.getStringExtra(EXTRA_STORE);
-            item = org.getStringExtra(EXTRA_ITEM);
-            cost = ""+ org.getDoubleExtra(EXTRA_COST, 0.0);
-            date = org.getStringExtra(EXTRA_DATE);
-            category = org.getStringExtra(EXTRA_CATEGORY);
-            description = org.getStringExtra(EXTRA_DESCRIPTION);
-        }
+        store = editStore.getText().toString();
+        item = editItem.getText().toString();
+        date = editDate.getText().toString();
+        cost = editCost.getText().toString();
+        category = editCategory.getSelectedItem().toString();
+        description = editDescription.getText().toString();
 
-        if(store.trim().isEmpty() || item.trim().isEmpty() || date.trim().isEmpty() || cost.isEmpty()){
-            Toast.makeText(this, "Please fill out the form" , Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Intent data = new Intent();
-        data.putExtra(EXTRA_STORE, store.trim());
-        data.putExtra(EXTRA_ITEM, item.trim());
-        data.putExtra(EXTRA_DATE, date.trim());
-        data.putExtra(EXTRA_COST, Double.parseDouble(cost));
-        data.putExtra(EXTRA_CATEGORY, category);
-        data.putExtra(EXTRA_DESCRIPTION, description.trim());
-
-        int id = getIntent().getIntExtra(EXTRA_ID, -1);
-        if(id != -1){
-            data.putExtra(EXTRA_ID, id);
-        }
-
-        String expId = expenseRef.push().getKey();
         double newAmount = Double.valueOf(cost);
-        if (tempAmount != newAmount){
+        if (tempAmount != newAmount) {
             newAmount -= tempAmount;
         }
 
-        Expenses expenses = new Expenses(store, item, newAmount, date);
+
+        /*store = editStore.getText().toString();
+        ret.putExtra(EXTRA_STORE, store.trim());
+
+        item = editItem.getText().toString();
+        ret.putExtra(EXTRA_ITEM, item.trim());
+
+        date = editDate.getText().toString();
+        ret.putExtra(EXTRA_DATE, date.trim());
+
+        cost = editCost.getText().toString();
+        ret.putExtra(EXTRA_COST, Double.parseDouble(cost));
+
+        category = editCategory.getSelectedItem().toString();
+        ret.putExtra(EXTRA_CATEGORY, category.trim());
+
+        description = editDescription.getText().toString();
+        ret.putExtra(EXTRA_DESCRIPTION, description.trim());*/
+
+        //Log.e("category input", category);
+//        if (store.trim().isEmpty() || item.trim().isEmpty() || date.trim().isEmpty() || cost.isEmpty()) {
+//            Toast.makeText(this, "Please fill out the form", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+
+        obj = new Expense(store, date, item, category, newAmount, description);
+
+        if (id > -1) {
+            obj.setId(id);
+        }else{ obj.setId(-1);}
+
+        ret.putExtra("expense", obj);
+
+        String expId = expenseRef.push().getKey();
+        Expenses expenses = new Expenses(store, item, newAmount, date, category, description);
         expenseRef.child(expId).setValue(expenses);
 
-        setResult(RESULT_OK, data);
+        setResult(RESULT_OK, ret);
         finish();
     }
 
