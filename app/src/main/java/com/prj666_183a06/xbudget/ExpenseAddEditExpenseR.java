@@ -1,6 +1,8 @@
 package com.prj666_183a06.xbudget;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -35,7 +37,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class ExpenseAddEditExpenseR extends AppCompatActivity {
+public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
     public static final String EXTRA_ID =
             "com.prj666_183a06.xbudget.EXTRA_ID";
@@ -60,11 +62,9 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
 
 
     private EditText editStore, editItem, editCost, editDescription;
-    private Spinner editCategory;
     private TextView editDate;
     private Spinner plansDrop;
-    private Button buttonAdd, debug;
-    private LinearLayout container;
+    Button exit;
     PlanViewModel pvm;
     static DatePickerDialog.OnDateSetListener dateListener;
     List<String> planTitles;
@@ -99,9 +99,16 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
 
         editDate.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
+                android.support.v4.app.DialogFragment datePicker = new DatePickerFragment();
+                datePicker.show(getSupportFragmentManager(), "date picker");
+            }
+        });
+
+        /*editDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 Calendar cal = Calendar.getInstance();
-                Date date = new Date();
 
                 int year = cal.get(Calendar.YEAR);
                 int month = cal.get(Calendar.MONTH);
@@ -115,6 +122,7 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
                 dialogue.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialogue.show();
 
+                Log.e("testing", "date listener");
                 dateListener = new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
@@ -126,12 +134,11 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
                     }
                 };
             }
-        });
+        });*/
 
-        editDate.setText(getDate());
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         if(intent.hasExtra(EXTRA_ID)){
             setTitle("Edit Expense");
             editStore.setText(intent.getStringExtra(EXTRA_STORE));
@@ -144,19 +151,32 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
             setTitle("Create Expense");
         }
 
+        exit = findViewById(R.id.exit);
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         FloatingActionButton buttonSave = findViewById(R.id.button_save);
         buttonSave.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                saveExpense();
+                saveExpense(1, intent);
             }
         });
 
+        editDate.setText(getDate());
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        editDate.setText(month+1 + "/" + dayOfMonth  + "/" +  year);
     }
 
     private String getDate(){
         Calendar cal = Calendar.getInstance();
-        Date date = new Date();
 
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH) + 1;
@@ -165,13 +185,25 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity {
         return month + "/" + day + "/" + year;
     }
 
-    private void saveExpense(){
-        String store = editStore.getText().toString();
-        String item = editItem.getText().toString();
-        String date = editDate.getText().toString();
-        String cost = editCost.getText().toString();
-        String category = plansDrop.getSelectedItem().toString();
-        String description = editDescription.getText().toString();
+    private void saveExpense(int i, Intent org){
+
+        String store, item, date, cost, category, description;
+
+        if(i == 1){
+            store = editStore.getText().toString();
+            item = editItem.getText().toString();
+            date = editDate.getText().toString();
+            cost = editCost.getText().toString();
+            category = plansDrop.getSelectedItem().toString();
+            description = editDescription.getText().toString();
+        }else{
+            store = org.getStringExtra(EXTRA_STORE);
+            item = org.getStringExtra(EXTRA_ITEM);
+            cost = ""+ org.getDoubleExtra(EXTRA_COST, 0.0);
+            date = org.getStringExtra(EXTRA_DATE);
+            category = org.getStringExtra(EXTRA_CATEGORY);
+            description = org.getStringExtra(EXTRA_DESCRIPTION);
+        }
 
         if(store.trim().isEmpty() || item.trim().isEmpty() || date.trim().isEmpty() || cost.isEmpty()){
             Toast.makeText(this, "Please fill out the form" , Toast.LENGTH_SHORT).show();

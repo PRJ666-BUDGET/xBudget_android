@@ -1,7 +1,9 @@
 package com.prj666_183a06.xbudget;
 
+import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,6 +37,9 @@ public class ExpenseActivity extends Fragment{
     public static final int EDIT_REQUEST= 2;
     private ExpenseViewModel expenseViewModel;
 
+    final ExpenseAdapter adapter = new ExpenseAdapter();
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,20 +58,11 @@ public class ExpenseActivity extends Fragment{
             }
         });
 
-        /*FloatingActionButton buttonTest = view.findViewById(R.id.test);
-        buttonTest.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), test_activity.class);
-                startActivity(intent);
-            }
-        });*/
-
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
 
-        final ExpenseAdapter adapter = new ExpenseAdapter();
+        //final ExpenseAdapter adapter = new ExpenseAdapter();
         recyclerView.setAdapter(adapter);
 
         expenseViewModel = ViewModelProviders.of(this).get(ExpenseViewModel.class);
@@ -80,29 +77,69 @@ public class ExpenseActivity extends Fragment{
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                Log.e("move", "doing");
                 return false;
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
 
-                expenseViewModel.delete(adapter.getExpenseAt(viewHolder.getAdapterPosition()));
-                Toast.makeText(getContext(), "Expense deleted", Toast.LENGTH_SHORT).show();;
+                if(direction == 4) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setCancelable(true);
+                    builder.setTitle("Delete");
+                    builder.setMessage("Are you sure you want to delete?");
+                    builder.setPositiveButton("Confirm",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    expenseViewModel.delete(adapter.getExpenseAt(viewHolder.getAdapterPosition()));
+                                }
+                            });
+                    builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+//                expenseViewModel.delete(adapter.getExpenseAt(viewHolder.getAdapterPosition()));
+//                Toast.makeText(getContext(), "Expense deleted", Toast.LENGTH_SHORT).show();;
+                }
+                if(direction == 8){
+                    Expense temp = adapter.getExpenseAt(viewHolder.getAdapterPosition());
+                    Intent intent = new Intent(getActivity(), ExpenseAddEditExpenseR.class);
+                    intent.putExtra(ExpenseAddEditExpenseR.EXTRA_ID, temp.getId());
+                    intent.putExtra(ExpenseAddEditExpenseR.EXTRA_STORE, temp.getExpenseStore());
+                    intent.putExtra(ExpenseAddEditExpenseR.EXTRA_ITEM, temp.getExpenseItem());
+                    intent.putExtra(ExpenseAddEditExpenseR.EXTRA_COST, temp.getExpenseCost());
+                    intent.putExtra(ExpenseAddEditExpenseR.EXTRA_DATE, temp.getExpenseDate());
+                    intent.putExtra(ExpenseAddEditExpenseR.EXTRA_CATEGORY, temp.getExpenseCategory());
+                    intent.putExtra(ExpenseAddEditExpenseR.EXTRA_DESCRIPTION, temp.getExpenseDescription());
+
+                    startActivityForResult(intent, EDIT_REQUEST);
+                }
             }
         }).attachToRecyclerView(recyclerView);
 
         adapter.setOnItemClickListener(new ExpenseAdapter.onItemClickListener() {
             @Override
             public void onItemClick(Expense expense) {
-                Intent intent = new Intent(getActivity(), ExpenseAddEditExpenseR.class);
+                Intent intent = new Intent(getActivity(), ExpenseDetail.class);
                 intent.putExtra(ExpenseAddEditExpenseR.EXTRA_ID, expense.getId());
                 intent.putExtra(ExpenseAddEditExpenseR.EXTRA_STORE, expense.getExpenseStore());
                 intent.putExtra(ExpenseAddEditExpenseR.EXTRA_ITEM, expense.getExpenseItem());
                 intent.putExtra(ExpenseAddEditExpenseR.EXTRA_COST, expense.getExpenseCost());
                 intent.putExtra(ExpenseAddEditExpenseR.EXTRA_DATE, expense.getExpenseDate());
+                intent.putExtra(ExpenseAddEditExpenseR.EXTRA_CATEGORY, expense.getExpenseCategory());
+                intent.putExtra(ExpenseAddEditExpenseR.EXTRA_DESCRIPTION, expense.getExpenseDescription());
                 startActivityForResult(intent, EDIT_REQUEST);
             }
         });
+
         
         return view;
     }
@@ -117,6 +154,7 @@ public class ExpenseActivity extends Fragment{
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         setHasOptionsMenu(true);
+
         if(requestCode == ADD_REQUEST && resultCode == RESULT_OK){
             String store = data.getStringExtra(ExpenseAddEditExpenseR.EXTRA_STORE);
             String item = data.getStringExtra(ExpenseAddEditExpenseR.EXTRA_ITEM);
@@ -147,10 +185,11 @@ public class ExpenseActivity extends Fragment{
             Expense expense = new Expense(store, date, item, category, cost, description);
             expense.setId(id);
             expenseViewModel.update(expense);
-            Toast.makeText(getContext(), "Expense updated", Toast.LENGTH_SHORT).show();
-        }else {
-            Toast.makeText(getActivity(), "Expense not saved", Toast.LENGTH_SHORT);
+//            Toast.makeText(getContext(), "Expense updated", Toast.LENGTH_SHORT).show();
+//        }else {
+//            Toast.makeText(getActivity(), "Expense not saved", Toast.LENGTH_SHORT);
         }
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -164,8 +203,26 @@ public class ExpenseActivity extends Fragment{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.delete_all_expense:
-                expenseViewModel.deleteAllExpenses();
-                Toast.makeText(getContext(),"All expense deleted", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setCancelable(true);
+                builder.setTitle("Delete all");
+                builder.setMessage("Are you sure you want to delete all expense data?");
+                builder.setPositiveButton("Confirm",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                expenseViewModel.deleteAllExpenses();
+                                Toast.makeText(getContext(),"All expense deleted", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+//                expenseViewModel.deleteAllExpenses();
+//                Toast.makeText(getContext(),"All expense deleted", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
