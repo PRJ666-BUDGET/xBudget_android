@@ -74,7 +74,6 @@ public class ReportFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getCurrData();
     }
 
     @Override
@@ -88,6 +87,7 @@ public class ReportFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.activity_report, container, false);
+        getCurrData();
 
         // View Charts
         mBar = v.findViewById(R.id.barChart2);
@@ -164,7 +164,7 @@ public class ReportFragment extends Fragment {
         }
 
         // Get the balance
-        hashMap_plan.put("Others", (float) balance);
+        hashMap_plan.put("Other", (float) balance);
         Map<String, Float> treeMap_plan = new TreeMap<>(hashMap_plan);
         Log.d("treeMap_plan: ", String.valueOf(treeMap_plan));
 
@@ -183,9 +183,9 @@ public class ReportFragment extends Fragment {
                 }
             } else if (r.getCategory().equals("None")) {
                 if (!hashMap_expenses_Bar.containsKey(r.getCategory())){
-                    hashMap_expenses_Bar.put("Others", (float) r.getCost());
+                    hashMap_expenses_Bar.put("Other", (float) r.getCost());
                 } else {
-                    hashMap_expenses_Bar.put("Others", hashMap_expenses_Bar.get(r.getCategory()) + (float) r.getCost());
+                    hashMap_expenses_Bar.put("Other", hashMap_expenses_Bar.get(r.getCategory()) + (float) r.getCost());
                 }
             }
         }
@@ -218,14 +218,16 @@ public class ReportFragment extends Fragment {
         Log.d("hash in Actual: ", String.valueOf(hashMap_expenses));
 
         // Sort using treemap & Return by total desc
-        Comparator<String> comparator = new ValueComparator<String, Float>(hashMap_expenses);
-        treeMap_expenses = new TreeMap<String, Float>(comparator);
-        treeMap_expenses.putAll(hashMap_expenses);
-        Log.d("comparator in Actual: ", String.valueOf(treeMap_expenses));
+//        Comparator<String> comparator = new ValueComparator<String, Float>(hashMap_expenses);
+//        treeMap_expenses = new TreeMap<String, Float>(comparator);
+//        treeMap_expenses.putAll(hashMap_expenses);
+//        Log.d("comparator in Actual: ", String.valueOf(treeMap_expenses));
 
         // Set to arrayList from treemap
-        arr_actual = new ArrayList<Float>(treeMap_expenses.values());
-        str_label_Pie = new ArrayList<String>(treeMap_expenses.keySet());
+//        arr_actual = new ArrayList<Float>(treeMap_expenses.values());
+//        str_label_Pie = new ArrayList<String>(treeMap_expenses.keySet());
+        arr_actual = new ArrayList<Float>(hashMap_expenses.values());
+        str_label_Pie = new ArrayList<String>(hashMap_expenses.keySet());
         Log.d("total in getActual: ", String.valueOf(arr_actual));
         Log.d("label in getActual: ", String.valueOf(str_label_Pie));
 
