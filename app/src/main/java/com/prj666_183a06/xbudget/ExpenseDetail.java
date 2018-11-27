@@ -21,7 +21,7 @@ import static com.prj666_183a06.xbudget.ExpenseAddEditExpenseR.EXTRA_ITEM;
 
 public class ExpenseDetail extends AppCompatActivity {
 
-    TextView itemTV, storeTV, costTV, categoryTV, dateTV, descriptionTV;
+    TextView itemTV, storeTV, costTV, categoryTV, dateTV, descriptionTV, titleTV;
     String item, store, cateegory, date, description;
     int id;
     Double cost;
@@ -63,6 +63,8 @@ public class ExpenseDetail extends AppCompatActivity {
         dateTV = findViewById(R.id.date);
         descriptionTV = findViewById(R.id.description);
 
+        titleTV = findViewById(R.id.title);
+
         id = intent.getIntExtra(EXTRA_ID, 0);
         item = intent.getStringExtra(EXTRA_ITEM);
         store = intent.getStringExtra(EXTRA_STORE);
@@ -78,6 +80,8 @@ public class ExpenseDetail extends AppCompatActivity {
         categoryTV.setText(cateegory);
         dateTV.setText(date);
         descriptionTV.setText(description);
+
+        titleTV.setText(intent.getStringExtra(EXTRA_ITEM));
 
         edit = findViewById(R.id.edit);
         exit = findViewById(R.id.exit);

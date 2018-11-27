@@ -237,8 +237,6 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
     }
 
     /*@Override
-
-    top right corner
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.add_expense_menu, menu);
