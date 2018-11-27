@@ -110,15 +110,6 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
 
             temp = (Expense) intent.getSerializableExtra("expense");
 
-            /*id = intent.getIntExtra(EXTRA_ID, -1);
-            editStore.setText(intent.getStringExtra(EXTRA_STORE));
-            editItem.setText(intent.getStringExtra(EXTRA_ITEM));
-            editCost.setText("" + intent.getDoubleExtra(EXTRA_COST, 0.0));
-            editDate.setText(intent.getStringExtra(EXTRA_DATE));
-            editDescription.setText(intent.getStringExtra(EXTRA_DESCRIPTION));
-            tempAmount = intent.getDoubleExtra(EXTRA_COST, 0.0);
-            */
-
             id = temp.getId();
             editStore.setText(temp.getExpenseStore());
             editItem.setText(temp.getExpenseItem());
@@ -183,31 +174,6 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
         if (tempAmount != newAmount) {
             newAmount -= tempAmount;
         }
-
-
-        /*store = editStore.getText().toString();
-        ret.putExtra(EXTRA_STORE, store.trim());
-
-        item = editItem.getText().toString();
-        ret.putExtra(EXTRA_ITEM, item.trim());
-
-        date = editDate.getText().toString();
-        ret.putExtra(EXTRA_DATE, date.trim());
-
-        cost = editCost.getText().toString();
-        ret.putExtra(EXTRA_COST, Double.parseDouble(cost));
-
-        category = editCategory.getSelectedItem().toString();
-        ret.putExtra(EXTRA_CATEGORY, category.trim());
-
-        description = editDescription.getText().toString();
-        ret.putExtra(EXTRA_DESCRIPTION, description.trim());*/
-
-        //Log.e("category input", category);
-//        if (store.trim().isEmpty() || item.trim().isEmpty() || date.trim().isEmpty() || cost.isEmpty()) {
-//            Toast.makeText(this, "Please fill out the form", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
 
         obj = new Expense(store, date, item, category, newAmount, description);
 
