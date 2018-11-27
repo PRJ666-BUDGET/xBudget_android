@@ -9,9 +9,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import com.prj666_183a06.xbudget.ExpenseRoom.Expense;
 import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseDao;
 import com.prj666_183a06.xbudget.database.dao.PlanDao;
-import com.prj666_183a06.xbudget.ExpenseRoom.Expense;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
 
 import static com.prj666_183a06.xbudget.database.AppDatabase.DATABASE_VERSION;
@@ -22,7 +22,7 @@ public abstract class AppDatabase extends RoomDatabase {
     // for Singleton
     public static AppDatabase instance;
 
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "xbudget";
 
     public abstract PlanDao planDao();
@@ -46,7 +46,7 @@ public abstract class AppDatabase extends RoomDatabase {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
-            new PopulateDbAsyncTask(instance).execute();
+            new PopulateDbExpenseAsyncTask(instance).execute();
         }
     };
 
@@ -64,7 +64,22 @@ public abstract class AppDatabase extends RoomDatabase {
             planDao.insertPlan(new PlanEntity("income", "Co-op", 1000, "bi-weekly"));
             planDao.insertPlan(new PlanEntity("income", "tutor", 500, "bi-weekly"));
             planDao.insertPlan(new PlanEntity("category", "Coffee", 5, "daily"));
+            return null;
+        }
+    }
 
+    public static class PopulateDbExpenseAsyncTask extends AsyncTask<Void, Void, Void> {
+        private ExpenseDao expenseDao;
+
+        private PopulateDbExpenseAsyncTask(AppDatabase db){
+            expenseDao = db.expenseDao();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids){
+            expenseDao.insert(new Expense("McDonalds", "12/12/2018", "Coffee", "None", 2.00, ""));
+            expenseDao.insert(new Expense("Best Buy", "12/12/2018", "Computer","None", 34442.00, "Bought a computer"));
+            expenseDao.insert(new Expense("Walmart", "12/12/2018", "Groceries", "None", 165.32, "None"));
             return null;
         }
     }

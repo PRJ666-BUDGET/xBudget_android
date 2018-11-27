@@ -6,16 +6,20 @@ public class Expenses {
     private String expenseItem;
     private double expenseCost;
     private String expenseDate;
+    private String expenseCategory;
+    private String expenseDescription;
 
     public Expenses() {
 
     }
 
-    public Expenses(String expenseStore, String expenseItem, double expenseCost, String expenseDate) {
+    public Expenses(String expenseStore, String expenseItem, double expenseCost, String expenseDate, String expenseCategory, String expenseDescription) {
         this.expenseStore = expenseStore;
         this.expenseItem = expenseItem;
         this.expenseCost = expenseCost;
         this.expenseDate = expenseDate;
+        this.expenseCategory = expenseCategory;
+        this.expenseDescription= expenseDescription;
     }
 
     public String getExpenseStore() {
@@ -32,5 +36,13 @@ public class Expenses {
 
     public String getExpenseDate() {
         return expenseDate;
+    }
+
+    public String getExpenseCategory(){
+        return expenseCategory;
+    }
+
+    public String getExpenseDescription(){
+        return expenseDescription;
     }
 }

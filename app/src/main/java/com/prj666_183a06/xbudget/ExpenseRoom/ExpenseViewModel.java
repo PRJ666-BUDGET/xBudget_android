@@ -5,6 +5,7 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 
 import java.util.List;
@@ -46,8 +47,11 @@ public class ExpenseViewModel extends AndroidViewModel {
         repository.deleteAll();
     }
 
+    public List<ExpenseObj> getAll(){
+        return repository.getAll();
+    }
+  
     public double getTotal(){
         return repository.getTotalCost();
     }
-
 }

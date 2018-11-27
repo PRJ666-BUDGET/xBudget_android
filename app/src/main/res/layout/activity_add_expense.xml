@@ -3,54 +3,135 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp"
     tools:context=".ExpenseAddEditExpenseR">
 
-    <EditText
-        android:id="@+id/edit_text_store"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Store"
-        android:inputType="text" />
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/edit_text_item"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Item"
-        android:inputType="text" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/edit_text_cost"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Cost"
-        android:inputType="numberDecimal" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/date_text"
+                    style="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Date: " />
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/edit_date_view"
+                    android:layout_width="wrap_content"
+                    android:clickable="false"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center"
+                    android:hint="Date"
+                    style="@style/Base.Widget.AppCompat.EditText"
+                    android:textColor="#000000" />
+            </LinearLayout>
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/date_text"
-            style="@style/Base.Widget.AppCompat.EditText"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="false"
-            android:hint="Date: " />
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/edit_date_view"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_marginLeft="5dp"
-            android:layout_toRightOf="@+id/date_text"
-            android:gravity="center"
-            android:hint="Date"
+            <TextView
+                style="@style/Base.TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Category" />
+
+            <Spinner
+                android:id="@+id/plans"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_toRightOf="@+id/cattag"/>
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/edit_text_store"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Store"
             android:inputType="text"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium.Inverse"
-            android:textColor="#000000" />
-    </RelativeLayout>
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"/>
 
+        <EditText
+            android:id="@+id/edit_text_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Item"
+            android:inputType="text"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"/>
+
+        <EditText
+            android:id="@+id/edit_text_cost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Cost"
+            android:inputType="numberDecimal"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"/>
+
+        <LinearLayout
+            android:id="@+id/cameraSpinner"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:text="Cost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </Spinner>
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/edit_text_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"/>
+
+        <Button
+            android:id="@+id/exit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:text="Exit" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/button_save"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_margin="15dp"
+            android:src="@drawable/ic_save"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
 </LinearLayout>

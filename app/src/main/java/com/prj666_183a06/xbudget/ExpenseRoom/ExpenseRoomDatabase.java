@@ -8,7 +8,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-@Database(entities ={Expense.class,}, version = 1, exportSchema = false)
+import com.prj666_183a06.xbudget.database.entity.PlanEntity;
+
+@Database(entities ={Expense.class, PlanEntity.class}, version = 1, exportSchema = false)
 
 public abstract class ExpenseRoomDatabase extends RoomDatabase {
 
@@ -21,7 +23,7 @@ public abstract class ExpenseRoomDatabase extends RoomDatabase {
                 if (instance == null) {
                     instance =
                             Room.databaseBuilder(context.getApplicationContext(),
-                                    ExpenseRoomDatabase.class, "expense_database")
+                                    ExpenseRoomDatabase.class, "xbudget")
                                     .fallbackToDestructiveMigration()
                                     .addCallback(roomCallBack)
                                     .build();
@@ -48,8 +50,9 @@ public abstract class ExpenseRoomDatabase extends RoomDatabase {
 
         @Override
         protected Void doInBackground(Void... voids){
-            expenseDao.insert(new Expense("McDonalds", "12/12/2018", "Coffee", 2.00));
-            expenseDao.insert(new Expense("Best Buy", "12/12/2018", "Computer", 34442.00));
+            expenseDao.insert(new Expense("McDonalds", "12/12/2018", "Coffee", "None", 2.00, ""));
+            expenseDao.insert(new Expense("Best Buy", "12/12/2018", "Computer","None", 34442.00, "Bought a computer"));
+            expenseDao.insert(new Expense("Walmart", "12/12/2018", "Groceries", "None", 165.32, "None"));
             return null;
         }
     }

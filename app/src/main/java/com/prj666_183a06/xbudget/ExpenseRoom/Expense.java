@@ -5,8 +5,10 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
+
 @Entity(tableName = "expense_table")
-public class Expense{
+public class Expense implements Serializable {
 
     @NonNull
     @PrimaryKey(autoGenerate = true)
@@ -22,16 +24,22 @@ public class Expense{
     @ColumnInfo(name = "expense_cost")
     private double expenseCost;
 
-
     @ColumnInfo(name = "expense_date")
     private String expenseDate;
 
-    public Expense(String expenseStore, String expenseDate, String expenseItem, double expenseCost) {
+    @ColumnInfo(name = "expense_category")
+    private String expenseCategory;
+
+    @ColumnInfo(name = "expense_description")
+    private String expenseDescription;
+
+    public Expense(String expenseStore, String expenseDate, String expenseItem, String expenseCategory, double expenseCost, String expenseDescription) {
         this.expenseStore = expenseStore;
-        //this.expenseCategory = expenseCategory;
+        this.expenseCategory = expenseCategory;
         this.expenseItem = expenseItem;
         this.expenseDate = expenseDate;
         this.expenseCost = expenseCost;
+        this.expenseDescription = expenseDescription;
     }
 
     @NonNull
@@ -39,8 +47,24 @@ public class Expense{
         return id;
     }
 
+    public String getExpenseCategory() {
+        return expenseCategory;
+    }
+
+    public void setExpenseCategory(String expenseCategory) {
+        this.expenseCategory = expenseCategory;
+    }
+
     public void setId(@NonNull int id) {
         this.id = id;
+    }
+
+    public String getExpenseDescription() {
+        return expenseDescription;
+    }
+
+    public void setExpenseDescription(String expenseDescription) {
+        this.expenseDescription = expenseDescription;
     }
 
     public String getExpenseStore() {

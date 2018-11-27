@@ -1,6 +1,6 @@
 package com.prj666_183a06.xbudget;
 
-import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -15,10 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -28,53 +29,64 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.prj666_183a06.xbudget.ExpenseRoom.Expense;
-import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseRepository;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseListInterface;
+import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseObj;
 import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseViewModel;
-import com.prj666_183a06.xbudget.database.Expenses;
-import com.prj666_183a06.xbudget.database.PlanRepository;
-import com.prj666_183a06.xbudget.database.Plans;
+import com.prj666_183a06.xbudget.pojo.PlanItem;
 import com.prj666_183a06.xbudget.receiptocr.CameraActivity;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
+import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 public class HomeFragment extends Fragment {
 
+    // Chart instances
     private LineChart mLine;
     private HorizontalBarChart mBar;
     private Typeface tf;
 
-    private double mIncome, mSpent, mBalance, mAccSpent;
+    private double total_income, total_expenses, curr_balance;
     List<String> str_label;
-    private List<Float> arr_spent = new ArrayList<Float>();
-    ArrayList<BarEntry> entries = new ArrayList<BarEntry>();
-    public List<Float> expense_arr = new ArrayList<Float>();
+    private List<Float> arr_plan, arr_expenses;
 
+    // Database instances - expenses
+    ExpenseViewModel expenseViewModel;
+    List<ExpenseObj> expenseObjs;
+    HashMap<String, Float> hashMap_exp;
+    Map<String, Float> treeMap_expenses;
+
+    // Database instances - plans
+    PlanViewModel planViewModel;
+    List<PlanItem> planItems;
+
+    // View instances
     Fragment fragment;
     Locale locale;
     NumberFormat fmt;
-
     TextView mtvIncome, mtvSpent, mtvBalance;
     String currencyIncome, currencySpent, currencyBal;
-
-    private DatabaseReference planRef = FirebaseDatabase.getInstance().getReference("plans");
-    private DatabaseReference expenseRef = FirebaseDatabase.getInstance().getReference("expenses");
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSpentData();
     }
 
     @Override
@@ -87,54 +99,29 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.activity_home, container, false);
-
-        PlanRepository planRepo = new PlanRepository(getActivity().getApplication());
-        planRepo.getPlanIncomeTotalFromHomeFragment(this);
-
-        ExpenseRepository expRepo = new ExpenseRepository(getActivity().getApplication());
-        expRepo.getExpenseTotalFromHomeFragment(this);
-//        expRepo.getAccExpenseTotalFromHomeFragment(this);
+        getCurrData();
 
         // Set Currency
         locale = Locale.CANADA;
         fmt = NumberFormat.getCurrencyInstance(locale);
 
-//        planRef.addValueEventListener(new ValueEventListener() {
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                mIncome = 0;
-//                for (DataSnapshot planData : dataSnapshot.getChildren()) {
-//                    Plans planValue = planData.getValue(Plans.class);
-//                    if(planValue.getPlan_type().equals("income")){
-//                        mIncome += planValue.getPlan_amount();
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError error) {
-//                System.out.println("The read failed!!!");
-//            }
-//        });
-//
-//        expenseRef.addValueEventListener(new ValueEventListener() {
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                mSpent = 0;
-//                for (DataSnapshot planData : dataSnapshot.getChildren()) {
-//                    Expenses expensesValue = planData.getValue(Expenses.class);
-//                    mSpent += expensesValue.getExpenseCost();
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError error) {
-//                System.out.println("The read failed!!!");
-//            }
-//        });
+        // Get Data
+//        total_income = 2000.00;
 
         // Text View & Image View
-        getTextView(v);
+        mtvIncome = (TextView) v.findViewById(R.id.tvIncome);
+        mtvSpent = (TextView) v.findViewById(R.id.tvSpent);
+        mtvBalance = (TextView) v.findViewById(R.id.tvBalance);
         getImageView(v);
+        getCurrData();
 
+        // Get Bar & Line Chart
+        mBar = v.findViewById(R.id.barChart1);
+        mLine = v.findViewById(R.id.lineChart1);
+        getBarChart();
+        getLineChart();
+
+        // Camera Button
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,13 +134,36 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        // Get Bar & Line Chart
-        mBar = v.findViewById(R.id.barChart1);
-        mLine = v.findViewById(R.id.lineChart1);
-        getBarChart();
-        getLineChart();
-
         return v;
+    }
+
+    public void getCurrData(){
+        // Initialize - expenses
+        expenseViewModel = ViewModelProviders.of(this).get(ExpenseViewModel.class);
+        expenseObjs = new ArrayList();
+        expenseObjs = expenseViewModel.getAll();
+        Log.e("expenseObjs", "in getCurrData Home" + expenseObjs);
+        total_expenses = expenseViewModel.getTotal();
+        Log.e("total_spent", "in getCurrData Home" + total_expenses);
+
+        // Initialize - plans
+        planViewModel = ViewModelProviders.of(this).get(PlanViewModel.class);
+        total_income = planViewModel.getTotalIncome();
+        Log.e("expenseObjs", "in getCurrData Home" + planItems);
+
+        curr_balance = total_income - total_expenses;
+
+        // Chart
+        hashMap_exp = new HashMap<>();
+        str_label = new ArrayList<String>();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getCurrData();
+        getTextView();
+        getBarChart();
     }
 
     private void getImageView(View v) {
@@ -198,77 +208,64 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void getTextView(View v) {
-        mtvIncome = (TextView) v.findViewById(R.id.tvIncome);
-        mtvSpent = (TextView) v.findViewById(R.id.tvSpent);
-        mtvBalance = (TextView) v.findViewById(R.id.tvBalance);
+    private void getTextView() {
+        // Apply the current data to textview
+        currencyIncome = fmt.format(this.total_income);
+        mtvIncome.setText(currencyIncome);
+
+        currencySpent = fmt.format(this.total_expenses);
+        mtvSpent.setText(currencySpent);
+
+        currencyBal = fmt.format(this.curr_balance);
+        mtvBalance.setText(currencyBal);
     }
 
-    private void getStringLabels(){
-        str_label = new ArrayList<String>();
-        str_label.add("1");
-
-        expenseRef.addValueEventListener(new ValueEventListener() {
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                str_label.clear();
-                for (DataSnapshot planData : dataSnapshot.getChildren()) {
-                    Expenses expensesValue = planData.getValue(Expenses.class);
-                    str_label.add(expensesValue.getExpenseDate());
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println("The read failed!!!");
-            }
-        });
-
-        str_label.add("5");
-        str_label.add("10");
-        str_label.add("15");
-        str_label.add("20");
-        str_label.add("25");
-        str_label.add("30");
+    protected void getPlanData(){
+        arr_plan = new ArrayList<Float>();
+        arr_plan.add((float) total_income);
     }
 
-    protected void getSpentData(){
-        expenseRef.addValueEventListener(new ValueEventListener() {
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                arr_spent.clear();
-                mAccSpent = 0;
-                for (DataSnapshot planData : dataSnapshot.getChildren()) {
-                    Expenses expensesValue = planData.getValue(Expenses.class);
-                    mAccSpent += expensesValue.getExpenseCost();
-                    arr_spent.add((float) mAccSpent);
-                }
-            }
+    protected void getExpensesData(){
+        PlanViewModel pvm = ViewModelProviders.of(this).get(PlanViewModel.class);
+        ExpenseListInterface obj = new ExpenseListInterface(expenseViewModel, pvm);
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println("The read failed!!!");
-            }
-        });
+        hashMap_exp = obj.getCostByDaily();
+        Log.e("hash compare in home: ", String.valueOf(hashMap_exp));
 
-        if (arr_spent.size() == 0) {
-            arr_spent.add(0f);
-            arr_spent.add(220f);
-            arr_spent.add(530f);
-            arr_spent.add(700f);
-            arr_spent.add(1070f);
+        // Sort by date using tree
+        treeMap_expenses = new TreeMap<String, Float>(hashMap_exp);
+        Log.e("tree compare in home: ", String.valueOf(treeMap_expenses));
+
+        arr_expenses = new ArrayList<Float>();
+        float value = 0;
+        for(Map.Entry<String,Float> entry : treeMap_expenses.entrySet()) {
+            String key = entry.getKey().substring(0,5);
+            value += entry.getValue();
+            arr_expenses.add(value);
+            str_label.add(key);
+        }
+
+        Log.e("data in key: ", String.valueOf(str_label));
+
+        Log.e("data in arr_expenses: ", String.valueOf(arr_expenses));
+        Log.e("data in hashMap_exp: ", hashMap_exp.toString());
+
+        if (arr_expenses.size() == 0){
+            arr_expenses.add(0f);
         }
     }
 
     private void getBarChart() {
+        // Set Bar UI & Data
         mBar.getDescription().setEnabled(false);
-
         mBar.setData(generateBarData());
         mBar.setDrawGridBackground(false);
 
+        // Set Axis
         XAxis xAxis = mBar.getXAxis();
         xAxis.setDrawGridLines(false);
         xAxis.setDrawAxisLine(false);
         xAxis.setDrawLabels(false);
-        xAxis.setEnabled(false);
 
         YAxis rightAxis = mBar.getAxisRight();
         rightAxis.setEnabled(false);
@@ -280,26 +277,44 @@ public class HomeFragment extends Fragment {
         leftAxis.setAxisMinimum(0f);
         leftAxis.setAxisMaximum(100f);
 
+        // Get Legend
         Legend lgdBar = mBar.getLegend();
-        lgdBar.setEnabled(false);
-//        lgdBar.setTypeface(tf);
-//        lgdBar.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        lgdBar.setTypeface(tf);
+        lgdBar.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
 
         mBar.setDrawValueAboveBar(false);
         mBar.invalidate();
     }
 
     private void getLineChart() {
+        // Set Line UI
         mLine.getDescription().setEnabled(false);
 
         Legend lgdLine = mLine.getLegend();
         lgdLine.setForm(Legend.LegendForm.LINE);
 
+        // Apply data to chart
         mLine.setData(generateLineData());
+//        mLine.setVisibleXRange(10, 30);
+        Log.e("set in getLineChart: ", "set");
+
+        // Set Axis
+        XAxis xAxis = mLine.getXAxis();
+        Log.e("set in getLineChart: ", xAxis.toString());
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(str_label));
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        Log.e("XAxis in getLineChart: ", str_label.toString());
+//        xAxis.setAvoidFirstLastClipping(true);
+
+        YAxis yAxisRight = mLine.getAxisRight();
+        yAxisRight.setEnabled(false);
+
     }
 
     protected BarData generateBarData() {
-        float v_expenses = (float) (mSpent/mIncome * 100);
+        ArrayList<BarEntry> entries = new ArrayList<BarEntry>();
+
+        float v_expenses = (float) (total_expenses/total_income) * 100;
         float v_balance = 100 - v_expenses;
 
         entries.add(new BarEntry(1, new float[] {v_expenses, v_balance}, ""));
@@ -308,7 +323,7 @@ public class HomeFragment extends Fragment {
         ds.setDrawIcons(false);
         ds.setColors(MyColorTemplate.VORDIPLOM_COLORS[4], MyColorTemplate.VORDIPLOM_COLORS[3]);
         ds.setStackLabels(new String[]{"Expenses", "Balance"});
-        ds.setDrawValues(false);
+        ds.setValueTextSize(10f);
 
         ArrayList<IBarDataSet> iBarDataSets = new ArrayList<IBarDataSet>();
         iBarDataSets.add(ds);
@@ -320,88 +335,46 @@ public class HomeFragment extends Fragment {
     }
 
     protected LineData generateLineData() {
-        PlanEntity plan = new PlanEntity("income" ,"", 0, "bi-weekly");
-
-        ArrayList<Entry> budget_arrList = new ArrayList<Entry>();
-        ArrayList<Entry> expenses_arrList = new ArrayList<Entry>();
-        ArrayList<ILineDataSet> iLineDataSets = new ArrayList<ILineDataSet>();
+        ArrayList<Entry> arrList_budget = new ArrayList<Entry>();
+        ArrayList<Entry> arrList_expenses = new ArrayList<Entry>();
 
         LineDataSet budget_ds;
         LineDataSet expenses_ds;
 
-        getSpentData();
-        getStringLabels();
+        ArrayList<ILineDataSet> iLineDataSets = new ArrayList<ILineDataSet>();
 
-        for(int i=1; i < 31; i+=7){
-            budget_arrList.add(new Entry(i, (float) mIncome));
+        getPlanData();
+        getExpensesData();
+
+        // Budget Dataset
+        for(int i=1; i <= arr_expenses.size(); i++){
+            arrList_budget.add(new Entry(i, arr_plan.get(0)));
         }
 
+        // Budget Dataset
         int temp = 0;
-
-        expenses_arrList.add(new Entry(0, 0f));
-
-        for(int i=1; i <= arr_spent.size(); i++){
-            expenses_arrList.add(new Entry(i, arr_spent.get(temp)));
+        for(int i=1; i <= arr_expenses.size(); i++){
+            arrList_expenses.add(new Entry(i, arr_expenses.get(temp)));
             temp++;
         }
 
-//        if (expense_arr.size() > 0) {
-//            for(int i=1; i <= expense_arr.size(); i++){
-//                expenses_arrList.add(new Entry(i, expense_arr.get(temp)));
-//                temp++;
-//            }
-//        }
-
-        budget_ds = new LineDataSet(budget_arrList, "My Budget");
+        budget_ds = new LineDataSet(arrList_budget, "My Budget");
         budget_ds.setLineWidth(2f);
         budget_ds.setDrawCircles(false);
+        budget_ds.setDrawValues(false);     // NOT Display value of the line
         budget_ds.setColor(MyColorTemplate.VORDIPLOM_COLORS[0]);
 
         iLineDataSets.add(budget_ds);
 
-        expenses_ds = new LineDataSet(expenses_arrList, "My Expenses");
+        expenses_ds = new LineDataSet(arrList_expenses, "My Expenses");
         expenses_ds.setLineWidth(2f);
         expenses_ds.setDrawCircles(false);
+        expenses_ds.setDrawValues(false);   // NOT Display value of the line
         expenses_ds.setColor(MyColorTemplate.VORDIPLOM_COLORS[4]);
 
         iLineDataSets.add(expenses_ds);
 
         LineData lineData = new LineData(iLineDataSets);
         return lineData;
-    }
-
-    public void getTotalIncome(Double aDouble) {
-        mIncome = aDouble;
-//        Toast.makeText(getActivity(), Double.toString(mIncome), Toast.LENGTH_SHORT).show();
-        currencyIncome = fmt.format(this.mIncome);
-        mtvIncome.setText(currencyIncome);
-        updateBalance();
-    }
-
-    public void getTotalExpenses(Double aDouble) {
-        mSpent = aDouble;
-//        Toast.makeText(getActivity(), Double.toString(mSpent), Toast.LENGTH_SHORT).show();
-        currencySpent = fmt.format(this.mSpent);
-        mtvSpent.setText(currencySpent);
-
-        if (aDouble > 0) {
-            expense_arr.add((float)mSpent);
-        } else {
-            expense_arr.clear();
-        }
-        updateBalance();
-    }
-
-    public void updateBalance() {
-        mBalance = mIncome - mSpent;
-        currencyBal = fmt.format(mBalance);
-//        Toast.makeText(getActivity(), Double.toString(mBalance), Toast.LENGTH_SHORT).show();
-        mtvBalance.setText(currencyBal);
-        getBarChart();
-        getLineChart();
-    }
-
-    public void getExpensesList(List<Expense> expList){
-
     }
 }

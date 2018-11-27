@@ -1,7 +1,10 @@
 package com.prj666_183a06.xbudget;
 
 import android.content.DialogInterface;
+<<<<<<< HEAD
 import android.content.Intent;
+=======
+>>>>>>> master
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
