@@ -1,6 +1,7 @@
 package com.prj666_183a06.xbudget;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.prj666_183a06.xbudget.database.Plans;
+import com.prj666_183a06.xbudget.receiptocr.CameraActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -188,6 +190,10 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_report:
                 fragment = new ReportFragment();
+                break;
+            case R.id.nav_camera:
+                Intent openCamera = new Intent(this, CameraActivity.class);
+                startActivity(openCamera);
                 break;
         }
 

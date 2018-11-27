@@ -15,6 +15,9 @@
         <item
             android:id="@+id/nav_report"
             android:title="Report" />
+        <item
+            android:id="@+id/nav_camera"
+            android:title="Camera" />
     </group>
 
 </menu>
