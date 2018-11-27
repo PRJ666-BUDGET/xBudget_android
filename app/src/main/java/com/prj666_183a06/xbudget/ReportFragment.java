@@ -74,7 +74,6 @@ public class ReportFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getCurrData();
     }
 
     @Override
@@ -88,6 +87,7 @@ public class ReportFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.activity_report, container, false);
+        getCurrData();
 
         // View Charts
         mBar = v.findViewById(R.id.barChart2);
@@ -164,7 +164,7 @@ public class ReportFragment extends Fragment {
         }
 
         // Get the balance
-        hashMap_plan.put("None", (float) balance);
+        hashMap_plan.put("Other", (float) balance);
         Map<String, Float> treeMap_plan = new TreeMap<>(hashMap_plan);
         Log.d("treeMap_plan: ", String.valueOf(treeMap_plan));
 
@@ -180,6 +180,12 @@ public class ReportFragment extends Fragment {
                     hashMap_expenses_Bar.put(r.getCategory(), (float) r.getCost());
                 } else {
                     hashMap_expenses_Bar.put(r.getCategory(), hashMap_expenses_Bar.get(r.getCategory()) + (float) r.getCost());
+                }
+            } else if (r.getCategory().equals("None")) {
+                if (!hashMap_expenses_Bar.containsKey(r.getCategory())){
+                    hashMap_expenses_Bar.put("Other", (float) r.getCost());
+                } else {
+                    hashMap_expenses_Bar.put("Other", hashMap_expenses_Bar.get(r.getCategory()) + (float) r.getCost());
                 }
             }
         }
@@ -212,20 +218,22 @@ public class ReportFragment extends Fragment {
         Log.d("hash in Actual: ", String.valueOf(hashMap_expenses));
 
         // Sort using treemap & Return by total desc
-        Comparator<String> comparator = new ValueComparator<String, Float>(hashMap_expenses);
-        treeMap_expenses = new TreeMap<String, Float>(comparator);
-        treeMap_expenses.putAll(hashMap_expenses);
-        Log.d("comparator in Actual: ", String.valueOf(treeMap_expenses));
+//        Comparator<String> comparator = new ValueComparator<String, Float>(hashMap_expenses);
+//        treeMap_expenses = new TreeMap<String, Float>(comparator);
+//        treeMap_expenses.putAll(hashMap_expenses);
+//        Log.d("comparator in Actual: ", String.valueOf(treeMap_expenses));
 
         // Set to arrayList from treemap
-        arr_actual = new ArrayList<Float>(treeMap_expenses.values());
-        str_label_Pie = new ArrayList<String>(treeMap_expenses.keySet());
+//        arr_actual = new ArrayList<Float>(treeMap_expenses.values());
+//        str_label_Pie = new ArrayList<String>(treeMap_expenses.keySet());
+        arr_actual = new ArrayList<Float>(hashMap_expenses.values());
+        str_label_Pie = new ArrayList<String>(hashMap_expenses.keySet());
         Log.d("total in getActual: ", String.valueOf(arr_actual));
         Log.d("label in getActual: ", String.valueOf(str_label_Pie));
 
         if (arr_actual.size() == 0){
-            arr_actual.add(100f);
-            str_label_Pie.add("Sample Data");
+            arr_actual.add(1f);
+            str_label_Pie.add("No data");
         }
     }
 
@@ -243,7 +251,6 @@ public class ReportFragment extends Fragment {
         xAxis.setCenterAxisLabels(true);
         xAxis.setGranularityEnabled(true);
 
-//        mBar.getAxis(YAxis.AxisDependency.LEFT);
         YAxis rightAxis = mBar.getAxisRight();
         rightAxis.setEnabled(false);
         rightAxis.setDrawLabels(false);
@@ -298,21 +305,20 @@ public class ReportFragment extends Fragment {
     }
 
     private void getPieChart() {
-//        mPie = v.findViewById(R.id.pieChart1);
         mPie.getDescription().setEnabled(false);
 
-        mPie.setCenterText(generateCenterText());
-        mPie.setCenterTextSize(8f);
-//        mPie.setEntryLabelColor(Color.DKGRAY);
-        mPie.setEntryLabelColor(Color.WHITE);
+//        mPie.setCenterText(generateCenterText());
+//        mPie.setCenterTextSize(8f);
+        mPie.setEntryLabelColor(Color.DKGRAY);
 
-        mPie.setHoleRadius(45f);
+        mPie.setHoleRadius(25f);
         mPie.setTransparentCircleRadius(50f);
 
         Legend lgdPie = mPie.getLegend();
         lgdPie.setEnabled(false);
 
         mPie.setData(generatePieData());
+
     }
 
     protected PieData generatePieData() {
@@ -331,10 +337,11 @@ public class ReportFragment extends Fragment {
         PieDataSet ds = new PieDataSet(entries_expenses, "");
         ds.setColors(MyColorTemplate.CUTE_COLORS);
         ds.setSliceSpace(2f);
-        ds.setValueTextColor(Color.WHITE);
+        ds.setValueTextColor(Color.DKGRAY);
         ds.setValueTextSize(12f);
-//        ds.setValueLineColor(Color.DKGRAY);
-//        ds.setXValuePosition(OUTSIDE_SLICE);
+        ds.setValueLineColor(Color.DKGRAY);
+        ds.setXValuePosition(OUTSIDE_SLICE);
+        ds.setValueLinePart1OffsetPercentage(65f);
 
         PieData d = new PieData(ds);
         return d;

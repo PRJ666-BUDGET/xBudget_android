@@ -18,7 +18,7 @@
             android:layout_marginRight="16dp"
             android:paddingLeft="32dp"
             android:paddingRight="16dp"
-            android:text="Pie chart for your expenses"
+            android:text="Expenses"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -53,7 +53,7 @@
             android:layout_marginRight="16dp"
             android:paddingLeft="32dp"
             android:paddingRight="16dp"
-            android:text="Comparison your plan and actual expenses"
+            android:text="Plan vs. Actual"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -75,4 +75,3 @@
 
     </LinearLayout>
 </LinearLayout>
-
