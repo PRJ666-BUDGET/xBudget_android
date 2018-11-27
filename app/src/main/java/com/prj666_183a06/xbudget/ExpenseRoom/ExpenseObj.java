@@ -5,14 +5,16 @@ public class ExpenseObj {
     private String store;
     private String date;
     private String category;
+    private String description;
     private double cost;
 
-    public ExpenseObj(String item, String store, String date, String category, double cost){
+    public ExpenseObj(String item, String store, String date, String category, double cost, String description){
         this.item = item;
         this.store = store;
         this.date = date;
         this.cost = cost;
         this.category = category;
+        this.description = description;
     }
 
     public String getItem() {
@@ -45,6 +47,14 @@ public class ExpenseObj {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public double getCost() {
