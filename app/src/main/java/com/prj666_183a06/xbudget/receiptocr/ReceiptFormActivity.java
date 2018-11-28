@@ -158,6 +158,11 @@ public class ReceiptFormActivity extends AppCompatActivity {
 
         double newAmount;
 
+        if(store.trim().isEmpty() || item.trim().isEmpty() || date.trim().isEmpty() || cost.isEmpty() || !check.isChecked()){
+            Toast.makeText(this, "Please fill out the form" , Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if(check.isChecked()){
             newAmount = Double.parseDouble(costDrop.getSelectedItem().toString());
         }else{
