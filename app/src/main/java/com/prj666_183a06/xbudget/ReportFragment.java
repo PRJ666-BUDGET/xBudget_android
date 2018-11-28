@@ -173,7 +173,6 @@ public class ReportFragment extends Fragment {
     }
 
     //Convert to date
-
     public Date convertDate(String s, Date d) {
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
         try {
@@ -185,6 +184,7 @@ public class ReportFragment extends Fragment {
         return d;
     }
 
+    //current
     public String getCurrentDate(){
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_MONTH, 1);
@@ -228,6 +228,8 @@ public class ReportFragment extends Fragment {
         }
     }
     */
+
+
     protected void getDataForBar() {
         hashMap_plan = new HashMap<>();
         str_label_Bar = new ArrayList<String>();
