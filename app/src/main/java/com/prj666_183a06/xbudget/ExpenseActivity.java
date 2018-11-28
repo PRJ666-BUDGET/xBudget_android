@@ -167,15 +167,14 @@ public class ExpenseActivity extends Fragment {
             returnedObj = (Expense) data.getSerializableExtra("expense");
 
             Log.e("expense b4 ins/upd", returnedObj.print());
-
             Toast.makeText(getActivity(), "Expense saved", Toast.LENGTH_SHORT);
 
             expenseViewModel.insert(returnedObj);
+            Toast.makeText(getActivity(), "Expense saved", Toast.LENGTH_SHORT);
 
         } else if (requestCode == EDIT_REQUEST && resultCode == RESULT_OK) {
 
             returnedObj = (Expense) data.getSerializableExtra("expense");
-
 
             Log.e("expense b4 ins/upd", returnedObj.print());
 
