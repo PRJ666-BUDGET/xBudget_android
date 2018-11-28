@@ -186,7 +186,6 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
             obj.setId(id);
         }
 
-        //
         String expId = expenseRef.push().getKey();
         Expenses expenses = new Expenses(store, item, newAmount, date, category, description);
         expenseRef.child(expId).setValue(expenses);
