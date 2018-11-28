@@ -99,13 +99,13 @@ public class ReceiptFormActivity extends AppCompatActivity {
 
         check = findViewById(R.id.check);
 
-        editDate.setOnClickListener(new View.OnClickListener() {
+        /*editDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 android.support.v4.app.DialogFragment datePicker = new DatePickerFragment();
                 datePicker.show(getSupportFragmentManager(), "date picker");
             }
-        });
+        });*/
 
         exit = findViewById(R.id.exit);
         exit.setOnClickListener(new View.OnClickListener() {
