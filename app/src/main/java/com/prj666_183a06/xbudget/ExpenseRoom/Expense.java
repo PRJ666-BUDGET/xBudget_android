@@ -99,8 +99,4 @@ public class Expense implements Serializable {
     public void setExpenseCost(double expenseTotal) {
         this.expenseCost = expenseTotal;
     }
-
-    public String print(){
-        return getId() + "\n" + getExpenseStore() + "\n" + getExpenseItem() + "\n" + getExpenseDate()  + "\n" + getExpenseCost()  + "\n" +  getExpenseCategory()  + "\n" +  getExpenseDescription();
-    }
 }
