@@ -90,6 +90,7 @@
             android:paddingBottom="10dp" />
 
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/cameraSpinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

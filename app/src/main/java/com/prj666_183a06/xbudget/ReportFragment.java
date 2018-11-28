@@ -139,6 +139,7 @@ public class ReportFragment extends Fragment {
     }
 
     public String getLastDate() {
+
         Calendar cal = Calendar.getInstance();
 
         int year = cal.get(Calendar.YEAR);
@@ -161,7 +162,6 @@ public class ReportFragment extends Fragment {
                 }
             }
         }
-
         if (day < 10) {
             lastDate = month + "/0" + day + "/" + year;
         } else {
@@ -269,6 +269,7 @@ public class ReportFragment extends Fragment {
         arr_plan = new ArrayList<Float>(treeMap_plan.values());
         str_label_Bar = new ArrayList<String>(treeMap_plan.keySet());
         hashMap_expenses_Bar = new HashMap<>();
+        String lastDate = getLastDate();
 
         //String lastDate = getLastDate();
 
@@ -283,7 +284,7 @@ public class ReportFragment extends Fragment {
         lastDate = convertDate(getLastDay(), lastDate);
 
         // Group using hash
-        for (ExpenseObj r : expenseObjs) {
+       for (ExpenseObj r : expenseObjs) {
 
             //Add code to get current date of object
 
@@ -305,38 +306,6 @@ public class ReportFragment extends Fragment {
                 }
             }
         }
-
-        for (String s : str_label_Bar) {
-            if (!hashMap_expenses_Bar.containsKey(s)) {
-                hashMap_expenses_Bar.put(s, (float) 0f);
-            }
-        }
-
-        Map<String, Float> treeMap_expenses_bar = new TreeMap<>(hashMap_expenses_Bar);
-        Log.d("treeMap_expenses_bar: ", String.valueOf(treeMap_expenses_bar));
-
-        // Change to array for chart
-        arr_actual_Bar = new ArrayList<Float>(treeMap_expenses_bar.values());
-    }
-
-    protected void getActualData() {
-        hashMap_expenses = new HashMap<>();
-
-        Date objDate = new Date();
-        Date lastDate = new Date();
-        Date currentDate = new Date();
-
-        lastDate = convertDate(getLastDate(), lastDate);
-        currentDate = convertDate(getCurrentDate(), currentDate);
-
-        // Group using hash
-        for (ExpenseObj r : expenseObjs) {
-
-            objDate = convertDate(r.getDate(), objDate);
-
-            //if (r.getDate().compareTo(lastDate) >= 0) {
-            if((objDate.after(lastDate) || objDate.equals(lastDate)) && objDate.before(currentDate)){
-                if (!hashMap_expenses.containsKey(r.getItem())) {
                     hashMap_expenses.put(r.getItem(), (float) r.getCost());
                 } else {
                     hashMap_expenses.put(r.getItem(), hashMap_expenses.get(r.getItem()) + (float) r.getCost());
