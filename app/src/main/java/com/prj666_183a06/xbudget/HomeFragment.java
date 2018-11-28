@@ -132,7 +132,14 @@ public class HomeFragment extends Fragment {
         expenseObjs = new ArrayList();
         expenseObjs = expenseViewModel.getAll();
         Log.e("expenseObjs", "in getCurrData Home" + expenseObjs);
-        total_expenses = expenseViewModel.getTotal();
+
+
+
+        ExpenseViewModel evm = ViewModelProviders.of(this).get(ExpenseViewModel.class);
+        PlanViewModel pvm = ViewModelProviders.of(this).get(PlanViewModel.class);
+
+        ExpenseListInterface eLI = new ExpenseListInterface(evm, pvm);
+        total_expenses = eLI.costTotal();
         Log.e("total_spent", "in getCurrData Home" + total_expenses);
 
         // Initialize - plans
