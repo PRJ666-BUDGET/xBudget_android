@@ -46,7 +46,7 @@
             android:screenOrientation="portrait" />
 
         <activity android:name=".ExpenseInfo"
-        />"
+        />
         <activity
             android:name=".receiptocr.ReceiptFormActivity"
             android:label="@string/title_activity_receipt_form"
