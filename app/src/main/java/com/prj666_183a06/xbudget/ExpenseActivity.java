@@ -166,34 +166,18 @@ public class ExpenseActivity extends Fragment {
 
             returnedObj = (Expense) data.getSerializableExtra("expense");
 
-            String temp =
-                    returnedObj.getId() + "\n" +
-                            returnedObj.getExpenseStore() + "\n" +
-                            returnedObj.getExpenseItem() + "\n" +
-                            returnedObj.getExpenseDate() + "\n" +
-                            returnedObj.getExpenseCost() + "\n" +
-                            returnedObj.getExpenseCategory() + "\n" +
-                            returnedObj.getExpenseDescription() + "\n";
+            Log.e("expense b4 ins/upd", returnedObj.print());
 
-            Log.e("expense b4 ins/upd", temp);
+            Toast.makeText(getActivity(), "Expense saved", Toast.LENGTH_SHORT);
 
             expenseViewModel.insert(returnedObj);
-            Toast.makeText(getActivity(), "Expense saved", Toast.LENGTH_SHORT);
 
         } else if (requestCode == EDIT_REQUEST && resultCode == RESULT_OK) {
 
             returnedObj = (Expense) data.getSerializableExtra("expense");
 
-            String temp =
-                    returnedObj.getId() + "\n" +
-                            returnedObj.getExpenseStore() + "\n" +
-                            returnedObj.getExpenseItem() + "\n" +
-                            returnedObj.getExpenseDate() + "\n" +
-                            returnedObj.getExpenseCost() + "\n" +
-                            returnedObj.getExpenseCategory() + "\n" +
-                            returnedObj.getExpenseDescription() + "\n";
 
-            Log.e("expense b4 ins/upd", temp);
+            Log.e("expense b4 ins/upd", returnedObj.print());
 
             expenseViewModel.update(returnedObj);
 
