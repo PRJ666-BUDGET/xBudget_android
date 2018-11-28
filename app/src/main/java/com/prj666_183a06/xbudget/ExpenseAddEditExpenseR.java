@@ -170,6 +170,11 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
         category = editCategory.getSelectedItem().toString();
         description = editDescription.getText().toString();
 
+        if(store.trim().isEmpty() || item.trim().isEmpty() || date.trim().isEmpty() || cost.isEmpty()){
+            Toast.makeText(this, "Please fill out the form" , Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         double newAmount = Double.valueOf(cost);
         if (tempAmount != newAmount) {
             newAmount -= tempAmount;

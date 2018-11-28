@@ -63,6 +63,9 @@ public class ReceiptFormActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_expense);
         Intent intent = getIntent();
 
+        costList = findViewById(R.id.cameraSpinner);
+        costList.setVisibility(View.VISIBLE);
+
         total = intent.getDoubleExtra("EXTRA_COST", 0);
 
         ArrayList<Double> arr = (ArrayList<Double>)intent.getSerializableExtra("EXTRA_COST_ARR");
@@ -74,8 +77,6 @@ public class ReceiptFormActivity extends AppCompatActivity {
                 this, android.R.layout.simple_spinner_dropdown_item, arr);
 
         costDrop.setAdapter(costAdapter);
-        costList = findViewById(R.id.cameraSpinner);
-        costList.setVisibility(View.VISIBLE);
 
         editStore = findViewById(R.id.edit_text_store);
         editItem = findViewById(R.id.edit_text_item);
