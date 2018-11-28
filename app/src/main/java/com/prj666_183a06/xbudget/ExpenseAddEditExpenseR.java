@@ -75,7 +75,7 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
             type = "edit";
         }else{ type = "add";}
 
-            editStore = findViewById(R.id.edit_text_store);
+        editStore = findViewById(R.id.edit_text_store);
         editItem = findViewById(R.id.edit_text_item);
         editCost = findViewById(R.id.edit_text_cost);
         editDate = findViewById(R.id.edit_date_view);

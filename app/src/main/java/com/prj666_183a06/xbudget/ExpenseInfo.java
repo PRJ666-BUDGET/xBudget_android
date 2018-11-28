@@ -10,8 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseViewModel;
 import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseListInterface;
+import com.prj666_183a06.xbudget.ExpenseRoom.ExpenseViewModel;
 import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
 import java.util.ArrayList;
