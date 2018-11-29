@@ -288,10 +288,8 @@ public class ReportFragment extends Fragment {
         for (ExpenseObj r : expenseObjs) {
 
             //Add code to get current date of object
-
             objDate = convertDate(r.getDate(), objDate);
-
-            if (objDate.equals(currentDate)) {
+            if ((objDate.after(lastDate) || objDate.equals(lastDate)) && objDate.before(currentDate)) {
                 if (str_label_Bar.contains(r.getCategory())) {
                     if (!hashMap_expenses_Bar.containsKey(r.getCategory())) {
                         hashMap_expenses_Bar.put(r.getCategory(), (float) r.getCost());
