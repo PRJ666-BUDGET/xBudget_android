@@ -5,6 +5,7 @@ import android.util.Log;
 import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -40,42 +41,60 @@ public class ExpenseListInterface {
     public String print() {
         String ret = "";
         for (ExpenseObj r : listE) {
-            ret = ret + r.getItem() + " " + r.getStore() + " " + r.getDate() + " " + r.getCost() + " " + r.getCategory()+ " " + r.getDescription() + "\n";
+            ret = ret + r.getItem() + " " + r.getStore() + " " + r.getDate() + " " + r.getCost() + " " + r.getCategory() + " " + r.getDescription() + "\n";
         }
         return ret;
+    }
+
+    public Date convertDate(String s, Date d) {
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        try {
+            d = format.parse(s);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return d;
+    }
+
+    public String getCurrentDate() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, 1);
+
+        int year = cal.get(Calendar.YEAR);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int month = cal.get(Calendar.MONTH) + 1;
+
+        return month + "/" + day + "/" + year;
+    }
+
+    public String getLastDay() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, -30);
+
+        int year = cal.get(Calendar.YEAR);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int month = cal.get(Calendar.MONTH) + 1;
+
+        return month + "/" + day + "/" + year;
     }
 
     public double costTotal() {
 
         double ret = 0;
-        Calendar cal = Calendar.getInstance();
 
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH) + 1;
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        String date;
+        Date currentDate = new Date();
+        Date lastDate = new Date();
+        Date objDate = new Date();
 
-        for (int i = 0; i < 30; i++) {
+        currentDate = convertDate(getCurrentDate(), currentDate);
+        lastDate = convertDate(getLastDay(), lastDate);
 
-            date = month + "/" + day  + "/" + year;
 
-            for (ExpenseObj c : listE) {
-                if(date.equals(c.getDate())){
-                    ret+= c.getCost();
-                }
-            }
-
-            if (day != 1) {
-                day--;
-            } else {
-                if (month != 1) {
-                    month--;
-                    day = 31;
-                } else {
-                    year--;
-                    month = 12;
-                    day = 31;
-                }
+        for (ExpenseObj c : listE) {
+            objDate = convertDate(c.getDate(), objDate);
+            if(objDate.after(lastDate) && objDate.before(currentDate)){
+                ret += c.getCost();
             }
         }
 
@@ -127,7 +146,12 @@ public class ExpenseListInterface {
                 }
             }
 
-            tempList.put(month + "/" + day + "/" + year, temp);
+            if (day < 10) {
+                tempList.put(month + "/0" + day + "/" + year, temp);
+            } else {
+                tempList.put(month + "/" + day + "/" + year, temp);
+            }
+
             System.out.println(month + "/" + day + "/" + year + ": " + temp);
             if (day != 1) {
                 day--;

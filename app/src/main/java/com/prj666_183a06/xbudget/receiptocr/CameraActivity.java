@@ -490,6 +490,7 @@ public final class CameraActivity extends AppCompatActivity {
                             myIntent.putExtra("EXTRA_COST", Collections.max(possibleValues));
                         }
                         CameraActivity.this.startActivity(myIntent);
+                        finish();
                     }
                 });
         return false;

@@ -41,12 +41,18 @@ import com.prj666_183a06.xbudget.model.PlanObj;
 import com.prj666_183a06.xbudget.pojo.PlanItem;
 import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import static com.github.mikephil.charting.data.PieDataSet.ValuePosition.OUTSIDE_SLICE;
 
@@ -57,6 +63,7 @@ public class ReportFragment extends Fragment {
     private PieChart mPie;
     private BarChart mBar;
     private Typeface tf;
+
 
     List<String> str_label_Pie, str_label_Bar;
     private List<Float> arr_plan, arr_actual, arr_actual_Bar;
@@ -131,7 +138,99 @@ public class ReportFragment extends Fragment {
         treeMap_plan = new TreeMap<String, Float>(hashMap_expenses);
     }
 
-    protected void getDataForBar(){
+    public String getLastDate() {
+        Calendar cal = Calendar.getInstance();
+
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+        String lastDate;
+
+        for (int i = 0; i < 31; i++) {
+            if (day != 1) {
+                day--;
+            } else {
+                if (month != 1) {
+                    month--;
+                    day = 31;
+                } else {
+                    year--;
+                    month = 12;
+                    day = 31;
+                }
+            }
+        }
+
+        if (day < 10) {
+            lastDate = month + "/0" + day + "/" + year;
+        } else {
+            lastDate = month + "/" + day + "/" + year;
+        }
+
+        lastDate = month + "/" + day + "/" + year;
+        return lastDate;
+    }
+
+    //Convert to date
+    public Date convertDate(String s, Date d) {
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        try {
+            d = format.parse(s);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return d;
+    }
+
+    //current
+    public String getCurrentDate(){
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, 1);
+
+        int year = cal.get(Calendar.YEAR);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int month = cal.get(Calendar.MONTH) + 1;
+
+        return month + "/" + day  + "/" + year;
+    }
+
+    public String getLastDay(){
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, -30);
+
+        int year = cal.get(Calendar.YEAR);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int month = cal.get(Calendar.MONTH) + 1;
+
+        return month + "/" + day  + "/" + year;
+    }
+
+    //This is to compare
+    //Old
+    /*
+    public String getCurrentDate() {
+        Calendar cal = Calendar.getInstance();
+
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+        if (day < 31) {
+            return month + "/" + day + "/" + year;
+        } else {
+            if (month < 12) {
+                return month + 1 + "/" + 1 + "/" + year;
+            } else {
+                return "1/1/" + year + 1;
+            }
+        }
+    }
+    */
+
+
+    protected void getDataForBar() {
         hashMap_plan = new HashMap<>();
         str_label_Bar = new ArrayList<String>();
 
@@ -139,24 +238,24 @@ public class ReportFragment extends Fragment {
         double total_income = planViewModel.getTotalIncome();
         double balance = total_income - total_expenses;
 
-        for(PlanObj r: planObjs) {
+        for (PlanObj r : planObjs) {
             float temp = 0;
-            switch (r.getPeriod()){
+            switch (r.getPeriod()) {
                 case "daily":
-                    temp = (float) r.getAmount()*365/12;
+                    temp = (float) r.getAmount() * 365 / 12;
                     break;
                 case "weekly":
-                    temp = (float) r.getAmount()*52/12;
+                    temp = (float) r.getAmount() * 52 / 12;
                     break;
                 case "bi-weekly":
-                    temp = (float) r.getAmount()*26/12;
+                    temp = (float) r.getAmount() * 26 / 12;
                     break;
                 case "monthly":
                     temp = (float) r.getAmount();
                     break;
             }
             balance -= temp;
-            if (hashMap_plan.containsKey(r.getTitle())){
+            if (hashMap_plan.containsKey(r.getTitle())) {
                 hashMap_plan.put(r.getTitle(), hashMap_plan.get(r.getTitle()) + temp);
             } else {
                 hashMap_plan.put(r.getTitle(), temp);
@@ -173,24 +272,43 @@ public class ReportFragment extends Fragment {
         str_label_Bar = new ArrayList<String>(treeMap_plan.keySet());
         hashMap_expenses_Bar = new HashMap<>();
 
+        //String lastDate = getLastDate();
+
+
+        Date currentDate, lastDate, objDate;
+
+        currentDate = new Date();
+        lastDate = new Date();
+        objDate = new Date();
+
+        currentDate = convertDate(getCurrentDate(), currentDate);
+        lastDate = convertDate(getLastDay(), lastDate);
+
         // Group using hash
-        for(ExpenseObj r: expenseObjs) {
-            if (str_label_Bar.contains(r.getCategory())){
-                if (!hashMap_expenses_Bar.containsKey(r.getCategory())){
-                    hashMap_expenses_Bar.put(r.getCategory(), (float) r.getCost());
-                } else {
-                    hashMap_expenses_Bar.put(r.getCategory(), hashMap_expenses_Bar.get(r.getCategory()) + (float) r.getCost());
-                }
-            } else if (r.getCategory().equals("None")) {
-                if (!hashMap_expenses_Bar.containsKey(r.getCategory())){
-                    hashMap_expenses_Bar.put("Other", (float) r.getCost());
-                } else {
-                    hashMap_expenses_Bar.put("Other", hashMap_expenses_Bar.get(r.getCategory()) + (float) r.getCost());
+        for (ExpenseObj r : expenseObjs) {
+
+            //Add code to get current date of object
+
+            objDate = convertDate(r.getDate(), objDate);
+
+            if (objDate.equals(currentDate)) {
+                if (str_label_Bar.contains(r.getCategory())) {
+                    if (!hashMap_expenses_Bar.containsKey(r.getCategory())) {
+                        hashMap_expenses_Bar.put(r.getCategory(), (float) r.getCost());
+                    } else {
+                        hashMap_expenses_Bar.put(r.getCategory(), hashMap_expenses_Bar.get(r.getCategory()) + (float) r.getCost());
+                    }
+                } else if (r.getCategory().equals("None")) {
+                    if (!hashMap_expenses_Bar.containsKey(r.getCategory())) {
+                        hashMap_expenses_Bar.put("Other", (float) r.getCost());
+                    } else {
+                        hashMap_expenses_Bar.put("Other", hashMap_expenses_Bar.get(r.getCategory()) + (float) r.getCost());
+                    }
                 }
             }
         }
 
-        for(String s: str_label_Bar) {
+        for (String s : str_label_Bar) {
             if (!hashMap_expenses_Bar.containsKey(s)) {
                 hashMap_expenses_Bar.put(s, (float) 0f);
             }
@@ -203,15 +321,28 @@ public class ReportFragment extends Fragment {
         arr_actual_Bar = new ArrayList<Float>(treeMap_expenses_bar.values());
     }
 
-    protected void getActualData(){
+    protected void getActualData() {
         hashMap_expenses = new HashMap<>();
 
+        Date objDate = new Date();
+        Date lastDate = new Date();
+        Date currentDate = new Date();
+
+        lastDate = convertDate(getLastDate(), lastDate);
+        currentDate = convertDate(getCurrentDate(), currentDate);
+
         // Group using hash
-        for(ExpenseObj r: expenseObjs) {
-            if (!hashMap_expenses.containsKey(r.getItem())){
-                hashMap_expenses.put(r.getItem(), (float) r.getCost());
-            } else {
-                hashMap_expenses.put(r.getItem(), hashMap_expenses.get(r.getItem()) + (float) r.getCost());
+        for (ExpenseObj r : expenseObjs) {
+
+            objDate = convertDate(r.getDate(), objDate);
+
+            //if (r.getDate().compareTo(lastDate) >= 0) {
+            if((objDate.after(lastDate) || objDate.equals(lastDate)) && objDate.before(currentDate)){
+                if (!hashMap_expenses.containsKey(r.getItem())) {
+                    hashMap_expenses.put(r.getItem(), (float) r.getCost());
+                } else {
+                    hashMap_expenses.put(r.getItem(), hashMap_expenses.get(r.getItem()) + (float) r.getCost());
+                }
             }
         }
 
@@ -231,7 +362,7 @@ public class ReportFragment extends Fragment {
         Log.d("total in getActual: ", String.valueOf(arr_actual));
         Log.d("label in getActual: ", String.valueOf(str_label_Pie));
 
-        if (arr_actual.size() == 0){
+        if (arr_actual.size() == 0) {
             arr_actual.add(1f);
             str_label_Pie.add("No data");
         }
@@ -280,9 +411,9 @@ public class ReportFragment extends Fragment {
 
         Log.d("data in Bar: ", Integer.toString(arr_actual_Bar.size()));
 
-        for(int i=0; i < arr_actual_Bar.size(); i++ ){
-            entries_plan.add(new BarEntry(i+1, arr_plan.get(i)));
-            entries_actual.add(new BarEntry(i+1, arr_actual_Bar.get(i)));
+        for (int i = 0; i < arr_actual_Bar.size(); i++) {
+            entries_plan.add(new BarEntry(i + 1, arr_plan.get(i)));
+            entries_actual.add(new BarEntry(i + 1, arr_actual_Bar.get(i)));
             Log.d("act loop in bar: ", Float.toString(arr_actual_Bar.get(i)));
             Log.d("plan loop in bar: ", Float.toString(arr_plan.get(i)));
         }
@@ -328,7 +459,7 @@ public class ReportFragment extends Fragment {
 
         // Apply data to chart
         Log.d("arr_actual in Pie: ", Integer.toString(arr_actual.size()));
-        for(int i = 0; i < arr_actual.size(); i++){
+        for (int i = 0; i < arr_actual.size(); i++) {
             entries_expenses.add(new PieEntry((float) arr_actual.get(i), str_label_Pie.get(i)));
             Log.d("loop in Pie: ", Float.toString(arr_actual.get(i)));
             Log.d("loop in Pie: ", str_label_Pie.get(i));

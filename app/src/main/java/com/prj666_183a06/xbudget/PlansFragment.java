@@ -42,6 +42,7 @@ public class PlansFragment extends Fragment {
     public static final int DELETE_PLAN_REQUEST = 2;
     public static final int EDIT_PLAN_REQUEST = 3;
 
+    final PlanAdapter adapter = new PlanAdapter();
     private PlanViewModel planViewModel;
 
     private DatabaseReference planRef = FirebaseDatabase.getInstance().getReference("plans");
@@ -115,16 +116,48 @@ public class PlansFragment extends Fragment {
          *  .attachToRecyclerView(recyclerView); <- MUST BE INCLUDED
          */
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
-                ItemTouchHelper.LEFT) {
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 return false;
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                planViewModel.delete(adapter.getPlanPosition(viewHolder.getAdapterPosition()));
-                Toast.makeText(getActivity(),"Plan deleted.", Toast.LENGTH_SHORT).show();
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
+
+                if (direction == 4) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setMessage("Do you want to delete this plan?")
+                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    planViewModel.delete(adapter.getPlanPosition(viewHolder.getAdapterPosition()));
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    adapter.notifyDataSetChanged();
+                                }
+                            }).show();
+
+//                    Toast.makeText(getActivity(), "Plan deleted.", Toast.LENGTH_SHORT).show();
+                }
+                if (direction == 8) {
+                    PlanEntity plan = adapter.getPlanPosition(viewHolder.getAdapterPosition());
+                    Intent newIntent = new Intent(getActivity(), CreateUpdatePlanActivity.class);
+
+                    newIntent.putExtra(CreateUpdatePlanActivity.PLAN_ID, plan.getPlanId());
+                    newIntent.putExtra(CreateUpdatePlanActivity.PLAN_TYPE, plan.getPlanType());
+                    newIntent.putExtra(CreateUpdatePlanActivity.PLAN_TITLE, plan.getPlanTitle());
+                    newIntent.putExtra(CreateUpdatePlanActivity.PLAN_AMOUNT, plan.getPlanAmount());
+                    newIntent.putExtra(CreateUpdatePlanActivity.PLAN_PERIOD, plan.getPlanPeriod());
+
+                    startActivityForResult(newIntent, EDIT_PLAN_REQUEST);
+
+//                    PlanEntity needUpdate = new PlanEntity(plan.getPlanType(), plan.getPlanTitle(), plan.getPlanAmount(), plan.getPlanPeriod());
+//                    needUpdate.setPlanId(plan.getPlanId());
+                }
             }
         }).attachToRecyclerView(recyclerView);
 
@@ -192,9 +225,24 @@ public class PlansFragment extends Fragment {
 //            Plans plans = new Plans(type, title, tempAmount, period);
 //            planRef.child(tempId).setValue(plans);
         }
+        else if (requestCode == EDIT_PLAN_REQUEST && resultCode == RESULT_OK) {
+            int id = data.getIntExtra(CreateUpdatePlanActivity.PLAN_ID, -1);
+            Log.d(TAG, "onActivityResult: planId: " + id);
+
+            String type = data.getStringExtra(CreateUpdatePlanActivity.PLAN_TYPE);
+            String title = data.getStringExtra(CreateUpdatePlanActivity.PLAN_TITLE);
+            double amount = data.getDoubleExtra(CreateUpdatePlanActivity.PLAN_AMOUNT, 0.00);
+            String period = data.getStringExtra(CreateUpdatePlanActivity.PLAN_PERIOD);
+
+            PlanEntity plan = new PlanEntity(type ,title, amount, period);
+            plan.setPlanId(id);
+            planViewModel.update(plan);
+//            Toast.makeText(this, title + " is updated.", Toast.LENGTH_SHORT).show();
+        }
         else{
 //            Toast.makeText(getActivity(), "BACK TO LIST VIEW FROM DETAIL VIEW [PlansFragment.java onActivityResult()]", Toast.LENGTH_SHORT).show();
         }
+        adapter.notifyDataSetChanged();
     }
 
     /**
@@ -217,8 +265,8 @@ public class PlansFragment extends Fragment {
             case R.id.delete_allPlan:
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setMessage("You can't undo this action. Do you want to delete all plans?").setPositiveButton("Yes", confirmDeleteDialogClickListener)
-                        .setNegativeButton("No", confirmDeleteDialogClickListener).show();
+                builder.setMessage("You can't undo this action. Do you want to delete all plans?").setPositiveButton("Confirm", confirmDeleteAllDialogClickListener)
+                        .setNegativeButton("Cancel", confirmDeleteAllDialogClickListener).show();
 
                 return true;
             default:
@@ -226,14 +274,14 @@ public class PlansFragment extends Fragment {
         }
     }
 
-    DialogInterface.OnClickListener confirmDeleteDialogClickListener = new DialogInterface.OnClickListener() {
+    DialogInterface.OnClickListener confirmDeleteAllDialogClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             switch(which) {
                 case DialogInterface.BUTTON_POSITIVE:
 
                     planViewModel.deleteAllPlans();
-                    Toast.makeText(getActivity(), "All Plans are deleted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "All Plans are deleted.", Toast.LENGTH_SHORT).show();
 
                     String id = planRef.push().getKey();
                     totalIncome *= -1;
