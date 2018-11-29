@@ -288,10 +288,8 @@ public class ReportFragment extends Fragment {
         for (ExpenseObj r : expenseObjs) {
 
             //Add code to get current date of object
-
             objDate = convertDate(r.getDate(), objDate);
-
-            if (objDate.equals(currentDate)) {
+            if ((objDate.after(lastDate) || objDate.equals(lastDate)) && objDate.before(currentDate)) {
                 if (str_label_Bar.contains(r.getCategory())) {
                     if (!hashMap_expenses_Bar.containsKey(r.getCategory())) {
                         hashMap_expenses_Bar.put(r.getCategory(), (float) r.getCost());
@@ -299,10 +297,10 @@ public class ReportFragment extends Fragment {
                         hashMap_expenses_Bar.put(r.getCategory(), hashMap_expenses_Bar.get(r.getCategory()) + (float) r.getCost());
                     }
                 } else if (r.getCategory().equals("None")) {
-                    if (!hashMap_expenses_Bar.containsKey(r.getCategory())) {
+                    if (!hashMap_expenses_Bar.containsKey("Other")) {
                         hashMap_expenses_Bar.put("Other", (float) r.getCost());
                     } else {
-                        hashMap_expenses_Bar.put("Other", hashMap_expenses_Bar.get(r.getCategory()) + (float) r.getCost());
+                        hashMap_expenses_Bar.put("Other", hashMap_expenses_Bar.get("Other") + (float) r.getCost());
                     }
                 }
             }
