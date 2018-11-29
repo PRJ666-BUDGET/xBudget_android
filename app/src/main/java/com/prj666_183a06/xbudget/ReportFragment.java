@@ -207,29 +207,6 @@ public class ReportFragment extends Fragment {
         return month + "/" + day  + "/" + year;
     }
 
-    //This is to compare
-    //Old
-    /*
-    public String getCurrentDate() {
-        Calendar cal = Calendar.getInstance();
-
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH) + 1;
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-
-        if (day < 31) {
-            return month + "/" + day + "/" + year;
-        } else {
-            if (month < 12) {
-                return month + 1 + "/" + 1 + "/" + year;
-            } else {
-                return "1/1/" + year + 1;
-            }
-        }
-    }
-    */
-
-
     protected void getDataForBar() {
         hashMap_plan = new HashMap<>();
         str_label_Bar = new ArrayList<String>();
@@ -271,10 +248,6 @@ public class ReportFragment extends Fragment {
         arr_plan = new ArrayList<Float>(treeMap_plan.values());
         str_label_Bar = new ArrayList<String>(treeMap_plan.keySet());
         hashMap_expenses_Bar = new HashMap<>();
-
-        //String lastDate = getLastDate();
-
-
         Date currentDate, lastDate, objDate;
 
         currentDate = new Date();
@@ -334,12 +307,19 @@ public class ReportFragment extends Fragment {
 
             objDate = convertDate(r.getDate(), objDate);
 
-            //if (r.getDate().compareTo(lastDate) >= 0) {
             if((objDate.after(lastDate) || objDate.equals(lastDate)) && objDate.before(currentDate)){
-                if (!hashMap_expenses.containsKey(r.getCategory())) {
-                    hashMap_expenses.put(r.getCategory(), (float) r.getCost());
+                if (r.getCategory().equals("None")) {
+                    if (!hashMap_expenses.containsKey(r.getItem())) {
+                        hashMap_expenses.put(r.getItem(), (float) r.getCost());
+                    } else {
+                        hashMap_expenses.put(r.getItem(), hashMap_expenses.get(r.getItem()) + (float) r.getCost());
+                    }
                 } else {
-                    hashMap_expenses.put(r.getCategory(), hashMap_expenses.get(r.getCategory()) + (float) r.getCost());
+                    if (!hashMap_expenses.containsKey(r.getCategory())) {
+                        hashMap_expenses.put(r.getCategory(), (float) r.getCost());
+                    } else {
+                        hashMap_expenses.put(r.getCategory(), hashMap_expenses.get(r.getCategory()) + (float) r.getCost());
+                    }
                 }
             }
         }
