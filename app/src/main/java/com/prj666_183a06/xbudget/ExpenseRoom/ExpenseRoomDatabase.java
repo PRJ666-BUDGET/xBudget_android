@@ -50,9 +50,9 @@ public abstract class ExpenseRoomDatabase extends RoomDatabase {
 
         @Override
         protected Void doInBackground(Void... voids){
-            expenseDao.insert(new Expense("McDonalds", "12/12/2018", "Coffee", "None", 2.00, ""));
-            expenseDao.insert(new Expense("Best Buy", "12/12/2018", "Computer","None", 34442.00, "Bought a computer"));
-            expenseDao.insert(new Expense("Walmart", "12/12/2018", "Groceries", "None", 165.32, "None"));
+            //expenseDao.insert(new Expense("McDonalds", "12/12/2018", "Coffee", "None", 2.00, ""));
+            //expenseDao.insert(new Expense("Best Buy", "12/12/2018", "Computer","None", 34442.00, "Bought a computer"));
+            //expenseDao.insert(new Expense("Walmart", "12/12/2018", "Groceries", "None", 165.32, "None"));
             return null;
         }
     }
