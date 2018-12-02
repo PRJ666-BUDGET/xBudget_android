@@ -468,6 +468,9 @@ public final class CameraActivity extends AppCompatActivity {
                         for (int i = 0; i < possibleValues.size(); i++) {
                             Log.d("CameraLog:", Double.toString(possibleValues.get(i)));
                         }
+                        for (int i = 0; i < receiptElements.size(); i++) {
+                            Log.d("CameraDump:", receiptElements.get(i).getValue());
+                        }
                         if (possibleValues.size() == 0) {
                             Log.d("CameraLog:", "No values");
                         }
