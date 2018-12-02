@@ -21,8 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.prj666_183a06.xbudget.adapter.PlanAdapter;
 import com.prj666_183a06.xbudget.crud.CreateUpdatePlanActivity;
 import com.prj666_183a06.xbudget.crud.DetailPlanActivity;
@@ -43,9 +41,6 @@ public class PlansFragment extends Fragment {
     public static final int EDIT_PLAN_REQUEST = 3;
 
     private PlanViewModel planViewModel;
-
-    private DatabaseReference planRef = FirebaseDatabase.getInstance().getReference("plans");
-    double totalIncome;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -234,11 +229,6 @@ public class PlansFragment extends Fragment {
 
                     planViewModel.deleteAllPlans();
                     Toast.makeText(getActivity(), "All Plans are deleted", Toast.LENGTH_SHORT).show();
-
-                    String id = planRef.push().getKey();
-                    totalIncome *= -1;
-                    Plans plans = new Plans("income", "deleteAll", totalIncome, "all");
-                    planRef.child(id).setValue(plans);
                     break;
                 case DialogInterface.BUTTON_NEGATIVE:
                     break;

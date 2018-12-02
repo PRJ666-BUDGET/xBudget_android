@@ -41,8 +41,6 @@ public class DetailPlanActivity extends AppCompatActivity {
 
     private int id;
 
-//    private DatabaseReference planRef = FirebaseDatabase.getInstance().getReference("plans");
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
