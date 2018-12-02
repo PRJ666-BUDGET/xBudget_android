@@ -432,11 +432,16 @@ public final class CameraActivity extends AppCompatActivity {
                                         }
                                     }
                                 }
-                                if (closestIndex != -1) {
-                                    possibleTotals.add(receiptElements.get(closestIndex));
+                                //take the larger of the 2
+                                if((closestIndex != -1) && (secondClosestIndex != -1)){
+                                    if(closestIndex > secondClosestIndex){
+                                        possibleTotals.add(receiptElements.get(closestIndex));
+                                    } else {
+                                        possibleTotals.add(receiptElements.get(secondClosestIndex));
+                                    }
                                 }
-                                if (secondClosestIndex != -1) {
-                                    possibleTotals.add(receiptElements.get(secondClosestIndex));
+                                else if (closestIndex != -1) {
+                                    possibleTotals.add(receiptElements.get(closestIndex));
                                 }
                             }
                         }
