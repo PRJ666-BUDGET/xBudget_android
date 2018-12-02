@@ -19,6 +19,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.AnimationDrawable;
 import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -73,6 +74,9 @@ public final class CameraActivity extends AppCompatActivity {
     private CameraSource cameraSource;
     private CameraSourcePreview preview;
     private GraphicOverlay<CameraOverlay> graphicOverlay;
+    private ImageView shutterView;
+    private AnimationDrawable shutterAnimation;
+
 
     // Helper objects for detecting taps and pinches.
     private ScaleGestureDetector scaleGestureDetector;
@@ -94,6 +98,10 @@ public final class CameraActivity extends AppCompatActivity {
         preview = (CameraSourcePreview) findViewById(R.id.preview);
         graphicOverlay = (GraphicOverlay<CameraOverlay>) findViewById(R.id.graphicOverlay);
         image = (ImageView) findViewById(R.id.CameraImageView);
+
+        shutterView = (ImageView) findViewById(R.id.shutterView);
+        shutterView.setBackgroundResource(R.drawable.shutter_animation);
+        shutterAnimation = (AnimationDrawable) shutterView.getBackground();
 
         // Set good defaults for capturing text.
         boolean autoFocus = true;
@@ -334,7 +342,13 @@ public final class CameraActivity extends AppCompatActivity {
 
 
     private boolean cameraAction(){
-        cameraSource.takePicture(null,
+        cameraSource.takePicture(
+                new CameraSource.ShutterCallback(){
+                     @Override
+                     public void onShutter() {
+                         shutterAnimation.start();
+                     }
+                },
                 new CameraSource.PictureCallback() {
                     public void onPictureTaken(byte[] data) {
                         Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
@@ -480,8 +494,6 @@ public final class CameraActivity extends AppCompatActivity {
                             Log.d("CameraLog:", "No values");
                         }
 
-                        //Sanitize values and sent to form
-                        Intent myIntent = new Intent(CameraActivity.this, ReceiptFormActivity.class);
                         //remove unusualy large values
                         //backwards due to index changes on remove7
                         for(int i = possibleValues.size() -1; i >= 0; i--){
@@ -489,6 +501,15 @@ public final class CameraActivity extends AppCompatActivity {
                                 possibleValues.remove(i);
                             }
                         }
+
+                        //shrink array to 4 largest
+                        Collections.sort(possibleValues, Collections.reverseOrder());
+                        for(int i = possibleValues.size() -1; i >= 3; i--){
+                            possibleValues.remove(i);
+                        }
+
+                        //Sanitize values and sent to form
+                        Intent myIntent = new Intent(CameraActivity.this, ReceiptFormActivity.class);
                         if(possibleValues.size() > 0){
                             myIntent.putExtra("EXTRA_COST_ARR", possibleValues);
                         }
