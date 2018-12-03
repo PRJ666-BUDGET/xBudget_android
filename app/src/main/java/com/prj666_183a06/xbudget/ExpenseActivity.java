@@ -33,6 +33,7 @@ public class ExpenseActivity extends Fragment {
 
     public static final int ADD_REQUEST = 1;
     public static final int EDIT_REQUEST = 2;
+    public static final int DETAIL_REQUEST = 3;
     private ExpenseViewModel expenseViewModel;
     Expense returnedObj;
 
@@ -52,11 +53,10 @@ public class ExpenseActivity extends Fragment {
 
                 intent.putExtra("type", "add");
                 startActivityForResult(intent, ADD_REQUEST);
-
-//                Intent intent = new Intent(getActivity(), ExpenseInfo.class);
-//                startActivity(intent);
             }
         });
+
+        setHasOptionsMenu(true);
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -82,7 +82,7 @@ public class ExpenseActivity extends Fragment {
 
             @Override
             public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
-
+                final int pos = viewHolder.getAdapterPosition();
                 if (direction == 4) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setCancelable(true);
@@ -92,7 +92,7 @@ public class ExpenseActivity extends Fragment {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    expenseViewModel.delete(adapter.getExpenseAt(viewHolder.getAdapterPosition()));
+                                    expenseViewModel.delete(adapter.getExpenseAt(pos));
                                 }
                             });
                     builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -104,6 +104,8 @@ public class ExpenseActivity extends Fragment {
 
                     AlertDialog dialog = builder.create();
                     dialog.show();
+
+                    adapter.notifyDataSetChanged();
                 }
                 if (direction == 8) {
                     Expense temp = adapter.getExpenseAt(viewHolder.getAdapterPosition());
@@ -136,7 +138,7 @@ public class ExpenseActivity extends Fragment {
                 intent.putExtra("expense", expense);
 
                 intent.putExtra("type", "edit");
-                startActivityForResult(intent, EDIT_REQUEST);
+                startActivityForResult(intent, DETAIL_REQUEST);
 
             }
         });
@@ -154,7 +156,6 @@ public class ExpenseActivity extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        setHasOptionsMenu(true);
 
 
         if (requestCode == ADD_REQUEST && resultCode == RESULT_OK) {
@@ -176,6 +177,24 @@ public class ExpenseActivity extends Fragment {
             expenseViewModel.update(returnedObj);
 
         }
+
+        if(requestCode == DETAIL_REQUEST && resultCode == RESULT_OK){
+            String type = data.getStringExtra("type");
+            if(type.equals("delete")){
+
+                returnedObj = (Expense) data.getSerializableExtra("expense");
+
+                expenseViewModel.delete(returnedObj);
+
+            }else if (type.equals("edit")){
+
+                returnedObj = (Expense) data.getSerializableExtra("expense");
+
+                Log.e("expense b4 up detail", returnedObj.print());
+
+                expenseViewModel.update(returnedObj);
+            }
+        }
         adapter.notifyDataSetChanged();
     }
 
@@ -192,9 +211,8 @@ public class ExpenseActivity extends Fragment {
         switch (item.getItemId()) {
             case R.id.delete_all_expense:
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setMessage("You can't undo this action. Do you want to delete all plans?").setPositiveButton("Yes", confirmDeleteDialogClickListener)
+                builder.setMessage("You can't undo this action. Do you want to delete all expense data?").setPositiveButton("Yes", confirmDeleteDialogClickListener)
                         .setNegativeButton("No", confirmDeleteDialogClickListener).show();
-
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -208,16 +226,17 @@ public class ExpenseActivity extends Fragment {
                 case DialogInterface.BUTTON_POSITIVE:
 
                     expenseViewModel.deleteAllExpenses();
-                    Toast.makeText(getActivity(), "All Plans are deleted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "All expense are deleted", Toast.LENGTH_SHORT).show();
 
                     break;
                 case DialogInterface.BUTTON_NEGATIVE:
+                    adapter.notifyDataSetChanged();
                     break;
             }
         }
     };
 
-    public void deleteAll(){
+    /*public void deleteAll(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setCancelable(true);
         builder.setTitle("Delete all");
@@ -236,6 +255,6 @@ public class ExpenseActivity extends Fragment {
 
             }
         });
-    }
+    }*/
 
 }

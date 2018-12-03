@@ -248,6 +248,7 @@ public class ReportFragment extends Fragment {
         arr_plan = new ArrayList<Float>(treeMap_plan.values());
         str_label_Bar = new ArrayList<String>(treeMap_plan.keySet());
         hashMap_expenses_Bar = new HashMap<>();
+
         Date currentDate, lastDate, objDate;
 
         currentDate = new Date();
@@ -261,6 +262,7 @@ public class ReportFragment extends Fragment {
         for (ExpenseObj r : expenseObjs) {
 
             //Add code to get current date of object
+
             objDate = convertDate(r.getDate(), objDate);
             if ((objDate.after(lastDate) || objDate.equals(lastDate)) && objDate.before(currentDate)) {
                 if (str_label_Bar.contains(r.getCategory())) {

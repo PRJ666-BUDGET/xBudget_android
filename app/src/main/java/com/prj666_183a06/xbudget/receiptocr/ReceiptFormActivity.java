@@ -94,8 +94,6 @@ public class ReceiptFormActivity extends AppCompatActivity {
                 this, android.R.layout.simple_spinner_dropdown_item, planTitles);
         editCategory.setAdapter(planAdapter);
 
-        check = findViewById(R.id.check);
-
         /*editDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,6 +111,7 @@ public class ReceiptFormActivity extends AppCompatActivity {
         });
 
         FloatingActionButton buttonSave = findViewById(R.id.button_save);
+        buttonSave.setVisibility(View.VISIBLE);
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,15 +153,15 @@ public class ReceiptFormActivity extends AppCompatActivity {
 
         double newAmount;
 
-        if(store.trim().isEmpty() || item.trim().isEmpty() || date.trim().isEmpty() || cost.isEmpty() || !check.isChecked()){
-            Toast.makeText(this, "Please fill out the form" , Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        if(date.trim().isEmpty() || (cost.isEmpty() || !check.isChecked())){
+//            Toast.makeText(this, "Please input in a cost" , Toast.LENGTH_SHORT).show();
+//            return;
+//        }
 
-        if(check.isChecked()){
-            newAmount = Double.parseDouble(costDrop.getSelectedItem().toString());
-        }else{
+        if(!cost.isEmpty()){
             newAmount = Double.parseDouble(cost);
+            }else{
+            newAmount = Double.parseDouble(costDrop.getSelectedItem().toString());
         }
 
         obj = new Expense(store, date, item, category, newAmount, description);
@@ -175,8 +174,7 @@ public class ReceiptFormActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.add_expense_menu, menu);
-
+        menuInflater.inflate(R.menu.save_menu, menu);
         return true;
     }
 
