@@ -37,6 +37,8 @@ public class ExpenseDetail extends AppCompatActivity {
 
         obj = (Expense) intent.getSerializableExtra("expense");
 
+        Log.e("id", obj.getId()+"");
+
         itemTV = findViewById(R.id.item);
         storeTV = findViewById(R.id.store);
         costTV = findViewById(R.id.cost);
@@ -106,6 +108,7 @@ public class ExpenseDetail extends AppCompatActivity {
             Log.e("expense obj in detail", temp);
 
             ret.putExtra("expense", obj);
+            ret.putExtra("type", "edit");
             setResult(RESULT_OK, ret);
             finish();
         }
@@ -126,11 +129,11 @@ public class ExpenseDetail extends AppCompatActivity {
                 editIntent.putExtra("type", "edit");
                 startActivityForResult(editIntent, 2);
                 return true;
-//            case R.id.delete:
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-//                builder.setMessage("You can't undo this action. Do you want to delete all plans?").setPositiveButton("Yes", delete)
-//                        .setNegativeButton("No", delete).show();
-//                return true;
+            case R.id.delete:
+                AlertDialog.Builder builder = new AlertDialog.Builder(ExpenseDetail.this);
+                builder.setMessage("Are you sure you want to delete this expense data?").setPositiveButton("Yes", delete)
+                        .setNegativeButton("No", delete).show();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -141,10 +144,13 @@ public class ExpenseDetail extends AppCompatActivity {
         public void onClick(DialogInterface dialog, int which) {
             switch(which) {
                 case DialogInterface.BUTTON_POSITIVE:
-
+                    Intent ret = new Intent();
+                    ret.putExtra("type", "delete");
+                    ret.putExtra("expense", obj);
+                    setResult(RESULT_OK, ret);
+                    finish();
                     break;
                 case DialogInterface.BUTTON_NEGATIVE:
-
                     break;
             }
         }

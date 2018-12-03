@@ -114,13 +114,14 @@ public class ReceiptFormActivity extends AppCompatActivity {
             }
         });
 
-        //FloatingActionButton buttonSave = findViewById(R.id.button_save);
-//        buttonSave.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                saveExpense();
-//            }
-//        });
+        FloatingActionButton buttonSave = findViewById(R.id.button_save);
+        buttonSave.setVisibility(View.VISIBLE);
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveExpense();
+            }
+        });
 
         editDate.setText(getDate());
 
