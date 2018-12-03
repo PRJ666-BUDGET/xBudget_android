@@ -207,29 +207,6 @@ public class ReportFragment extends Fragment {
         return month + "/" + day  + "/" + year;
     }
 
-    //This is to compare
-    //Old
-    /*
-    public String getCurrentDate() {
-        Calendar cal = Calendar.getInstance();
-
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH) + 1;
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-
-        if (day < 31) {
-            return month + "/" + day + "/" + year;
-        } else {
-            if (month < 12) {
-                return month + 1 + "/" + 1 + "/" + year;
-            } else {
-                return "1/1/" + year + 1;
-            }
-        }
-    }
-    */
-
-
     protected void getDataForBar() {
         hashMap_plan = new HashMap<>();
         str_label_Bar = new ArrayList<String>();
@@ -272,9 +249,6 @@ public class ReportFragment extends Fragment {
         str_label_Bar = new ArrayList<String>(treeMap_plan.keySet());
         hashMap_expenses_Bar = new HashMap<>();
 
-        //String lastDate = getLastDate();
-
-
         Date currentDate, lastDate, objDate;
 
         currentDate = new Date();
@@ -290,8 +264,7 @@ public class ReportFragment extends Fragment {
             //Add code to get current date of object
 
             objDate = convertDate(r.getDate(), objDate);
-
-            if (objDate.equals(currentDate)) {
+            if ((objDate.after(lastDate) || objDate.equals(lastDate)) && objDate.before(currentDate)) {
                 if (str_label_Bar.contains(r.getCategory())) {
                     if (!hashMap_expenses_Bar.containsKey(r.getCategory())) {
                         hashMap_expenses_Bar.put(r.getCategory(), (float) r.getCost());
@@ -299,10 +272,10 @@ public class ReportFragment extends Fragment {
                         hashMap_expenses_Bar.put(r.getCategory(), hashMap_expenses_Bar.get(r.getCategory()) + (float) r.getCost());
                     }
                 } else if (r.getCategory().equals("None")) {
-                    if (!hashMap_expenses_Bar.containsKey(r.getCategory())) {
+                    if (!hashMap_expenses_Bar.containsKey("Other")) {
                         hashMap_expenses_Bar.put("Other", (float) r.getCost());
                     } else {
-                        hashMap_expenses_Bar.put("Other", hashMap_expenses_Bar.get(r.getCategory()) + (float) r.getCost());
+                        hashMap_expenses_Bar.put("Other", hashMap_expenses_Bar.get("Other") + (float) r.getCost());
                     }
                 }
             }
@@ -336,12 +309,19 @@ public class ReportFragment extends Fragment {
 
             objDate = convertDate(r.getDate(), objDate);
 
-            //if (r.getDate().compareTo(lastDate) >= 0) {
             if((objDate.after(lastDate) || objDate.equals(lastDate)) && objDate.before(currentDate)){
-                if (!hashMap_expenses.containsKey(r.getItem())) {
-                    hashMap_expenses.put(r.getItem(), (float) r.getCost());
+                if (r.getCategory().equals("None")) {
+                    if (!hashMap_expenses.containsKey(r.getItem())) {
+                        hashMap_expenses.put(r.getItem(), (float) r.getCost());
+                    } else {
+                        hashMap_expenses.put(r.getItem(), hashMap_expenses.get(r.getItem()) + (float) r.getCost());
+                    }
                 } else {
-                    hashMap_expenses.put(r.getItem(), hashMap_expenses.get(r.getItem()) + (float) r.getCost());
+                    if (!hashMap_expenses.containsKey(r.getCategory())) {
+                        hashMap_expenses.put(r.getCategory(), (float) r.getCost());
+                    } else {
+                        hashMap_expenses.put(r.getCategory(), hashMap_expenses.get(r.getCategory()) + (float) r.getCost());
+                    }
                 }
             }
         }

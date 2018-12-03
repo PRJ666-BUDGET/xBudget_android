@@ -46,7 +46,7 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.PlanHolder> {
         if (currentPlan.getPlanType().matches("income")) {
             holder.textview_planAmount.setTextColor(Color.parseColor("#33cc33"));
         } else {
-            holder.textview_planAmount.setTextColor(Color.parseColor("#ff1a1a"));
+            holder.textview_planAmount.setTextColor(Color.parseColor("#3366ff"));
         }
     }
 

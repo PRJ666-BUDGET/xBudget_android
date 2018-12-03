@@ -13,8 +13,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.prj666_183a06.xbudget.R;
 import com.prj666_183a06.xbudget.database.Plans;
 
@@ -33,8 +31,6 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
     private EditText editTextAmount;
     private Spinner spinnerType;
     private Spinner spinnerPeriod;
-
-    private DatabaseReference planRef = FirebaseDatabase.getInstance().getReference("plans");
     double prev_amount = 0;
 
     @Override
@@ -107,10 +103,6 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
             default:
                 current_amount = current_amount;
         }
-
-        String id = planRef.push().getKey();
-        Plans plans = new Plans(spinnerType.getSelectedItem().toString(), title, current_amount, spinnerPeriod.getSelectedItem().toString());
-        planRef.child(id).setValue(plans);
 
         Intent data = new Intent();
         data.putExtra(PLAN_TYPE, spinnerType.getSelectedItem().toString());

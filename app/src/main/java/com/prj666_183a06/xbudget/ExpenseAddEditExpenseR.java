@@ -22,9 +22,6 @@ import com.prj666_183a06.xbudget.ExpenseRoom.Expense;
 import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
 import java.util.ArrayList;
-
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.prj666_183a06.xbudget.database.Expenses;
 
 import java.util.Calendar;
@@ -63,7 +60,6 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
     List<String> planTitles;
     Expense temp;
 
-    private DatabaseReference expenseRef = FirebaseDatabase.getInstance().getReference("expenses");
     private double tempAmount;
 
     @Override
@@ -187,10 +183,6 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
         if (id != -1) {
             obj.setId(id);
         }
-
-        String expId = expenseRef.push().getKey();
-        Expenses expenses = new Expenses(store, item, newAmount, date, category, description);
-        expenseRef.child(expId).setValue(expenses);
 
         ret.putExtra("expense", obj);
         setResult(RESULT_OK, ret);

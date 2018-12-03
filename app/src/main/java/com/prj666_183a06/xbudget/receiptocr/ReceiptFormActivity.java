@@ -24,9 +24,6 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.prj666_183a06.xbudget.DatePickerFragment;
 import com.prj666_183a06.xbudget.ExpenseAddEditExpenseR;
 import com.prj666_183a06.xbudget.ExpenseRoom.Expense;
@@ -48,7 +45,6 @@ public class ReceiptFormActivity extends AppCompatActivity {
 
     private EditText editStore, editItem, editCost, editDescription;
     private TextView editDate;
-    private DatabaseReference expenseRef = FirebaseDatabase.getInstance().getReference("expenses");
     private double total;
     CheckBox check;
     LinearLayout costList;
@@ -169,10 +165,6 @@ public class ReceiptFormActivity extends AppCompatActivity {
         }
 
         obj = new Expense(store, date, item, category, newAmount, description);
-
-        String expId = expenseRef.push().getKey();
-        Expenses expenses = new Expenses(store, item, newAmount, date, category, description);
-        expenseRef.child(expId).setValue(expenses);
 
         ExpenseViewModel evm = ViewModelProviders.of(this).get(ExpenseViewModel.class);
         evm.insert(obj);

@@ -17,6 +17,8 @@ public class ReceiptElement {
         return line;
     }
 
+    private boolean isTotal;
+
     private Line line;
 
     public String getValue() {
@@ -38,13 +40,16 @@ public class ReceiptElement {
     ReceiptElement(Line nline){
         line = nline;
         value = line.getValue().toLowerCase();
+        //clean input
+        value = value.replaceAll("\\s",""); //remove spaces
+
         isNumber = parseNumber();
+        isTotal = innerIsTotal();
         if(isNumber){
             value = value.replaceAll(",","."); //make decimal
             value = value.replaceAll("[li]","1"); //li -> 1
             value = value.replaceAll("g","9"); //g -> 9
             value = value.replaceAll("o","0"); //o -> 0
-            value = value.replaceAll("\\s",""); //remove spaces
             value = value.replaceAll(".*[^\\d.]", ""); //remove non numeric characters left of first char
 
             numValue = Double.parseDouble(value);
@@ -95,11 +100,15 @@ public class ReceiptElement {
     }
 
     public boolean isTotal(){
-        if(Pattern.compile("total").matcher(value).find()) {
+        if(Pattern.compile("t[o0]ta[l1i]").matcher(value).find()) {
             //possible total
             return true;
         }
         return false;
+    }
+
+    private boolean innerIsTotal(){
+        return isTotal;
     }
 
     public boolean inNumber() {

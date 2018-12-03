@@ -16,11 +16,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.prj666_183a06.xbudget.database.Plans;
 import com.prj666_183a06.xbudget.receiptocr.CameraActivity;
 
@@ -32,32 +27,12 @@ public class MainActivity extends AppCompatActivity
     Fragment fragment = null;
     NavigationView navigationView;
 
-    private DatabaseReference planRef = FirebaseDatabase.getInstance().getReference("plans");
-    public static double gIncome;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        planRef.addValueEventListener(new ValueEventListener() {
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                gIncome = 0;
-                for (DataSnapshot planData : dataSnapshot.getChildren()) {
-                    Plans planValue = planData.getValue(Plans.class);
-                    if(planValue.getPlan_type().equals("income")){
-                        gIncome += planValue.getPlan_amount();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                System.out.println("The read failed!!!");
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -95,10 +70,6 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
         );
-    }
-
-    double getgIncome() {
-        return gIncome;
     }
 
     @Override
