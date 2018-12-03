@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity
         return -1;
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         // REMOVE Settings
@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     private void displaySelectedScreen(int id) {
 //        Fragment fragment = null;

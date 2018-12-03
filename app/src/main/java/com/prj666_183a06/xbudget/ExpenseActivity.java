@@ -63,6 +63,8 @@ public class ExpenseActivity extends Fragment {
             }
         });
 
+        setHasOptionsMenu(true);
+
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
@@ -109,6 +111,8 @@ public class ExpenseActivity extends Fragment {
 
                     AlertDialog dialog = builder.create();
                     dialog.show();
+
+                    adapter.notifyDataSetChanged();
                 }
                 if (direction == 8) {
                     Expense temp = adapter.getExpenseAt(viewHolder.getAdapterPosition());
@@ -159,7 +163,6 @@ public class ExpenseActivity extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        setHasOptionsMenu(true);
 
 
         if (requestCode == ADD_REQUEST && resultCode == RESULT_OK) {
@@ -199,7 +202,6 @@ public class ExpenseActivity extends Fragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setMessage("You can't undo this action. Do you want to delete all plans?").setPositiveButton("Yes", confirmDeleteDialogClickListener)
                         .setNegativeButton("No", confirmDeleteDialogClickListener).show();
-
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -217,6 +219,7 @@ public class ExpenseActivity extends Fragment {
 
                     break;
                 case DialogInterface.BUTTON_NEGATIVE:
+                    adapter.notifyDataSetChanged();
                     break;
             }
         }

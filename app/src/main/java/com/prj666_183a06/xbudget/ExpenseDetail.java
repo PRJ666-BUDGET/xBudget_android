@@ -1,12 +1,20 @@
 package com.prj666_183a06.xbudget;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.prj666_183a06.xbudget.ExpenseRoom.Expense;
 
@@ -45,6 +53,8 @@ public class ExpenseDetail extends AppCompatActivity {
         category = obj.getExpenseCategory();
         date = obj.getExpenseDate();
         description = obj.getExpenseDescription();
+
+        Log.e("obj get:", obj.print());
 
         itemTV.setText(item);
         storeTV.setText(store);
@@ -100,4 +110,43 @@ public class ExpenseDetail extends AppCompatActivity {
             finish();
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.detail_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.edit:
+                Intent editIntent = new Intent(getApplicationContext(), ExpenseAddEditExpenseR.class);
+                editIntent.putExtra("expense", obj);
+                editIntent.putExtra("type", "edit");
+                startActivityForResult(editIntent, 2);
+                return true;
+//            case R.id.delete:
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+//                builder.setMessage("You can't undo this action. Do you want to delete all plans?").setPositiveButton("Yes", delete)
+//                        .setNegativeButton("No", delete).show();
+//                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    DialogInterface.OnClickListener delete = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch(which) {
+                case DialogInterface.BUTTON_POSITIVE:
+
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE:
+
+                    break;
+            }
+        }
+    };
 }

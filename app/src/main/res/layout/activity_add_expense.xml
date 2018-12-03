@@ -106,12 +106,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
             </Spinner>
-
-            <CheckBox
-                android:id="@+id/check"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Use this value" />
+            
         </LinearLayout>
 
         <EditText
@@ -130,7 +125,7 @@
             android:text="Exit" />
     </LinearLayout>
 
-    <RelativeLayout
+    <!--<RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -142,5 +137,5 @@
             android:layout_alignParentBottom="true"
             android:layout_margin="15dp"
             android:src="@drawable/ic_save" />
-    </RelativeLayout>
+    </RelativeLayout>-->
 </LinearLayout>

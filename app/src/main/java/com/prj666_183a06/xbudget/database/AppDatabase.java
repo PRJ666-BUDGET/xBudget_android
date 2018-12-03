@@ -47,6 +47,7 @@ public abstract class AppDatabase extends RoomDatabase {
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
             new PopulateDbExpenseAsyncTask(instance).execute();
+            new PopulateDbAsyncTask(instance).execute();
         }
     };
 
