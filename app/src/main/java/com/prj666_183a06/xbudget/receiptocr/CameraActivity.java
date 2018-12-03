@@ -494,16 +494,22 @@ public final class CameraActivity extends AppCompatActivity {
                             Log.d("CameraLog:", "No values");
                         }
 
-                        //remove unusualy large values
-                        //backwards due to index changes on remove7
+                        //remove unusualy large values and duplicates
+                        //backwards due to index changes on remove
+                        Collections.sort(possibleValues, Collections.reverseOrder());
+                        Double oldVal = -1.0;
                         for(int i = possibleValues.size() -1; i >= 0; i--){
                             if(possibleValues.get(i) > 999){
                                 possibleValues.remove(i);
+                            } else if(possibleValues.get(i).equals(oldVal)){
+                                possibleValues.remove(i);
+                            } else {
+                                oldVal = possibleValues.get(i);
                             }
+
                         }
 
                         //shrink array to 4 largest
-                        Collections.sort(possibleValues, Collections.reverseOrder());
                         for(int i = possibleValues.size() -1; i >= 3; i--){
                             possibleValues.remove(i);
                         }
