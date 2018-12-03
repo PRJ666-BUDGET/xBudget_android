@@ -7,62 +7,78 @@
     android:orientation="vertical"
     android:padding="24dp">
 
+    <View
+        android:id="@+id/view"
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:layout_below="@+id/textView_titleRecord"
+        android:layout_centerHorizontal="true"
+        android:background="#000000" />
+
     <TextView
         android:id="@+id/textView_planType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/spinner_planType"
+        android:layout_below="@+id/view"
+        android:layout_marginTop="35dp"
         android:text="@string/detailForm_planType_label"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textView_typeRecord"
         android:layout_width="240dp"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view"
         android:layout_alignParentEnd="true"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="10dp"
         android:text="@string/detailForm_planType"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-    <TextView
-        android:id="@+id/textInputLayout_planTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView_planType"
-        android:layout_marginTop="35dp"
-        android:layout_marginBottom="10dp"
-        android:text="@string/detailForm_planTitle_label"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+    <!--<TextView-->
+        <!--android:id="@+id/textInputLayout_planTitle"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/textView_planType"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_marginStart="87dp"-->
+        <!--android:layout_marginTop="209dp"-->
+        <!--android:layout_marginBottom="10dp"-->
+        <!--android:text="@string/detailForm_planTitle_label"-->
+        <!--android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
+        <!--android:textStyle="bold" />-->
 
     <TextView
         android:id="@+id/textView_titleRecord"
         android:layout_width="240dp"
-        android:layout_height="30dp"
-        android:layout_below="@+id/textView_typeRecord"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="35dp"
+        android:layout_height="60dp"
         android:layout_marginBottom="10dp"
         android:text="@string/detailForm_planTitle"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:textAlignment="textStart"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="50dp" />
 
     <TextView
         android:id="@+id/textInputLayout_planPeriod"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textInputLayout_planTitle"
+        android:layout_below="@+id/textView_planType"
         android:layout_marginTop="35dp"
         android:layout_marginBottom="10dp"
         android:text="@string/detailForm_planAmount_label"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textView_amountRecord"
         android:layout_width="240dp"
         android:layout_height="30dp"
-        android:layout_below="@+id/textView_titleRecord"
+        android:layout_below="@+id/textView_typeRecord"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="35dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:text="@string/detailForm_planAmount"
         android:textAlignment="center"
@@ -73,18 +89,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textInputLayout_planPeriod"
-        android:layout_alignStart="@+id/textView_planType"
         android:layout_marginTop="35dp"
         android:text="@string/detailForm_planPeriod_label"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textView_periodRecord"
         android:layout_width="240dp"
         android:layout_height="30dp"
-        android:layout_below="@+id/textInputLayout_planPeriod"
+        android:layout_below="@+id/textView_amountRecord"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="35dp"
+        android:layout_marginEnd="10dp"
         android:text="@string/detailForm_planPeriod"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
