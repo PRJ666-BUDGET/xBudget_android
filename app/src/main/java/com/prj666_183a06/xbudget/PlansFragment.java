@@ -24,7 +24,6 @@ import android.widget.Toast;
 import com.prj666_183a06.xbudget.adapter.PlanAdapter;
 import com.prj666_183a06.xbudget.crud.CreateUpdatePlanActivity;
 import com.prj666_183a06.xbudget.crud.DetailPlanActivity;
-import com.prj666_183a06.xbudget.database.Plans;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
 import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
@@ -135,6 +134,8 @@ public class PlansFragment extends Fragment {
                                     adapter.notifyDataSetChanged();
                                 }
                             }).show();
+
+                    adapter.notifyDataSetChanged();
                 }
                 else if (direction == 8) {
                     PlanEntity plan = adapter.getPlanPosition(viewHolder.getAdapterPosition());
