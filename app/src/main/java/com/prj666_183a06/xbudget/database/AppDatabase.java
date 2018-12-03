@@ -81,12 +81,12 @@ public abstract class AppDatabase extends RoomDatabase {
         @Override
         protected Void doInBackground(Void... voids){
             //rent
-            expenseDao.insert(new Expense("Rent", "12/01/2018", "Rent", "Rent", 700.00, ""));
+            expenseDao.insert(new Expense("Rent", "12/1/2018", "Rent", "Rent", 700.00, ""));
             //takout
             expenseDao.insert(new Expense("SushiQ", "11/24/2018", "Sushi", "Takeout", 10, ""));
             expenseDao.insert(new Expense("SushiQ", "11/17/2018", "Sushi", "Takeout", 10, ""));
             expenseDao.insert(new Expense("SushiQ", "11/10/2018", "Sushi", "Takeout", 10, ""));
-            expenseDao.insert(new Expense("SushiQ", "11/03/2018", "Sushi", "Takeout", 10, ""));
+            expenseDao.insert(new Expense("SushiQ", "11/3/2018", "Sushi", "Takeout", 10, ""));
             expenseDao.insert(new Expense("SushiQ", "10/27/2018", "Sushi", "Takeout", 10, ""));
             //coffee
             expenseDao.insert(new Expense("Tims", "10/27/2018", "Coffee", "Coffee", 2, ""));
@@ -133,13 +133,13 @@ public abstract class AppDatabase extends RoomDatabase {
             expenseDao.insert(new Expense("NoFrills", "11/24/2018", "Groceries", "Groceries", 75, ""));
             expenseDao.insert(new Expense("NoFrills", "11/17/2018", "Groceries", "Groceries", 75, ""));
             expenseDao.insert(new Expense("NoFrills", "11/10/2018", "Groceries", "Groceries", 75, ""));
-            expenseDao.insert(new Expense("NoFrills", "11/03/2018", "Groceries", "Groceries", 75, ""));
+            expenseDao.insert(new Expense("NoFrills", "11/3/2018", "Groceries", "Groceries", 75, ""));
             expenseDao.insert(new Expense("NoFrills", "10/27/2018", "Groceries", "Groceries", 75, ""));
             //gas
             expenseDao.insert(new Expense("Gas", "11/24/2018", "Gas", "Gas", 30, ""));
             expenseDao.insert(new Expense("Gas", "11/17/2018", "Gas", "Gas", 30, ""));
             expenseDao.insert(new Expense("Gas", "11/10/2018", "Gas", "Gas", 30, ""));
-            expenseDao.insert(new Expense("Gas", "11/03/2018", "Gas", "Gas", 30, ""));
+            expenseDao.insert(new Expense("Gas", "11/3/2018", "Gas", "Gas", 30, ""));
             expenseDao.insert(new Expense("Gas", "10/27/2018", "Gas", "Gas", 30, ""));
             //Some Incidentals
             expenseDao.insert(new Expense("BestBuy", "11/10/2018", "Laptop", "None", 500, "Replacement"));
