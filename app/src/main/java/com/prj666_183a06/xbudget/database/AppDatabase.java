@@ -61,9 +61,11 @@ public abstract class AppDatabase extends RoomDatabase {
         @Override
         protected Void doInBackground(Void... voids) {
 
-            planDao.insertPlan(new PlanEntity("income", "Co-op", 1000, "bi-weekly"));
-            planDao.insertPlan(new PlanEntity("income", "tutor", 500, "bi-weekly"));
-            planDao.insertPlan(new PlanEntity("category", "Coffee", 5, "daily"));
+            planDao.insertPlan(new PlanEntity("category", "Rent", 800, "monthly"));
+            planDao.insertPlan(new PlanEntity("category", "Coffee", 2, "daily"));
+            planDao.insertPlan(new PlanEntity("category", "Takeout", 10, "weekly"));
+            planDao.insertPlan(new PlanEntity("category", "Gas", 30, "weekly"));
+            planDao.insertPlan(new PlanEntity("income", "Income", 1000, "weekly"));
             return null;
         }
     }
