@@ -53,9 +53,6 @@ public class ExpenseActivity extends Fragment {
 
                 intent.putExtra("type", "add");
                 startActivityForResult(intent, ADD_REQUEST);
-
-//                Intent intent = new Intent(getActivity(), ExpenseInfo.class);
-//                startActivity(intent);
             }
         });
 
