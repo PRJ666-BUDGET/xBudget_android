@@ -24,7 +24,6 @@ import android.widget.Toast;
 import com.prj666_183a06.xbudget.adapter.PlanAdapter;
 import com.prj666_183a06.xbudget.crud.CreateUpdatePlanActivity;
 import com.prj666_183a06.xbudget.crud.DetailPlanActivity;
-import com.prj666_183a06.xbudget.database.Plans;
 import com.prj666_183a06.xbudget.database.entity.PlanEntity;
 import com.prj666_183a06.xbudget.viewmodel.PlanViewModel;
 
@@ -47,7 +46,7 @@ public class PlansFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        getActivity().setTitle("Plans");
+        getActivity().setTitle("Plan");
 //
 //        planRef.addValueEventListener(new ValueEventListener() {
 //            public void onDataChange(DataSnapshot dataSnapshot) {
@@ -126,7 +125,7 @@ public class PlansFragment extends Fragment {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     planViewModel.delete(adapter.getPlanPosition(viewHolder.getAdapterPosition()));
-                                    Toast.makeText(getActivity(),"Plan deleted.", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(getActivity(),"Plan deleted.", Toast.LENGTH_SHORT).show();
                                 }
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -188,7 +187,7 @@ public class PlansFragment extends Fragment {
             PlanEntity plan = new PlanEntity(type ,title, amount, period);
             planViewModel.insert(plan);
 
-            Toast.makeText(getActivity(), "Plan is created.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), "Plan is created.", Toast.LENGTH_SHORT).show();
         }
         else if (requestCode == DELETE_PLAN_REQUEST && resultCode == RESULT_OK) {
             String type = data.getStringExtra(CreateUpdatePlanActivity.PLAN_TYPE);
@@ -278,7 +277,7 @@ public class PlansFragment extends Fragment {
                 case DialogInterface.BUTTON_POSITIVE:
 
                     planViewModel.deleteAllPlans();
-                    Toast.makeText(getActivity(), "All Plans are deleted", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(), "All Plans are deleted", Toast.LENGTH_SHORT).show();
                     break;
                 case DialogInterface.BUTTON_NEGATIVE:
                     break;
