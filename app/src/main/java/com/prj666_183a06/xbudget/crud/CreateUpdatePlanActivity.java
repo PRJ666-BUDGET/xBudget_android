@@ -57,7 +57,7 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
         Intent intent = getIntent();
 
         if (intent.hasExtra(PLAN_ID)) {
-            setTitle("Update Plan");
+            setTitle("Edit Plan");
             editTextTitle.setText(intent.getStringExtra(PLAN_TITLE));
             editTextAmount.setText(String.valueOf(intent.getDoubleExtra(PLAN_AMOUNT, 0.00)));
             spinnerType.setSelection(getIndex(spinnerType, intent.getStringExtra(PLAN_TYPE)));
