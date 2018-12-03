@@ -30,6 +30,8 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
     private EditText editTextAmount;
     private Spinner spinnerType;
     private Spinner spinnerPeriod;
+
+    private int id;
     double prev_amount = 0;
 
     @Override
@@ -58,6 +60,7 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
 
         if (intent.hasExtra(PLAN_ID)) {
             setTitle("Edit Plan");
+            setId(intent.getIntExtra(PLAN_ID, -1));
             editTextTitle.setText(intent.getStringExtra(PLAN_TITLE));
             editTextAmount.setText(String.valueOf(intent.getDoubleExtra(PLAN_AMOUNT, 0.00)));
             spinnerType.setSelection(getIndex(spinnerType, intent.getStringExtra(PLAN_TYPE)));
@@ -68,6 +71,8 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
         } else {
             setTitle("Create Plan");
         }
+
+//        Toast.makeText(this, "PlanId " + getId() + " is loaded.", Toast.LENGTH_SHORT).show();
     }
 
     private void savePlan() {
@@ -113,16 +118,17 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
         }
 
         Intent data = new Intent();
+
         data.putExtra(PLAN_TYPE, spinnerType.getSelectedItem().toString());
         data.putExtra(PLAN_TITLE, title);
         data.putExtra(PLAN_AMOUNT, amount);
         data.putExtra(PLAN_PERIOD, spinnerPeriod.getSelectedItem().toString());
 
-        int planId = getIntent().getIntExtra(PLAN_ID, -1);
+        int planId = getId();
 
         if (planId != -1) {
             data.putExtra(PLAN_ID, planId);
-//            Toast.makeText(this, "PLAN ID: " + planId + " IS UPDATED.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "PLAN ID: " + planId + " IS UPDATED.", Toast.LENGTH_SHORT).show();
         }
 
         setResult(RESULT_OK, data);
@@ -161,6 +167,14 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     private int getIndex(Spinner spinner, String myString){

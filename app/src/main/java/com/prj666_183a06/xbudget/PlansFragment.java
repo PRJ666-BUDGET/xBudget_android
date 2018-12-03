@@ -141,7 +141,7 @@ public class PlansFragment extends Fragment {
                     PlanEntity plan = adapter.getPlanPosition(viewHolder.getAdapterPosition());
                     Intent needUpdate = new Intent(getActivity(), CreateUpdatePlanActivity.class);
 
-                    needUpdate.putExtra(CreateUpdatePlanActivity.PLAN_ID, getId());
+                    needUpdate.putExtra(CreateUpdatePlanActivity.PLAN_ID, plan.getPlanId());
                     needUpdate.putExtra(CreateUpdatePlanActivity.PLAN_TYPE, plan.getPlanType());
                     needUpdate.putExtra(CreateUpdatePlanActivity.PLAN_TITLE, plan.getPlanTitle());
                     needUpdate.putExtra(CreateUpdatePlanActivity.PLAN_AMOUNT, plan.getPlanAmount());
@@ -222,7 +222,7 @@ public class PlansFragment extends Fragment {
             Log.d(TAG, "onActivityResult: planId: " + id);
 
             if (id == -1) {
-//                Toast.makeText(this, "BAD REQUEST [DetailPlanActivity.java: onActivityResult()], RETURN planId: " + id, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "BAD REQUEST [DetailPlanActivity.java: onActivityResult()], RETURN planId: " + id, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -235,7 +235,7 @@ public class PlansFragment extends Fragment {
             plan.setPlanId(id);
             planViewModel.update(plan);
 
-//            Toast.makeText(this, title + " is updated.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), id + " is updated.", Toast.LENGTH_SHORT).show();
         }
         else{
 //            Toast.makeText(getActivity(), "BACK TO LIST VIEW FROM DETAIL VIEW [PlansFragment.java onActivityResult()]", Toast.LENGTH_SHORT).show();
