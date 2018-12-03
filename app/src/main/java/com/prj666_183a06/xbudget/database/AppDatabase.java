@@ -46,15 +46,16 @@ public abstract class AppDatabase extends RoomDatabase {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
+            new PopulateDbPlanAsyncTask(instance).execute();
             new PopulateDbExpenseAsyncTask(instance).execute();
         }
     };
 
-    private static class PopulateDbAsyncTask extends AsyncTask<Void, Void, Void> {
+    private static class PopulateDbPlanAsyncTask extends AsyncTask<Void, Void, Void> {
 
         private PlanDao planDao;
 
-        private PopulateDbAsyncTask(AppDatabase database) {
+        private PopulateDbPlanAsyncTask(AppDatabase database) {
             planDao = database.planDao();
         }
 
