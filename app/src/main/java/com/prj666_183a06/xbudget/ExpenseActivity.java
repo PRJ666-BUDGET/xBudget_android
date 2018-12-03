@@ -82,7 +82,7 @@ public class ExpenseActivity extends Fragment {
 
             @Override
             public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
-
+                final int pos = viewHolder.getAdapterPosition();
                 if (direction == 4) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setCancelable(true);
@@ -92,7 +92,7 @@ public class ExpenseActivity extends Fragment {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    expenseViewModel.delete(adapter.getExpenseAt(viewHolder.getAdapterPosition()));
+                                    expenseViewModel.delete(adapter.getExpenseAt(pos));
                                 }
                             });
                     builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
