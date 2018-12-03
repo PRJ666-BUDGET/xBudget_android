@@ -46,25 +46,28 @@ public abstract class AppDatabase extends RoomDatabase {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
+            new PopulateDbPlanAsyncTask(instance).execute();
             new PopulateDbExpenseAsyncTask(instance).execute();
             new PopulateDbAsyncTask(instance).execute();
         }
     };
 
-    private static class PopulateDbAsyncTask extends AsyncTask<Void, Void, Void> {
+    private static class PopulateDbPlanAsyncTask extends AsyncTask<Void, Void, Void> {
 
         private PlanDao planDao;
 
-        private PopulateDbAsyncTask(AppDatabase database) {
+        private PopulateDbPlanAsyncTask(AppDatabase database) {
             planDao = database.planDao();
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
 
-            planDao.insertPlan(new PlanEntity("income", "Co-op", 1000, "bi-weekly"));
-            planDao.insertPlan(new PlanEntity("income", "tutor", 500, "bi-weekly"));
-            planDao.insertPlan(new PlanEntity("category", "Coffee", 5, "daily"));
+            planDao.insertPlan(new PlanEntity("category", "Rent", 800, "monthly"));
+            planDao.insertPlan(new PlanEntity("category", "Coffee", 2, "daily"));
+            planDao.insertPlan(new PlanEntity("category", "Takeout", 10, "weekly"));
+            planDao.insertPlan(new PlanEntity("category", "Gas", 30, "weekly"));
+            planDao.insertPlan(new PlanEntity("income", "Income", 1000, "weekly"));
             return null;
         }
     }

@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/update_plan"
-        android:title="Update" />
+        android:title="Edit" />
     <item
         android:id="@+id/delete_plan"
         android:title="Delete" />

@@ -40,7 +40,7 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.PlanHolder> {
     public void onBindViewHolder(@NonNull PlanHolder holder, int position) {
         PlanEntity currentPlan = plans.get(position);
         holder.textview_planTitle.setText(currentPlan.getPlanTitle());
-        holder.textview_planAmount.setText(String.format("%.2f", currentPlan.getPlanAmount()));
+        holder.textview_planAmount.setText(String.format("$%.2f", currentPlan.getPlanAmount()));
         holder.textview_planPeriod.setText(currentPlan.getPlanPeriod());
 
         if (currentPlan.getPlanType().matches("income")) {

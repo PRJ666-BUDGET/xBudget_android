@@ -45,6 +45,7 @@ public class DetailPlanActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_plan);
+        setTitle("Detail");
 
         final PlanAdapter adapter = new PlanAdapter();
 
@@ -68,7 +69,7 @@ public class DetailPlanActivity extends AppCompatActivity {
         setId(intent.getIntExtra(PLAN_ID, -1));
         typeRecord.setText(intent.getStringExtra(PLAN_TYPE));
         titleRecord.setText(intent.getStringExtra(PLAN_TITLE));
-        amountRecord.setText(String.valueOf(intent.getDoubleExtra(PLAN_AMOUNT, 0.00)));
+        amountRecord.setText("$" + String.valueOf(intent.getDoubleExtra(PLAN_AMOUNT, 0.00)));
         periodRecord.setText(intent.getStringExtra(PLAN_PERIOD));
 
 //        Toast.makeText(this, "PlanId " + getId() + " is loaded.", Toast.LENGTH_SHORT).show();
@@ -93,7 +94,7 @@ public class DetailPlanActivity extends AppCompatActivity {
                 Intent data = new Intent();
                 data.putExtra(PLAN_TYPE, typeRecord.getText().toString());
                 data.putExtra(PLAN_TITLE, titleRecord.getText().toString());
-                data.putExtra(PLAN_AMOUNT, Double.parseDouble(amountRecord.getText().toString()));
+                data.putExtra(PLAN_AMOUNT, Double.parseDouble(amountRecord.getText().toString().replaceAll("[^\\d.]", "")));
                 data.putExtra(PLAN_PERIOD, periodRecord.getText().toString());
 
                 int planId = getIntent().getIntExtra(PLAN_ID, -1);
@@ -141,7 +142,7 @@ public class DetailPlanActivity extends AppCompatActivity {
                 newIntent.putExtra(CreateUpdatePlanActivity.PLAN_ID, getId());
                 newIntent.putExtra(CreateUpdatePlanActivity.PLAN_TYPE, typeRecord.getText().toString());
                 newIntent.putExtra(CreateUpdatePlanActivity.PLAN_TITLE, titleRecord.getText().toString());
-                newIntent.putExtra(CreateUpdatePlanActivity.PLAN_AMOUNT, Double.parseDouble(amountRecord.getText().toString()));
+                newIntent.putExtra(CreateUpdatePlanActivity.PLAN_AMOUNT, Double.parseDouble(amountRecord.getText().toString().replaceAll("[^\\d.]", "")));
                 newIntent.putExtra(CreateUpdatePlanActivity.PLAN_PERIOD, periodRecord.getText().toString());
 
                 startActivityForResult(newIntent, EDIT_PLAN_REQUEST);
@@ -185,7 +186,7 @@ public class DetailPlanActivity extends AppCompatActivity {
             plan.setPlanId(id);
             planViewModel.update(plan);
 
-            Toast.makeText(this, title + " is updated.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, title + " is updated.", Toast.LENGTH_SHORT).show();
 
             finish();
         }

@@ -14,11 +14,10 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.prj666_183a06.xbudget.R;
-import com.prj666_183a06.xbudget.database.Plans;
 
 public class CreateUpdatePlanActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    private static final String TAG = "CreateUpdatePlanActivity";
+    private static final String TAG = "CreateUpdatePlanAct";
 
     public static final String PLAN_ID = "com.prj666_183a06.xbudget.PLAN_ID";
     public static final String PLAN_TYPE = "com.prj666_183a06.xbudget.PLAN_TYPE";
@@ -58,7 +57,7 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
         Intent intent = getIntent();
 
         if (intent.hasExtra(PLAN_ID)) {
-            setTitle("Update Plan");
+            setTitle("Edit Plan");
             editTextTitle.setText(intent.getStringExtra(PLAN_TITLE));
             editTextAmount.setText(String.valueOf(intent.getDoubleExtra(PLAN_AMOUNT, 0.00)));
             spinnerType.setSelection(getIndex(spinnerType, intent.getStringExtra(PLAN_TYPE)));
@@ -73,17 +72,16 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
 
     private void savePlan() {
         String title = editTextTitle.getText().toString();
-        double amount = Double.parseDouble(editTextAmount.getText().toString());
 
-        // Input validation
-        if (title.trim().isEmpty() || editTextAmount.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Please complete the create form.", Toast.LENGTH_SHORT).show();
-            return;
-        } else if (amount > 10000) {
-
-            Toast.makeText(this, "Plan amount cannot be greater than $10000.", Toast.LENGTH_SHORT).show();
+        double amount = 0;
+        if (editTextAmount.getText().toString().trim().isEmpty()) {
+            Toast.makeText(this, "Please complete the create form", Toast.LENGTH_SHORT).show();
             return;
         }
+        else {
+            amount = Double.parseDouble(editTextAmount.getText().toString());
+        }
+
         double current_amount = 0;
         current_amount = amount;
         if (prev_amount != current_amount) {
@@ -102,6 +100,16 @@ public class CreateUpdatePlanActivity extends AppCompatActivity implements Adapt
                 break;
             default:
                 current_amount = current_amount;
+        }
+
+        // Input validation
+        if (editTextTitle.getText().toString().trim().isEmpty()) {
+            Toast.makeText(this, "Please complete the create form.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else if (current_amount > 10000) {
+            Toast.makeText(this, "Plan amount for the monthly income cannot be greater than $10000.", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         Intent data = new Intent();
