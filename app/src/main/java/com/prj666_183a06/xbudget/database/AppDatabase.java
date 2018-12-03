@@ -48,7 +48,6 @@ public abstract class AppDatabase extends RoomDatabase {
             super.onCreate(db);
             new PopulateDbPlanAsyncTask(instance).execute();
             new PopulateDbExpenseAsyncTask(instance).execute();
-            new PopulateDbPlanAsyncTask(instance).execute();
         }
     };
 
