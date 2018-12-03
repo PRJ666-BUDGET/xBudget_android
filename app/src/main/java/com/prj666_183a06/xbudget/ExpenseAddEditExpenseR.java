@@ -7,6 +7,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -67,9 +69,11 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
 
         Intent intent = getIntent();
 
-        if(intent.getStringExtra("type").equals("edit")) {
+        if (intent.getStringExtra("type").equals("edit")) {
             type = "edit";
-        }else{ type = "add";}
+        } else {
+            type = "add";
+        }
 
         editStore = findViewById(R.id.edit_text_store);
         editItem = findViewById(R.id.edit_text_item);
@@ -127,13 +131,13 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
             }
         });
 
-        FloatingActionButton buttonSave = findViewById(R.id.button_save);
-        buttonSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveExpense();
-            }
-        });
+//        FloatingActionButton buttonSave = findViewById(R.id.button_save);
+//        buttonSave.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                saveExpense();
+//            }
+//        });
 
         editDate.setText(getDate());
     }
@@ -166,15 +170,13 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
         category = editCategory.getSelectedItem().toString();
         description = editDescription.getText().toString();
 
-        if(store.trim().isEmpty() || item.trim().isEmpty() || date.trim().isEmpty() || cost.isEmpty()){
-            Toast.makeText(this, "Please fill out the form" , Toast.LENGTH_SHORT).show();
+        //if(store.trim().isEmpty() || item.trim().isEmpty() || date.trim().isEmpty() || cost.isEmpty()){
+        if (date.trim().isEmpty() || cost.isEmpty()){
+            Toast.makeText(this, "Please fill out the form", Toast.LENGTH_SHORT).show();
             return;
         }
 
         double newAmount = Double.valueOf(cost);
-        if (tempAmount != newAmount) {
-            newAmount -= tempAmount;
-        }
 
         obj = new Expense(store, date, item, category, newAmount, description);
 
@@ -187,22 +189,20 @@ public class ExpenseAddEditExpenseR extends AppCompatActivity implements DatePic
         finish();
     }
 
-    /*@Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.add_expense_menu, menu);
-
+        getMenuInflater().inflate(R.menu.save_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.save_expense:
+            case R.id.save:
                 saveExpense();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }*/
+    }
 }
